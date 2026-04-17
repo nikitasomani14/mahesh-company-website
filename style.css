@@ -2310,6 +2310,7 @@ a {
         padding: 20px;
         box-shadow: var(--shadow-lg);
         gap: 0;
+        z-index: 1000;
     }
 
     .nav-links.active {
@@ -2317,12 +2318,14 @@ a {
     }
 
     .nav-links a {
-        padding: 12px 16px;
+        padding: 14px 16px;
         border-radius: 8px;
+        font-size: 1rem;
     }
 
     .mobile-menu-btn {
         display: block;
+        padding: 10px;
     }
 
     .search-box {
@@ -2335,6 +2338,7 @@ a {
 
     .products-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
     }
 
     .services-grid {
@@ -2381,9 +2385,18 @@ a {
     .quickview-image img {
         border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     }
+    
+    .container {
+        padding: 0 16px;
+    }
 }
 
 @media (max-width: 640px) {
+    .top-bar {
+        padding: 6px 0;
+        font-size: 0.75rem;
+    }
+    
     .top-bar-left {
         flex-direction: column;
         gap: 4px;
@@ -2394,71 +2407,169 @@ a {
         flex-direction: column;
         gap: 8px;
     }
+    
+    .top-bar-left span {
+        font-size: 0.72rem;
+    }
 
     .hero {
-        height: 100vh;
+        height: auto;
+        min-height: 100vh;
+        padding-bottom: 80px;
     }
 
     .hero h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
+        line-height: 1.25;
     }
 
     .hero p {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        line-height: 1.6;
     }
 
     .hero-buttons {
         flex-direction: column;
+        gap: 12px;
+    }
+    
+    .hero-buttons .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 14px 24px;
     }
 
     .hero-stats {
-        gap: 20px;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .stat-item {
+        min-width: 80px;
     }
 
     .stat-number {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
     }
 
     .hero-nav {
         bottom: 20px;
         right: 20px;
+        left: 20px;
+        justify-content: center;
+    }
+    
+    .hero-badge {
+        font-size: 0.75rem;
+        padding: 5px 16px;
     }
 
     .categories-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .category-img {
+        height: 160px;
     }
 
     .products-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .product-card {
+        margin: 0;
+    }
+    
+    .product-image {
+        height: 200px;
+    }
+    
+    .product-info {
+        padding: 14px;
+    }
+    
+    .product-name {
+        font-size: 0.95rem;
+    }
+    
+    .current-price {
+        font-size: 1.15rem;
+    }
+    
+    .product-cart-btn {
+        padding: 12px;
+        font-size: 0.9rem;
     }
 
     .services-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .service-card {
+        padding: 24px 20px;
+    }
+
+    .section-header {
+        margin-bottom: 30px;
     }
 
     .section-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+        line-height: 1.3;
+    }
+    
+    .section-subtitle {
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+    }
+    
+    .section-desc {
+        font-size: 0.9rem;
+        padding: 0 10px;
+    }
+
+    .offer-banner {
+        padding: 50px 0;
     }
 
     .offer-text h2 {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
+        line-height: 1.3;
+    }
+    
+    .offer-text p {
+        font-size: 0.9rem;
     }
 
     .offer-timer {
         gap: 8px;
+        justify-content: center;
     }
 
     .timer-block {
-        padding: 10px 14px;
-        min-width: 60px;
+        padding: 10px 12px;
+        min-width: 55px;
     }
 
     .timer-block span {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
+    }
+    
+    .timer-block small {
+        font-size: 0.65rem;
     }
 
     .footer-grid {
         grid-template-columns: 1fr;
+        gap: 30px;
     }
 
     .footer-bottom {
@@ -2466,26 +2577,93 @@ a {
         gap: 12px;
         text-align: center;
     }
+    
+    .footer {
+        padding: 40px 0 0;
+    }
+
+    .about-section,
+    .categories-section,
+    .products-section,
+    .services-section,
+    .testimonials-section,
+    .contact-section {
+        padding: 60px 0;
+    }
 
     .about-features {
         grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .about-feature {
+        font-size: 0.85rem;
     }
 
     .about-cta {
         flex-direction: column;
+        gap: 12px;
+    }
+    
+    .about-cta .btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .about-img-secondary {
         display: none;
     }
+    
+    .about-img-main img {
+        height: 280px;
+    }
+    
+    .about-experience-badge {
+        padding: 14px;
+        top: -10px;
+        left: -10px;
+    }
+    
+    .exp-number {
+        font-size: 1.8rem;
+    }
+    
+    .exp-text {
+        font-size: 0.65rem;
+    }
 
     .form-row {
         grid-template-columns: 1fr;
+    }
+    
+    .contact-form-container {
+        padding: 24px;
+    }
+    
+    .contact-card {
+        padding: 18px;
     }
 
     .cart-sidebar {
         width: 100%;
         right: -100%;
+    }
+    
+    .cart-header {
+        padding: 16px;
+    }
+    
+    .cart-items {
+        padding: 12px;
+    }
+    
+    .cart-item {
+        padding: 12px;
+    }
+    
+    .cart-item-img {
+        width: 70px;
+        height: 70px;
     }
 
     .whatsapp-float span {
@@ -2495,19 +2673,159 @@ a {
     .whatsapp-float {
         padding: 14px;
         border-radius: 50%;
+        bottom: 20px;
+        left: 20px;
+    }
+    
+    .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
     }
 
     .product-filters {
         gap: 6px;
+        padding: 0 10px;
     }
 
     .filter-btn {
-        padding: 8px 16px;
-        font-size: 0.8rem;
+        padding: 8px 14px;
+        font-size: 0.75rem;
     }
 
     .success-actions {
         flex-direction: column;
+    }
+    
+    .modal {
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-header {
+        padding: 16px 20px;
+    }
+    
+    .testimonial-card {
+        padding: 24px;
+    }
+    
+    .testimonial-card::before {
+        font-size: 3.5rem;
+    }
+    
+    .nav-content {
+        padding: 10px 16px;
+    }
+    
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+    
+    .logo-name {
+        font-size: 1rem;
+    }
+    
+    .logo-tagline {
+        font-size: 0.65rem;
+    }
+    
+    .cart-icon {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .brands-strip {
+        padding: 12px 0;
+    }
+    
+    .brand-item {
+        font-size: 0.8rem;
+        gap: 8px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 380px) {
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+    }
+    
+    .offer-text h2 {
+        font-size: 1.4rem;
+    }
+    
+    .timer-block {
+        min-width: 50px;
+        padding: 8px 10px;
+    }
+    
+    .timer-block span {
+        font-size: 1rem;
+    }
+    
+    .hero-stats {
+        gap: 12px;
+    }
+    
+    .stat-number {
+        font-size: 1.3rem;
+    }
+    
+    .product-image {
+        height: 180px;
+    }
+    
+    .current-price {
+        font-size: 1.05rem;
+    }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 48px;
+    }
+    
+    .filter-btn {
+        min-height: 44px;
+    }
+    
+    .product-cart-btn {
+        min-height: 48px;
+    }
+    
+    .nav-links a {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .action-btn {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .qty-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    /* Always show action buttons on touch devices */
+    .product-actions-overlay {
+        bottom: 0;
+        background: linear-gradient(transparent, rgba(0,0,0,0.4));
     }
 }
 
