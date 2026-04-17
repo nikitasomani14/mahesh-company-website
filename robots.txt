@@ -1,0 +1,11 @@
+# Robots.txt for Mahesh & Company Aspur Website
+# https://nikitasomani14.github.io/mahesh-company-website/
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://nikitasomani14.github.io/mahesh-company-website/sitemap.xml
+
+# Crawl-delay (optional, be nice to the server)
+Crawl-delay: 10
