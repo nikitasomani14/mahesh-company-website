@@ -13,6 +13,7 @@ const products = [
         reviews: 124,
         badge: "auth",
         badgeText: "Authorized",
+        inStock: true,
         description: "Heavy-duty multi-crop thresher by Sonalika. Capacity 1200kg with triple blower design. Suitable for wheat, paddy, maize, and more.",
         features: ["40 HP Power Requirement", "1200 kg Capacity", "Triple Blower Design", "Mild Steel Body", "1-Year Warranty"]
     },
@@ -27,6 +28,7 @@ const products = [
         reviews: 89,
         badge: "auth",
         badgeText: "Authorized",
+        inStock: true,
         description: "64-inch drum maize sheller with skin dehusker. Double wheel, new model with enhanced performance.",
         features: ["64\" Drum Size", "35+ HP Required", "640 RPM Speed", "Double Wheel", "Skin Dehusker"]
     },
@@ -41,6 +43,7 @@ const products = [
         reviews: 67,
         badge: "sale",
         badgeText: "15% OFF",
+        inStock: true,
         description: "Tractor-operated paddy thresher with high output. Perfect for rice harvesting season.",
         features: ["Tractor Operated", "High Output Design", "Low Grain Loss", "Easy Maintenance", "All-Season Use"]
     },
@@ -55,6 +58,7 @@ const products = [
         reviews: 256,
         badge: "auth",
         badgeText: "Honda Dealer",
+        inStock: true,
         description: "Original Honda GX200 engine. Air-cooled, 4-stroke OHV with recoil start. Ideal for water pumps and agriculture.",
         features: ["6.5 HP Power", "Air-Cooled 4-Stroke", "3.1L Fuel Tank", "Low Oil Alert", "3-Year Warranty"]
     },
@@ -69,6 +73,7 @@ const products = [
         reviews: 178,
         badge: "hot",
         badgeText: "Best Seller",
+        inStock: true,
         description: "Powerful Honda GX390 engine for heavy-duty applications. Perfect for large water pumps and industrial equipment.",
         features: ["13 HP Power", "Horizontal Crankshaft", "OHV 4-Stroke", "Electric Start Option", "Commercial Grade"]
     },
@@ -83,6 +88,7 @@ const products = [
         reviews: 92,
         badge: "sale",
         badgeText: "20% OFF",
+        inStock: true,
         description: "Heavy-duty oil bearing diesel engine. Fuel efficient and long-lasting. Ideal for threshers and water pumps.",
         features: ["10 HP Diesel", "Oil Bearing Design", "Fuel Efficient", "Low Vibration", "Easy Maintenance"]
     },
@@ -97,6 +103,7 @@ const products = [
         reviews: 340,
         badge: "hot",
         badgeText: "Popular",
+        inStock: true,
         description: "JCB 3DX backhoe loader available for rent. Expert operators provided. Minimum 4 hours booking.",
         features: ["Expert Operator Included", "Min 4 Hours Booking", "Land Leveling", "Digging & Loading", "Construction Work"]
     },
@@ -111,6 +118,7 @@ const products = [
         reviews: 156,
         badge: "sale",
         badgeText: "Special Rate",
+        inStock: true,
         description: "Complete farm land leveling service using JCB. Per bigha pricing with professional operators.",
         features: ["Professional Operators", "Per Bigha Pricing", "Farm Land Leveling", "Precision Work", "Free Site Visit"]
     },
@@ -125,6 +133,7 @@ const products = [
         reviews: 201,
         badge: "new",
         badgeText: "New Stock",
+        inStock: true,
         description: "High-quality cultivator blade set. Hardened steel for long life. Compatible with all major tractor models.",
         features: ["12 Pieces Set", "Hardened Steel", "Universal Fit", "Long Lasting", "Rust Resistant"]
     },
@@ -139,6 +148,7 @@ const products = [
         reviews: 145,
         badge: null,
         badgeText: null,
+        inStock: false,
         description: "Premium quality V-belt set for thresher machines. Long-lasting, heat resistant. Compatible with Sonalika threshers.",
         features: ["Premium Quality", "Heat Resistant", "Sonalika Compatible", "Long Life", "Set of 4 Belts"]
     },
@@ -153,6 +163,7 @@ const products = [
         reviews: 88,
         badge: "sale",
         badgeText: "18% OFF",
+        inStock: true,
         description: "Heavy-duty rotavator blades for tractor rotavators. Forged steel construction for maximum durability.",
         features: ["42 Pieces", "Forged Steel", "Universal Mount", "High Durability", "All Soil Types"]
     },
@@ -167,6 +178,7 @@ const products = [
         reviews: 112,
         badge: null,
         badgeText: null,
+        inStock: true,
         description: "Complete bearing set for thresher machines. Includes main shaft, drum, and auxiliary bearings.",
         features: ["Complete Kit", "Premium Quality", "All Major Parts", "Dust Sealed", "Easy Installation"]
     },
@@ -181,6 +193,7 @@ const products = [
         reviews: 320,
         badge: null,
         badgeText: null,
+        inStock: false,
         description: "Professional grade khurpi for weeding and garden work. Stainless steel blade with wooden handle.",
         features: ["Stainless Steel", "Wooden Handle", "Ergonomic Grip", "Multi-Purpose", "Light Weight"]
     },
@@ -195,6 +208,7 @@ const products = [
         reviews: 198,
         badge: "hot",
         badgeText: "Best Seller",
+        inStock: true,
         description: "Battery-operated 16-litre spraying machine. Rechargeable with adjustable nozzle. Perfect for pesticide spraying.",
         features: ["16 Litre Capacity", "Battery Operated", "Adjustable Nozzle", "6-Hour Battery", "Backpack Design"]
     },
@@ -209,6 +223,7 @@ const products = [
         reviews: 156,
         badge: "new",
         badgeText: "New Arrival",
+        inStock: true,
         description: "Complete garden tool set with 8 essential tools. Includes trowel, cultivator, pruner, and more.",
         features: ["8 Piece Set", "Carbon Steel", "Rubber Grip", "Carrying Bag", "Gift Quality"]
     },
@@ -223,6 +238,7 @@ const products = [
         reviews: 134,
         badge: "auth",
         badgeText: "Honda Dealer",
+        inStock: true,
         description: "Honda-powered 3-inch water pump. 950L/min max flow rate. Cast aluminum body with cast iron impeller.",
         features: ["950L/min Flow", "25m Total Head", "GX200 Engine", "Cast Iron Impeller", "Self-Priming"]
     },
@@ -237,6 +253,7 @@ const products = [
         reviews: 89,
         badge: "sale",
         badgeText: "15% OFF",
+        inStock: true,
         description: "High-quality 1.5HP submersible pump for borewell and open well. Copper winding motor for long life.",
         features: ["1.5 HP Motor", "Copper Winding", "Borewell Compatible", "60m Head", "Thermal Protection"]
     },
@@ -251,6 +268,7 @@ const products = [
         reviews: 67,
         badge: "new",
         badgeText: "Eco-Friendly",
+        inStock: true,
         description: "Complete drip irrigation kit for 1 acre. Saves 60% water. Easy installation with all fittings included.",
         features: ["1 Acre Coverage", "60% Water Saving", "All Fittings Included", "UV Resistant Pipes", "Easy Installation"]
     },
@@ -265,6 +283,7 @@ const products = [
         reviews: 78,
         badge: "sale",
         badgeText: "17% OFF",
+        inStock: true,
         description: "Compact mini thresher ideal for small farms. Low power requirement with efficient output.",
         features: ["20 HP Requirement", "Compact Design", "Easy Transport", "Multi-Crop", "Low Maintenance"]
     },
@@ -279,6 +298,7 @@ const products = [
         reviews: 145,
         badge: null,
         badgeText: null,
+        inStock: true,
         description: "Reliable 5 HP diesel engine with oil bearing technology. Perfect for small-scale farming applications.",
         features: ["5 HP Diesel", "Oil Bearing", "Compact Size", "Easy Start", "Low Fuel Consumption"]
     },
@@ -293,6 +313,7 @@ const products = [
         reviews: 56,
         badge: "sale",
         badgeText: "23% OFF",
+        inStock: true,
         description: "Complete sprinkler system with pipes, nozzles, and connectors. Coverage up to half acre.",
         features: ["Half Acre Coverage", "Adjustable Nozzles", "All Pipes Included", "Easy Setup", "Durable Material"]
     },
@@ -307,6 +328,7 @@ const products = [
         reviews: 93,
         badge: null,
         badgeText: null,
+        inStock: false,
         description: "Heavy-duty plough blade set for deep ploughing. High-carbon steel with protective coating.",
         features: ["High-Carbon Steel", "Deep Ploughing", "Protective Coating", "Universal Fit", "Long Life"]
     },
@@ -321,6 +343,7 @@ const products = [
         reviews: 210,
         badge: "hot",
         badgeText: "Most Booked",
+        inStock: true,
         description: "Full-day JCB excavator service. Expert operator included. Ideal for large-scale farm and construction work.",
         features: ["Full Day (8 Hours)", "Expert Operator", "Diesel Included", "All Types of Work", "Insurance Covered"]
     },
@@ -335,6 +358,7 @@ const products = [
         reviews: 45,
         badge: "new",
         badgeText: "New Stock",
+        inStock: true,
         description: "Tractor-mounted seed drill for precise sowing. Adjustable row spacing and seed rate control.",
         features: ["Tractor Mounted", "9 Row Capacity", "Adjustable Spacing", "Seed Rate Control", "All Seed Types"]
     }
@@ -344,6 +368,15 @@ const products = [
 // State
 // ============================
 let cart = JSON.parse(localStorage.getItem('maheshCart') || '[]');
+let wishlist = JSON.parse(localStorage.getItem('maheshWishlist') || '[]');
+let compareIds = JSON.parse(localStorage.getItem('maheshCompare') || '[]')
+    .filter(id => products.some(p => p.id === id))
+    .slice(0, 3);
+localStorage.setItem('maheshCompare', JSON.stringify(compareIds));
+let recentlyViewed = JSON.parse(localStorage.getItem('maheshRecent') || '[]')
+    .filter(id => products.some(p => p.id === id))
+    .slice(0, 6);
+localStorage.setItem('maheshRecent', JSON.stringify(recentlyViewed));
 let currentSlide = 0;
 let slideInterval;
 let currentFilter = 'all';
@@ -352,8 +385,16 @@ let currentFilter = 'all';
 // Initialize
 // ============================
 document.addEventListener('DOMContentLoaded', () => {
-    renderProducts();
+    initDarkMode();
+    initMobileBarClass();
+    window.addEventListener('resize', initMobileBarClass);
+    initSeasonalBanner();
+    renderProductsWithSkeleton();
     updateCartUI();
+    updateWishlistUI();
+    updateCompareBar();
+    renderRecentlyViewed();
+    if (typeof renderFaq === 'function') renderFaq();
     startSlideShow();
     startCountdown();
     animateStats();
@@ -361,17 +402,147 @@ document.addEventListener('DOMContentLoaded', () => {
     setupRevealAnimations();
 });
 
+function initMobileBarClass() {
+    const mobile = window.matchMedia('(max-width: 640px)').matches;
+    document.body.classList.toggle('has-mobile-bar', mobile);
+}
+
 // ============================
-// Product Rendering
+// Dark mode
 // ============================
+function initDarkMode() {
+    const saved = localStorage.getItem('maheshTheme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = saved || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeIcon(theme);
+    setMetaThemeColor(theme);
+}
+
+function toggleDarkMode() {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('maheshTheme', next);
+    updateThemeIcon(next);
+    setMetaThemeColor(next);
+}
+
+function updateThemeIcon(theme) {
+    const icon = document.getElementById('themeIcon');
+    if (!icon) return;
+    icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+
+function setMetaThemeColor(theme) {
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'theme-color';
+        document.head.appendChild(meta);
+    }
+    meta.content = theme === 'dark' ? '#1a2332' : '#2d6a4f';
+}
+
+// ============================
+// Seasonal banner
+// ============================
+function initSeasonalBanner() {
+    if (localStorage.getItem('maheshSeasonalDismissed') === '1') return;
+    const banner = document.getElementById('seasonalBanner');
+    const textEl = document.getElementById('seasonalBannerText');
+    if (!banner || !textEl) return;
+
+    const month = new Date().getMonth() + 1;
+    let msg = '';
+    let cls = '';
+
+    if (month >= 10 && month <= 11) {
+        msg = typeof t === 'function' ? t('season_banner_diwali') : 'Festive Season Sale!';
+        cls = 'seasonal-theme-diwali';
+    } else if (month >= 6 && month <= 9) {
+        msg = typeof t === 'function' ? t('season_banner_monsoon') : 'Monsoon Farming Season - Best Deals!';
+        cls = 'seasonal-theme-monsoon';
+    } else if (month >= 3 && month <= 4) {
+        msg = typeof t === 'function' ? t('season_banner_harvest') : 'Harvest Season Special!';
+        cls = 'seasonal-theme-harvest';
+    } else if (month === 12 || month === 1) {
+        msg = typeof t === 'function' ? t('season_banner_winter') : 'Winter Sale!';
+        cls = 'seasonal-theme-winter';
+    }
+
+    if (!msg) return;
+    banner.classList.add(cls);
+    textEl.textContent = msg;
+    banner.hidden = false;
+}
+
+function dismissSeasonalBanner() {
+    const banner = document.getElementById('seasonalBanner');
+    if (banner) banner.hidden = true;
+    localStorage.setItem('maheshSeasonalDismissed', '1');
+}
+
+function refreshSeasonalBanner() {
+    const banner = document.getElementById('seasonalBanner');
+    const textEl = document.getElementById('seasonalBannerText');
+    if (!banner || !textEl || banner.hidden || localStorage.getItem('maheshSeasonalDismissed') === '1') return;
+    const month = new Date().getMonth() + 1;
+    let msg = '';
+    if (month >= 10 && month <= 11) msg = t('season_banner_diwali');
+    else if (month >= 6 && month <= 9) msg = t('season_banner_monsoon');
+    else if (month >= 3 && month <= 4) msg = t('season_banner_harvest');
+    else if (month === 12 || month === 1) msg = t('season_banner_winter');
+    if (msg) textEl.textContent = msg;
+}
+
+function t(key) {
+    if (typeof translations === 'undefined' || typeof currentLanguage === 'undefined') return '';
+    const lang = translations[currentLanguage];
+    return lang && lang[key] ? lang[key] : key;
+}
+
+// ============================
+// Skeleton + Product Rendering
+// ============================
+function buildSkeletonCards(count) {
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        html += `
+            <div class="product-card product-skeleton-card">
+                <div class="skeleton-shimmer skeleton-img"></div>
+                <div class="skeleton-pad">
+                    <div class="skeleton-shimmer skeleton-line short"></div>
+                    <div class="skeleton-shimmer skeleton-line"></div>
+                    <div class="skeleton-shimmer skeleton-line mid"></div>
+                    <div class="skeleton-shimmer skeleton-btn"></div>
+                </div>
+            </div>`;
+    }
+    return html;
+}
+
+function renderProductsWithSkeleton() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    grid.classList.add('is-loading');
+    grid.innerHTML = buildSkeletonCards(8);
+
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            grid.classList.remove('is-loading');
+            renderProducts(currentFilter);
+        }, 450);
+    });
+}
+
 function renderProducts(filter = 'all', searchTerm = '') {
     const grid = document.getElementById('productsGrid');
-    let filtered = products;
+    if (!grid) return;
 
+    let filtered = products;
     if (filter !== 'all') {
         filtered = filtered.filter(p => p.category === filter);
     }
-
     if (searchTerm) {
         const term = searchTerm.toLowerCase();
         filtered = filtered.filter(p =>
@@ -381,26 +552,38 @@ function renderProducts(filter = 'all', searchTerm = '') {
         );
     }
 
+    updateProductBreadcrumb(filter);
+
     grid.innerHTML = filtered.map(product => {
         const discount = Math.round((1 - product.price / product.originalPrice) * 100);
         const inCart = cart.find(c => c.id === product.id);
+        const inWish = wishlist.includes(product.id);
+        const inCompare = compareIds.includes(product.id);
+        const stock = product.inStock !== false;
 
         return `
             <div class="product-card" data-category="${product.category}">
+                <button type="button" class="product-wishlist-btn ${inWish ? 'active' : ''}" onclick="event.stopPropagation(); toggleWishlist(${product.id})" aria-label="Wishlist" title="Wishlist">
+                    <i class="fas fa-heart"></i>
+                </button>
                 <div class="product-badges">
+                    ${!stock ? `<span class="product-badge badge-oos">${typeof t === 'function' ? t('out_of_stock') : 'Out of Stock'}</span>` : ''}
                     ${product.badge ? `<span class="product-badge badge-${product.badge}">${product.badgeText}</span>` : ''}
                     ${discount >= 10 ? `<span class="product-badge badge-sale">${discount}% OFF</span>` : ''}
                 </div>
                 <div class="product-image">
                     <img src="${product.image}" alt="${product.name}" loading="lazy">
                     <div class="product-actions-overlay">
-                        <button class="action-btn" onclick="quickView(${product.id})" title="Quick View">
+                        <button type="button" class="action-btn" onclick="quickView(${product.id})" title="Quick View">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button class="action-btn" onclick="addToCart(${product.id})" title="Add to Cart">
-                            <i class="fas fa-cart-plus"></i>
+                        <button type="button" class="action-btn" onclick="event.stopPropagation(); toggleCompare(${product.id})" title="Compare">
+                            <i class="fas ${inCompare ? 'fa-check' : 'fa-columns'}"></i>
                         </button>
-                        <button class="action-btn" onclick="shareProduct(${product.id})" title="Share on WhatsApp">
+                        ${stock ? `<button type="button" class="action-btn" onclick="addToCart(${product.id})" title="Add to Cart">
+                            <i class="fas fa-cart-plus"></i>
+                        </button>` : ''}
+                        <button type="button" class="action-btn" onclick="shareProduct(${product.id})" title="Share on WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </button>
                     </div>
@@ -416,10 +599,14 @@ function renderProducts(filter = 'all', searchTerm = '') {
                         <span class="current-price">${formatPrice(product.price)}</span>
                         <span class="original-price">${formatPrice(product.originalPrice)}</span>
                     </div>
-                    <button class="product-cart-btn ${inCart ? 'added' : ''}" onclick="addToCart(${product.id})">
+                    ${stock ? `
+                    <button type="button" class="product-cart-btn ${inCart ? 'added' : ''}" onclick="addToCart(${product.id})">
                         <i class="fas ${inCart ? 'fa-check' : 'fa-shopping-cart'}"></i>
-                        ${inCart ? `In Cart (${inCart.qty})` : 'Add to Cart'}
-                    </button>
+                        ${inCart ? `In Cart (${inCart.qty})` : (typeof t === 'function' ? t('add_to_cart') : 'Add to Cart')}
+                    </button>` : `
+                    <button type="button" class="product-cart-btn notify-btn" onclick="notifyStockWhatsApp(${product.id})">
+                        <i class="fab fa-whatsapp"></i> ${typeof t === 'function' ? t('notify_me') : 'Notify Me'}
+                    </button>`}
                 </div>
             </div>
         `;
@@ -427,15 +614,47 @@ function renderProducts(filter = 'all', searchTerm = '') {
 
     if (filtered.length === 0) {
         grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-light);">
-                <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 16px; color: var(--border);"></i>
-                <p style="font-size: 1.1rem;">No products found. Try a different search or category.</p>
+            <div class="product-empty-state">
+                <i class="fas fa-search"></i>
+                <p>No products found. Try a different search or category.</p>
             </div>
         `;
     }
+
+    setupProductCardReveal(grid);
+}
+
+function updateProductBreadcrumb(filter) {
+    const nav = document.getElementById('productBreadcrumb');
+    const catSpan = document.getElementById('breadcrumbCategory');
+    if (!nav || !catSpan) return;
+    if (filter === 'all') {
+        nav.hidden = true;
+        return;
+    }
+    nav.hidden = false;
+    catSpan.textContent = getCategoryName(filter);
+}
+
+function setupProductCardReveal(grid) {
+    const cards = grid.querySelectorAll('.product-card');
+    cards.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(24px)';
+        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, 40 + index * 40);
+    });
 }
 
 function getCategoryName(cat) {
+    const key = 'category_' + cat;
+    if (typeof translations !== 'undefined' && typeof currentLanguage !== 'undefined') {
+        const tr = translations[currentLanguage] && translations[currentLanguage][key];
+        if (tr) return tr;
+    }
     const names = {
         thresher: 'Thresher Machine',
         engine: 'Engine',
@@ -467,14 +686,11 @@ function formatPrice(price) {
 // ============================
 function filterByCategory(category) {
     currentFilter = category;
-    renderProducts(category);
+    document.getElementById('searchInput').value = '';
+    renderProductsWithSkeleton();
 
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.textContent.toLowerCase().includes(category) ||
-            (category === 'all' && btn.textContent === 'All Products')) {
-            btn.classList.add('active');
-        }
+        btn.classList.toggle('active', btn.getAttribute('data-filter') === category);
     });
 
     document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
@@ -486,11 +702,259 @@ function filterProducts() {
 }
 
 // ============================
+// Wishlist
+// ============================
+function toggleWishlist(productId) {
+    const i = wishlist.indexOf(productId);
+    if (i >= 0) wishlist.splice(i, 1);
+    else wishlist.push(productId);
+    localStorage.setItem('maheshWishlist', JSON.stringify(wishlist));
+    updateWishlistUI();
+    renderProducts(currentFilter, document.getElementById('searchInput').value);
+    renderWishlistSidebar();
+}
+
+function updateWishlistUI() {
+    const countEl = document.getElementById('wishlistCount');
+    if (countEl) countEl.textContent = wishlist.length;
+}
+
+function renderWishlistSidebar() {
+    const el = document.getElementById('wishlistItems');
+    if (!el) return;
+    if (wishlist.length === 0) {
+        el.innerHTML = `<div class="wishlist-empty"><i class="far fa-heart" style="font-size:2.5rem;opacity:.3;"></i><p>${typeof t === 'function' ? t('wishlist_empty') : 'Your wishlist is empty'}</p></div>`;
+        return;
+    }
+    el.innerHTML = wishlist.map(id => {
+        const p = products.find(x => x.id === id);
+        if (!p) return '';
+        return `
+            <div class="wishlist-item">
+                <img src="${p.image}" alt="">
+                <div class="wishlist-item-info">
+                    <div class="wishlist-item-name">${p.name}</div>
+                    <div class="wishlist-item-price">${formatPrice(p.price)}</div>
+                </div>
+                <button type="button" class="btn btn-sm" onclick="quickView(${p.id}); toggleWishlistSidebar();">View</button>
+            </div>`;
+    }).join('');
+}
+
+function toggleWishlistSidebar() {
+    const side = document.getElementById('wishlistSidebar');
+    const ov = document.getElementById('wishlistOverlay');
+    if (!side || !ov) return;
+    side.classList.toggle('active');
+    ov.classList.toggle('active');
+    document.body.style.overflow = side.classList.contains('active') ? 'hidden' : '';
+    renderWishlistSidebar();
+}
+
+// ============================
+// Compare
+// ============================
+function toggleCompare(productId) {
+    const idx = compareIds.indexOf(productId);
+    if (idx >= 0) {
+        compareIds.splice(idx, 1);
+    } else {
+        if (compareIds.length >= 3) {
+            showToast(typeof t === 'function' ? t('compare_max') : 'You can compare up to 3 products');
+            return;
+        }
+        compareIds.push(productId);
+    }
+    localStorage.setItem('maheshCompare', JSON.stringify(compareIds));
+    updateCompareBar();
+    renderProducts(currentFilter, document.getElementById('searchInput').value);
+}
+
+function clearCompare() {
+    compareIds = [];
+    localStorage.setItem('maheshCompare', '[]');
+    updateCompareBar();
+    renderProducts(currentFilter, document.getElementById('searchInput').value);
+}
+
+function updateCompareBar() {
+    const bar = document.getElementById('compareFloatBar');
+    const text = document.getElementById('compareFloatText');
+    if (!bar || !text) return;
+    const n = compareIds.length;
+    if (n === 0) {
+        bar.hidden = true;
+        return;
+    }
+    bar.hidden = false;
+    const label = typeof t === 'function' ? t('compare_selected') : 'selected';
+    text.textContent = `${n} ${label}`;
+}
+
+function openCompareModal() {
+    const body = document.getElementById('compareModalBody');
+    const modal = document.getElementById('compareModal');
+    if (!body || !modal) return;
+    const items = compareIds.map(id => products.find(p => p.id === id)).filter(Boolean);
+    if (items.length === 0) {
+        showToast('Add products to compare');
+        return;
+    }
+    const rows = [
+        ['Feature', ...items.map(p => p.name)],
+        ['Image', ...items.map(p => `<img src="${p.image}" alt="">`)],
+        ['Price', ...items.map(p => formatPrice(p.price))],
+        ['Rating', ...items.map(p => `${p.rating} ★`)],
+        ['Reviews', ...items.map(p => String(p.reviews))],
+        ...[0, 1, 2, 3, 4].map(i => {
+            const cells = items.map(p => (p.features[i] || '—'));
+            return [`Feature ${i + 1}`, ...cells];
+        })
+    ];
+    body.innerHTML = `
+        <div class="compare-table-wrap">
+            <table class="compare-table">
+                <tbody>
+                    ${rows.map((row, ri) => `
+                        <tr>
+                            ${row.map((cell, ci) => ci === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`).join('')}
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>`;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCompareModal() {
+    const modal = document.getElementById('compareModal');
+    if (modal) modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// ============================
+// Recently viewed
+// ============================
+function addRecentlyViewed(productId) {
+    recentlyViewed = recentlyViewed.filter(id => id !== productId);
+    recentlyViewed.unshift(productId);
+    recentlyViewed = recentlyViewed.slice(0, 6);
+    localStorage.setItem('maheshRecent', JSON.stringify(recentlyViewed));
+    renderRecentlyViewed();
+}
+
+function renderRecentlyViewed() {
+    const wrap = document.getElementById('recentlyViewedWrap');
+    const row = document.getElementById('recentlyViewedRow');
+    if (!wrap || !row) return;
+    const ids = recentlyViewed.filter(id => products.some(p => p.id === id));
+    if (ids.length === 0) {
+        wrap.hidden = true;
+        return;
+    }
+    wrap.hidden = false;
+    row.innerHTML = ids.map(id => {
+        const p = products.find(x => x.id === id);
+        return `
+            <div class="recent-item" onclick="quickView(${p.id})">
+                <img src="${p.image}" alt="">
+                <div class="recent-item-info">${p.name}</div>
+            </div>`;
+    }).join('');
+}
+
+// ============================
+// EMI
+// ============================
+function openEmiModal(price) {
+    const modal = document.getElementById('emiModal');
+    const input = document.getElementById('emiPrice');
+    if (input && price != null && !isNaN(price)) input.value = price;
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    const res = document.getElementById('emiResult');
+    if (res) res.textContent = '';
+}
+
+function closeEmiModal() {
+    const modal = document.getElementById('emiModal');
+    if (modal) modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function calculateEmi() {
+    const p = parseFloat(document.getElementById('emiPrice').value) || 0;
+    const n = parseInt(document.getElementById('emiTenure').value, 10) || 12;
+    const annual = parseFloat(document.getElementById('emiRate').value) || 0;
+    const resEl = document.getElementById('emiResult');
+    if (!resEl) return;
+
+    let emi;
+    if (annual === 0) {
+        emi = p / n;
+    } else {
+        const r = annual / 12 / 100;
+        emi = p * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+    }
+    const label = typeof t === 'function' ? t('emi_monthly') : 'Monthly EMI';
+    resEl.textContent = `${label}: ${formatPrice(Math.round(emi))}`;
+}
+
+// ============================
+// Delivery estimator
+// ============================
+function estimateDeliveryFromInput(inputId, resultId) {
+    const input = document.getElementById(inputId);
+    const out = document.getElementById(resultId);
+    if (!input || !out) return;
+    const pin = (input.value || '').replace(/\D/g, '');
+    out.textContent = getDeliveryEstimateText(pin);
+}
+
+function getDeliveryEstimateText(pin) {
+    if (pin.length !== 6) {
+        return typeof t === 'function' ? t('pin_invalid') : 'Enter a valid 6-digit PIN code';
+    }
+    if (pin.startsWith('314')) {
+        return typeof t === 'function' ? t('pin_314') : 'Free delivery — estimated 1–2 days';
+    }
+    if (/^3\d{5}$/.test(pin)) {
+        return typeof t === 'function' ? t('pin_3xx') : 'Delivery ₹500 — estimated 3–5 days';
+    }
+    return typeof t === 'function' ? t('pin_other') : 'Delivery ₹1,000 — estimated 5–7 days';
+}
+
+// ============================
+// Share website
+// ============================
+function shareWebsite() {
+    const url = window.location.href.split('#')[0];
+    const base = typeof t === 'function' ? t('share_site_msg') : 'Check out Mahesh & Company Aspur — agriculture equipment & JCB services: ';
+    const text = base + url;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+}
+
+// ============================
+// Stock notification
+// ============================
+function notifyStockWhatsApp(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    const msg = typeof t === 'function'
+        ? t('notify_msg').replace('{name}', product.name)
+        : `Hello Mahesh & Company, please notify me when this product is back in stock: ${product.name}`;
+    window.open(`https://wa.me/917297047681?text=${encodeURIComponent(msg)}`, '_blank', 'noopener,noreferrer');
+}
+
+// ============================
 // Cart Functions
 // ============================
 function addToCart(productId) {
     const product = products.find(p => p.id === productId);
-    if (!product) return;
+    if (!product || product.inStock === false) return;
 
     const existing = cart.find(c => c.id === productId);
     if (existing) {
@@ -507,7 +971,7 @@ function addToCart(productId) {
 
     saveCart();
     updateCartUI();
-    renderProducts(currentFilter);
+    renderProducts(currentFilter, document.getElementById('searchInput').value);
     showToast(`${product.name} added to cart!`);
 }
 
@@ -515,7 +979,7 @@ function removeFromCart(productId) {
     cart = cart.filter(c => c.id !== productId);
     saveCart();
     updateCartUI();
-    renderProducts(currentFilter);
+    renderProducts(currentFilter, document.getElementById('searchInput').value);
 }
 
 function updateQuantity(productId, change) {
@@ -530,7 +994,7 @@ function updateQuantity(productId, change) {
 
     saveCart();
     updateCartUI();
-    renderProducts(currentFilter);
+    renderProducts(currentFilter, document.getElementById('searchInput').value);
 }
 
 function clearCart() {
@@ -538,7 +1002,7 @@ function clearCart() {
     cart = [];
     saveCart();
     updateCartUI();
-    renderProducts(currentFilter);
+    renderProducts(currentFilter, document.getElementById('searchInput').value);
     showToast('Cart cleared!');
 }
 
@@ -576,12 +1040,12 @@ function updateCartUI() {
                     <div class="cart-item-name">${item.name}</div>
                     <div class="cart-item-price">${formatPrice(item.price)}</div>
                     <div class="quantity-controls">
-                        <button class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
+                        <button type="button" class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
                         <span class="qty-value">${item.qty}</span>
-                        <button class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                        <button type="button" class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
                     </div>
                 </div>
-                <button class="cart-item-remove" onclick="removeFromCart(${item.id})">
+                <button type="button" class="cart-item-remove" onclick="removeFromCart(${item.id})">
                     <i class="fas fa-trash-alt"></i>
                 </button>
             </div>
@@ -645,12 +1109,11 @@ function placeOrder(e) {
     const notes = document.getElementById('orderNotes').value || 'None';
     const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     const orderNumber = 'MC' + Date.now().toString().slice(-8);
-    const orderDate = new Date().toLocaleString('en-IN', { 
-        dateStyle: 'medium', 
-        timeStyle: 'short' 
+    const orderDate = new Date().toLocaleString('en-IN', {
+        dateStyle: 'medium',
+        timeStyle: 'short'
     });
 
-    // Payment method text
     const paymentText = {
         'cod': 'Cash on Delivery',
         'upi': 'UPI Payment',
@@ -658,12 +1121,10 @@ function placeOrder(e) {
         'emi': 'EMI'
     }[payment] || payment;
 
-    // Build order items list
-    const itemsList = cart.map(item => 
+    const itemsList = cart.map(item =>
         `• ${item.name} × ${item.qty} = ${formatPrice(item.price * item.qty)}`
     ).join('\n');
 
-    // Build WhatsApp message
     const whatsappMessage = `🛒 *NEW ORDER - MAHESH & COMPANY*
 
 📋 *Order ID:* ${orderNumber}
@@ -689,7 +1150,6 @@ ${notes}
 ---
 _Order received via Mahesh & Company Website_`;
 
-    // Encode message for WhatsApp URL
     const encodedMessage = encodeURIComponent(whatsappMessage);
     const whatsappURL = `https://wa.me/917297047681?text=${encodedMessage}`;
 
@@ -705,7 +1165,6 @@ _Order received via Mahesh & Company Website_`;
         <p><strong>Delivery:</strong> ${address}</p>
     `;
 
-    // Update success modal WhatsApp button to include order details
     const trackBtn = document.querySelector('#successModal .btn-outline');
     if (trackBtn) {
         trackBtn.href = whatsappURL;
@@ -714,7 +1173,6 @@ _Order received via Mahesh & Company Website_`;
     document.getElementById('successModal').classList.add('active');
     document.body.style.overflow = 'hidden';
 
-    // Automatically open WhatsApp to send order to shop owner
     setTimeout(() => {
         window.open(whatsappURL, '_blank', 'noopener,noreferrer');
     }, 1500);
@@ -722,7 +1180,7 @@ _Order received via Mahesh & Company Website_`;
     cart = [];
     saveCart();
     updateCartUI();
-    renderProducts(currentFilter);
+    renderProducts(currentFilter, document.getElementById('searchInput').value);
     document.getElementById('checkoutForm').reset();
 }
 
@@ -738,12 +1196,16 @@ function quickView(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
+    addRecentlyViewed(productId);
+
     const discount = Math.round((1 - product.price / product.originalPrice) * 100);
     const content = document.getElementById('quickViewContent');
+    const stock = product.inStock !== false;
 
     content.innerHTML = `
-        <div class="quickview-image">
-            <img src="${product.image}" alt="${product.name}">
+        <div class="quickview-image quickview-image-zoom-wrap">
+            <img src="${product.image}" alt="${product.name}" draggable="false">
+            <span class="quickview-zoom-hint">${typeof t === 'function' ? t('zoom_hint') : 'Hover to zoom · Pinch on mobile'}</span>
         </div>
         <div class="quickview-details">
             <div class="product-category-tag">${getCategoryName(product.category)}</div>
@@ -761,11 +1223,26 @@ function quickView(productId) {
             <ul class="quickview-features">
                 ${product.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}
             </ul>
-            <button class="btn btn-primary btn-full" onclick="addToCart(${product.id}); closeQuickView();">
-                <i class="fas fa-cart-plus"></i> Add to Cart
+            <div class="delivery-estimator quickview-delivery">
+                <label class="delivery-est-desc" for="qvPin">${typeof t === 'function' ? t('delivery_est_short') : 'PIN code'}</label>
+                <div class="delivery-est-row">
+                    <input type="text" id="qvPin" maxlength="6" placeholder="314021" inputmode="numeric">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="estimateDeliveryFromInput('qvPin','qvPinResult')">${typeof t === 'function' ? t('delivery_est_btn') : 'Check'}</button>
+                </div>
+                <p class="delivery-est-result" id="qvPinResult"></p>
+            </div>
+            ${stock ? `
+            <button type="button" class="btn btn-primary btn-full" onclick="addToCart(${product.id}); closeQuickView();">
+                <i class="fas fa-cart-plus"></i> ${typeof t === 'function' ? t('add_to_cart') : 'Add to Cart'}
+            </button>` : `
+            <button type="button" class="btn btn-primary btn-full notify-btn" onclick="notifyStockWhatsApp(${product.id}); closeQuickView();">
+                <i class="fab fa-whatsapp"></i> ${typeof t === 'function' ? t('notify_me') : 'Notify Me'}
+            </button>`}
+            <button type="button" class="btn btn-outline btn-full" style="margin-top:10px;border-color:var(--primary);color:var(--primary);" onclick="openEmiModal(${product.price})">
+                <i class="fas fa-calculator"></i> ${typeof t === 'function' ? t('emi_calc_link') : 'EMI Calculator'}
             </button>
             <div style="margin-top: 12px; text-align: center;">
-                <a href="https://wa.me/919876543210?text=Hi! I'm interested in ${encodeURIComponent(product.name)} (${formatPrice(product.price)})" 
+                <a href="https://wa.me/917297047681?text=${encodeURIComponent(`Hi! I'm interested in ${product.name} (${formatPrice(product.price)})`)}" 
                    class="btn btn-outline" style="border-color: #25d366; color: #25d366;" target="_blank" rel="noopener noreferrer">
                     <i class="fab fa-whatsapp"></i> Enquire on WhatsApp
                 </a>
@@ -947,11 +1424,11 @@ function toggleMobileMenu() {
 }
 
 // ============================
-// Reveal Animations
+// Reveal Animations (static sections)
 // ============================
 function setupRevealAnimations() {
     const reveals = document.querySelectorAll(
-        '.category-card, .product-card, .service-card, .testimonial-card, .contact-card'
+        '.category-card, .service-card, .testimonial-card, .contact-card'
     );
 
     const observer = new IntersectionObserver((entries) => {
@@ -996,19 +1473,72 @@ function handleContactSubmit(e) {
     e.target.reset();
 }
 
-// Close modals on Escape key
+// FAQ render — uses translations
+function renderFaq() {
+    const container = document.getElementById('faqAccordion');
+    if (!container || typeof translations === 'undefined') return;
+
+    const lang = translations[currentLanguage];
+    const keys = [1, 2, 3, 4, 5, 6, 7, 8];
+    container.innerHTML = keys.map(i => `
+        <div class="faq-item" data-faq="${i}">
+            <button type="button" class="faq-question" aria-expanded="false" onclick="toggleFaqItem(this)">
+                <span>${lang['faq_q' + i] || ''}</span>
+                <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">${lang['faq_a' + i] || ''}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function toggleFaqItem(btn) {
+    const item = btn.closest('.faq-item');
+    const answer = item.querySelector('.faq-answer');
+    const icon = btn.querySelector('.faq-toggle-icon i');
+    const expanded = item.classList.contains('open');
+
+    document.querySelectorAll('.faq-item.open').forEach(other => {
+        if (other !== item) {
+            other.classList.remove('open');
+            other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+            const ans = other.querySelector('.faq-answer');
+            ans.style.maxHeight = null;
+            const ic = other.querySelector('.faq-toggle-icon i');
+            ic.className = 'fas fa-plus';
+        }
+    });
+
+    if (expanded) {
+        item.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+        answer.style.maxHeight = null;
+        icon.className = 'fas fa-plus';
+    } else {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        icon.className = 'fas fa-minus';
+    }
+}
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeCheckout();
         closeSuccessModal();
         closeQuickView();
+        closeCompareModal();
+        closeEmiModal();
         if (document.getElementById('cartSidebar').classList.contains('active')) {
             toggleCart();
+        }
+        if (document.getElementById('wishlistSidebar').classList.contains('active')) {
+            toggleWishlistSidebar();
         }
     }
 });
 
-// Close mobile menu on nav link click
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
         document.getElementById('navLinks').classList.remove('active');

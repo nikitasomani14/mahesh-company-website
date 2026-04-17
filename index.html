@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2d6a4f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mahesh & Co">
     <title>Mahesh & Company Aspur | Sonalika Thresher, Honda Engine & JCB Services in Rajasthan</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%232d6a4f' width='32' height='32' rx='6'/%3E%3Cpath fill='%23d4a017' d='M4 18h7l2-8H6L4 18zm14 0h7l2-8h-7l-2 8z'/%3E%3Ccircle fill='%23fff' cx='10' cy='24' r='3'/%3E%3Ccircle fill='%23fff' cx='22' cy='24' r='3'/%3E%3Cpath fill='%2340916c' d='M4 10h10v4H4z'/%3E%3C/svg%3E">
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="Mahesh & Company Aspur - Authorized dealer of Sonalika Thresher, Honda Engines, Ganeshraj Thresher in Rajasthan. JCB on rent, agriculture parts, diesel engines, motor parts. Call +91-94147 24472. Located at Dabrawat Complex, Aspur, Dungarpur.">
@@ -77,10 +83,17 @@
                     <input type="text" placeholder="Search products..." id="searchInput" oninput="filterProducts()">
                     <i class="fas fa-search"></i>
                 </div>
+                <button type="button" class="theme-toggle-btn" id="themeToggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
                 <button class="lang-btn" id="langToggle" onclick="toggleLanguage()">
                     <i class="fas fa-language"></i>
                     <span id="langText">हिंदी</span>
                 </button>
+                <div class="wishlist-icon" onclick="toggleWishlistSidebar()" title="Wishlist">
+                    <i class="fas fa-heart"></i>
+                    <span class="wishlist-count" id="wishlistCount">0</span>
+                </div>
                 <div class="cart-icon" onclick="toggleCart()">
                     <i class="fas fa-shopping-cart"></i>
                     <span class="cart-count" id="cartCount">0</span>
@@ -91,6 +104,16 @@
             </div>
         </div>
     </nav>
+
+    <!-- Seasonal Banner -->
+    <div class="seasonal-banner" id="seasonalBanner" role="region" aria-label="Seasonal announcement" hidden>
+        <div class="container seasonal-banner-inner">
+            <p class="seasonal-banner-text" id="seasonalBannerText"></p>
+            <button type="button" class="seasonal-banner-close" onclick="dismissSeasonalBanner()" aria-label="Dismiss">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
@@ -284,17 +307,27 @@
                 <h2 class="section-title" data-translate="featured_products">Featured <span class="highlight">Products</span></h2>
                 <p class="section-desc" data-translate="products_desc">Quality agricultural equipment at competitive prices</p>
             </div>
+            <nav class="product-breadcrumb" id="productBreadcrumb" aria-label="Breadcrumb" hidden>
+                <a href="#" onclick="filterByCategory('all'); return false;" data-translate="breadcrumb_home">Home</a>
+                <span class="breadcrumb-sep" aria-hidden="true">&gt;</span>
+                <a href="#" onclick="filterByCategory('all'); return false;" data-translate="breadcrumb_products">Products</a>
+                <span class="breadcrumb-sep" aria-hidden="true">&gt;</span>
+                <span id="breadcrumbCategory" class="breadcrumb-current"></span>
+            </nav>
             <div class="product-filters">
-                <button class="filter-btn active" onclick="filterByCategory('all')" data-translate="all_products">All Products</button>
-                <button class="filter-btn" onclick="filterByCategory('thresher')" data-translate="threshers">Threshers</button>
-                <button class="filter-btn" onclick="filterByCategory('engine')" data-translate="engines">Engines</button>
-                <button class="filter-btn" onclick="filterByCategory('jcb')">JCB</button>
-                <button class="filter-btn" onclick="filterByCategory('parts')" data-translate="parts">Parts</button>
-                <button class="filter-btn" onclick="filterByCategory('tools')" data-translate="tools">Tools</button>
-                <button class="filter-btn" onclick="filterByCategory('pump')" data-translate="pumps">Pumps</button>
+                <button type="button" class="filter-btn active" data-filter="all" onclick="filterByCategory('all')" data-translate="all_products">All Products</button>
+                <button type="button" class="filter-btn" data-filter="thresher" onclick="filterByCategory('thresher')" data-translate="threshers">Threshers</button>
+                <button type="button" class="filter-btn" data-filter="engine" onclick="filterByCategory('engine')" data-translate="engines">Engines</button>
+                <button type="button" class="filter-btn" data-filter="jcb" onclick="filterByCategory('jcb')">JCB</button>
+                <button type="button" class="filter-btn" data-filter="parts" onclick="filterByCategory('parts')" data-translate="parts">Parts</button>
+                <button type="button" class="filter-btn" data-filter="tools" onclick="filterByCategory('tools')" data-translate="tools">Tools</button>
+                <button type="button" class="filter-btn" data-filter="pump" onclick="filterByCategory('pump')" data-translate="pumps">Pumps</button>
             </div>
             <div class="products-grid" id="productsGrid">
-                <!-- Products populated by JS -->
+            </div>
+            <div class="recently-viewed-wrap" id="recentlyViewedWrap" hidden>
+                <h3 class="recently-viewed-title" data-translate="recently_viewed">Recently Viewed</h3>
+                <div class="recently-viewed-row" id="recentlyViewedRow"></div>
             </div>
         </div>
     </section>
@@ -383,14 +416,29 @@
                     <h3>EMI & Financing</h3>
                     <p>Easy EMI options available on all major purchases. Quick loan approval with minimal documentation.</p>
                     <div class="service-price">0% EMI Available</div>
-                    <a href="#contact" class="btn btn-sm">Apply Now</a>
+                    <button type="button" class="btn btn-sm" onclick="openEmiModal(null)">EMI Calculator</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="video-section" id="video">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle" data-translate="video_subtitle">Watch & Learn</span>
+                <h2 class="section-title" data-translate="video_title">See Our Machines in <span class="highlight">Action</span></h2>
+            </div>
+            <div class="video-embed-wrap">
+                <div class="video-aspect">
+                    <iframe src="https://www.youtube.com/embed/N78vz8LqN6w?rel=0" title="Agriculture machinery video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Testimonials -->
-    <section class="testimonials-section">
+    <section class="testimonials-section" id="testimonials">
         <div class="container">
             <div class="section-header">
                 <span class="section-subtitle">Customer Love</span>
@@ -401,12 +449,14 @@
                     <div class="testimonial-stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
+                    <span class="verified-badge" data-translate="verified_purchase"><i class="fas fa-check-circle"></i> Verified Purchase</span>
                     <p>"Best agriculture shop in Aspur! Bought Sonalika thresher from here. Excellent quality and after-sales service. Highly recommended!"</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar"><i class="fas fa-user"></i></div>
+                        <div class="author-avatar author-avatar-1" aria-hidden="true">RP</div>
                         <div>
                             <strong>Ramesh Patel</strong>
                             <span>Farmer, Aspur</span>
+                            <span class="testimonial-product" data-translate="testimonial_bought_1">Bought: Sonalika Multi-Crop Thresher 40HP</span>
                         </div>
                     </div>
                 </div>
@@ -414,12 +464,14 @@
                     <div class="testimonial-stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
+                    <span class="verified-badge" data-translate="verified_purchase"><i class="fas fa-check-circle"></i> Verified Purchase</span>
                     <p>"JCB service is very reliable. Always on time and reasonable rates. Mahesh ji is very helpful and honest in dealings."</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar"><i class="fas fa-user"></i></div>
+                        <div class="author-avatar author-avatar-2" aria-hidden="true">SK</div>
                         <div>
                             <strong>Suresh Kumar</strong>
                             <span>Contractor, Dungarpur</span>
+                            <span class="testimonial-product" data-translate="testimonial_bought_2">Service: JCB 3DX Backhoe Rental</span>
                         </div>
                     </div>
                 </div>
@@ -427,16 +479,29 @@
                     <div class="testimonial-stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                     </div>
+                    <span class="verified-badge" data-translate="verified_purchase"><i class="fas fa-check-circle"></i> Verified Purchase</span>
                     <p>"Got Honda GX390 engine at the best price. Genuine product with proper warranty. The engine runs perfectly for my water pump."</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar"><i class="fas fa-user"></i></div>
+                        <div class="author-avatar author-avatar-3" aria-hidden="true">MS</div>
                         <div>
                             <strong>Mohan Singh</strong>
                             <span>Farmer, Sagwara</span>
+                            <span class="testimonial-product" data-translate="testimonial_bought_3">Bought: Honda GX390 Engine 13 HP</span>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle" data-translate="faq_subtitle">Help Center</span>
+                <h2 class="section-title" data-translate="faq_title">Frequently Asked <span class="highlight">Questions</span></h2>
+            </div>
+            <div class="faq-accordion" id="faqAccordion"></div>
         </div>
     </section>
 
@@ -532,6 +597,15 @@
                 <h2 class="section-title">Contact <span class="highlight">Us</span></h2>
                 <p class="section-desc">Visit our showroom or reach out for any inquiries</p>
             </div>
+            <div class="delivery-estimator contact-delivery-widget">
+                <h4 data-translate="delivery_est_title">Delivery Estimator</h4>
+                <p class="delivery-est-desc" data-translate="delivery_est_desc">Enter your 6-digit PIN code for estimated cost & time</p>
+                <div class="delivery-est-row">
+                    <input type="text" id="contactPinInput" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" placeholder="e.g. 314021" aria-label="PIN code">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="estimateDeliveryFromInput('contactPinInput','contactPinResult')" data-translate="delivery_est_btn">Check</button>
+                </div>
+                <p class="delivery-est-result" id="contactPinResult" role="status"></p>
+            </div>
             <div class="contact-grid">
                 <div class="contact-info">
                     <div class="contact-card">
@@ -562,11 +636,11 @@
                             <p>+91-7297047681 (Atul Mantri)<br>Quick response guaranteed!</p>
                         </div>
                     </div>
-                    <div class="contact-card">
-                        <div class="contact-card-icon"><i class="fas fa-directions"></i></div>
-                        <div>
-                            <h4>Get Directions</h4>
-                            <p><a href="https://www.google.com/maps/dir//Mahesh+and+Company,+Aspur,+Dabrawat+Complex,+Aspur,+Rajasthan+314021/@23.9583635,74.0804451,17z" target="_blank" style="color: var(--primary);">Open in Google Maps →</a></p>
+                    <div class="contact-card contact-card-map">
+                        <div class="contact-card-icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <div class="contact-map-embed-wrap">
+                            <h4 data-translate="map_card_title">Location Map</h4>
+                            <iframe class="contact-map-iframe" src="https://maps.google.com/maps?q=23.9583635,74.0804451&amp;z=17&amp;ie=UTF8&amp;iwloc=&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mahesh & Company Aspur on Google Maps"></iframe>
                         </div>
                     </div>
                 </div>
@@ -607,21 +681,38 @@
                     </form>
                 </div>
             </div>
+            <div class="map-fullwidth-block">
+                <h3 class="map-fullwidth-title" data-translate="map_full_title">Find Us on the Map</h3>
+                <div class="map-fullwidth-inner">
+                    <iframe class="map-fullwidth-iframe" src="https://maps.google.com/maps?q=23.9583635,74.0804451&amp;z=17&amp;ie=UTF8&amp;iwloc=&amp;output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Aspur location full map"></iframe>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- WhatsApp Floating Button -->
-    <a href="https://wa.me/917297047681?text=Hello%20Mahesh%20%26%20Company!%20I%20want%20to%20know%20about%20your%20products." class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+    <a href="https://wa.me/917297047681?text=Hello%20Mahesh%20%26%20Company!%20I%20want%20to%20know%20about%20your%20products." class="whatsapp-float" id="whatsappFloat" target="_blank" rel="noopener noreferrer">
         <i class="fab fa-whatsapp"></i>
         <span>Chat with us</span>
     </a>
+
+    <a href="#" class="share-site-float" id="shareSiteFloat" onclick="shareWebsite(); return false;" title="Share this website" data-translate-title="share_site_title">
+        <i class="fas fa-share-alt"></i>
+        <span data-translate="share_site_short">Share</span>
+    </a>
+
+    <!-- Mobile sticky call bar -->
+    <div class="mobile-call-bar" id="mobileCallBar">
+        <a href="tel:+919414724472" class="mobile-call-btn call-now-btn"><i class="fas fa-phone-alt"></i> <span data-translate="call_now_short">Call Now</span></a>
+        <a href="https://wa.me/917297047681?text=Hello%20Mahesh%20%26%20Company!" class="mobile-call-btn whatsapp-now-btn" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
 
     <!-- Shopping Cart Sidebar -->
     <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <h3><i class="fas fa-shopping-cart"></i> Your Cart</h3>
-            <button class="cart-close" onclick="toggleCart()"><i class="fas fa-times"></i></button>
+            <button type="button" class="cart-close" onclick="toggleCart()"><i class="fas fa-times"></i></button>
         </div>
         <div class="cart-items" id="cartItems">
             <div class="cart-empty">
@@ -635,9 +726,26 @@
                 <span>Total:</span>
                 <span id="cartTotal">₹0</span>
             </div>
-            <button class="btn btn-primary btn-full" onclick="showCheckout()"><i class="fas fa-credit-card"></i> Proceed to Checkout</button>
-            <button class="btn btn-outline btn-full" onclick="clearCart()"><i class="fas fa-trash"></i> Clear Cart</button>
+            <button type="button" class="btn btn-primary btn-full" onclick="showCheckout()"><i class="fas fa-credit-card"></i> Proceed to Checkout</button>
+            <button type="button" class="btn btn-outline btn-full" onclick="clearCart()"><i class="fas fa-trash"></i> Clear Cart</button>
         </div>
+    </div>
+
+    <!-- Wishlist Sidebar -->
+    <div class="wishlist-overlay" id="wishlistOverlay" onclick="toggleWishlistSidebar()"></div>
+    <aside class="wishlist-sidebar" id="wishlistSidebar" aria-label="Wishlist">
+        <div class="cart-header">
+            <h3><i class="fas fa-heart"></i> <span data-translate="your_wishlist">Your Wishlist</span></h3>
+            <button type="button" class="cart-close" onclick="toggleWishlistSidebar()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="wishlist-items" id="wishlistItems"></div>
+    </aside>
+
+    <!-- Compare floating bar -->
+    <div class="compare-float-bar" id="compareFloatBar" hidden>
+        <span id="compareFloatText"></span>
+        <button type="button" class="btn btn-sm btn-compare-open" onclick="openCompareModal()">Compare</button>
+        <button type="button" class="compare-float-clear" onclick="clearCompare()" aria-label="Clear"><i class="fas fa-times"></i></button>
     </div>
 
     <!-- Checkout Modal -->
@@ -645,7 +753,7 @@
         <div class="modal">
             <div class="modal-header">
                 <h3><i class="fas fa-clipboard-check"></i> Place Your Order</h3>
-                <button class="modal-close" onclick="closeCheckout()"><i class="fas fa-times"></i></button>
+                <button type="button" class="modal-close" onclick="closeCheckout()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 <div id="orderSummary"></div>
@@ -700,7 +808,7 @@
                 <p>Your order details are being sent to <strong>Mahesh & Company</strong> via WhatsApp. Please complete sending the message to confirm your order.</p>
                 <div id="orderDetails" class="order-details"></div>
                 <div class="success-actions">
-                    <button class="btn btn-primary" onclick="closeSuccessModal()">Continue Shopping</button>
+                    <button type="button" class="btn btn-primary" onclick="closeSuccessModal()">Continue Shopping</button>
                     <a href="https://wa.me/917297047681" class="btn btn-outline" target="_blank" rel="noopener noreferrer">
                         <i class="fab fa-whatsapp"></i> Send Order on WhatsApp
                     </a>
@@ -715,8 +823,52 @@
     <!-- Product Quick View Modal -->
     <div class="modal-overlay" id="quickViewModal">
         <div class="modal quickview-modal">
-            <button class="modal-close" onclick="closeQuickView()"><i class="fas fa-times"></i></button>
+            <button type="button" class="modal-close" onclick="closeQuickView()"><i class="fas fa-times"></i></button>
             <div class="quickview-content" id="quickViewContent"></div>
+        </div>
+    </div>
+
+    <!-- Compare Modal -->
+    <div class="modal-overlay" id="compareModal" onclick="if(event.target===this)closeCompareModal()">
+        <div class="modal compare-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-columns"></i> <span data-translate="compare_title">Compare Products</span></h3>
+                <button type="button" class="modal-close" onclick="closeCompareModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body compare-modal-body" id="compareModalBody"></div>
+        </div>
+    </div>
+
+    <!-- EMI Calculator Modal -->
+    <div class="modal-overlay" id="emiModal" onclick="if(event.target===this)closeEmiModal()">
+        <div class="modal emi-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-calculator"></i> <span data-translate="emi_modal_title">EMI Calculator</span></h3>
+                <button type="button" class="modal-close" onclick="closeEmiModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="emi-form">
+                    <div class="form-group">
+                        <label data-translate="emi_price">Product price (₹)</label>
+                        <input type="number" id="emiPrice" min="0" step="100" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label data-translate="emi_tenure">Tenure (months)</label>
+                        <select id="emiTenure">
+                            <option value="3">3</option>
+                            <option value="6">6</option>
+                            <option value="9">9</option>
+                            <option value="12" selected>12</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-translate="emi_rate">Interest rate % p.a. (0 for promo)</label>
+                        <input type="number" id="emiRate" min="0" max="50" step="0.1" value="0">
+                    </div>
+                    <button type="button" class="btn btn-primary btn-full" onclick="calculateEmi()"><span data-translate="emi_calc_btn">Calculate EMI</span></button>
+                    <div class="emi-result" id="emiResult" role="status"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -739,6 +891,9 @@
                         <a href="#"><i class="fab fa-instagram"></i></a>
                         <a href="#"><i class="fab fa-youtube"></i></a>
                     </div>
+                    <p class="footer-share-line">
+                        <a href="#" class="footer-share-link" onclick="shareWebsite(); return false;"><i class="fab fa-whatsapp"></i> <span data-translate="share_site_footer">Share this website on WhatsApp</span></a>
+                    </p>
                 </div>
                 <div class="footer-col">
                     <h4>Quick Links</h4>
@@ -784,7 +939,7 @@
     </footer>
 
     <!-- Back to Top -->
-    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">
+    <button type="button" class="back-to-top" id="backToTop" onclick="scrollToTop()">
         <i class="fas fa-arrow-up"></i>
     </button>
 

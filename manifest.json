@@ -1,0 +1,25 @@
+{
+  "name": "Mahesh & Company Aspur",
+  "short_name": "Mahesh & Co",
+  "description": "Authorized Sonalika Thresher & Honda Engine dealer. Agriculture equipment, JCB rent, and spare parts in Aspur, Rajasthan.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#2d6a4f",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%232d6a4f' width='512' height='512' rx='96'/%3E%3Cpath fill='%23d4a017' d='M96 288h112l32-128H128L96 288zm272 0h112l32-128H400l-32 128z'/%3E%3Cpath fill='%23f8f9fa' d='M160 352a48 48 0 1 1 0 96 48 48 0 0 1 0-96zm224 0a48 48 0 1 1 0 96 48 48 0 0 1 0-96z'/%3E%3Cpath fill='%2340916c' d='M80 160h160v64H80z'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%232d6a4f' width='512' height='512' rx='96'/%3E%3Cpath fill='%23d4a017' d='M96 288h112l32-128H128L96 288zm272 0h112l32-128H400l-32 128z'/%3E%3Cpath fill='%23f8f9fa' d='M160 352a48 48 0 1 1 0 96 48 48 0 0 1 0-96zm224 0a48 48 0 1 1 0 96 48 48 0 0 1 0-96z'/%3E%3Cpath fill='%2340916c' d='M80 160h160v64H80z'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
