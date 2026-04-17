@@ -639,10 +639,59 @@ function placeOrder(e) {
 
     const name = document.getElementById('orderName').value;
     const phone = document.getElementById('orderPhone').value;
+    const email = document.getElementById('orderEmail').value || 'Not provided';
     const address = document.getElementById('orderAddress').value;
     const payment = document.getElementById('orderPayment').value;
+    const notes = document.getElementById('orderNotes').value || 'None';
     const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     const orderNumber = 'MC' + Date.now().toString().slice(-8);
+    const orderDate = new Date().toLocaleString('en-IN', { 
+        dateStyle: 'medium', 
+        timeStyle: 'short' 
+    });
+
+    // Payment method text
+    const paymentText = {
+        'cod': 'Cash on Delivery',
+        'upi': 'UPI Payment',
+        'bank': 'Bank Transfer',
+        'emi': 'EMI'
+    }[payment] || payment;
+
+    // Build order items list
+    const itemsList = cart.map(item => 
+        `• ${item.name} × ${item.qty} = ${formatPrice(item.price * item.qty)}`
+    ).join('\n');
+
+    // Build WhatsApp message
+    const whatsappMessage = `🛒 *NEW ORDER - MAHESH & COMPANY*
+
+📋 *Order ID:* ${orderNumber}
+📅 *Date:* ${orderDate}
+
+👤 *Customer Details:*
+• Name: ${name}
+• Phone: ${phone}
+• Email: ${email}
+
+📍 *Delivery Address:*
+${address}
+
+🛍️ *Order Items:*
+${itemsList}
+
+💰 *Total Amount:* ${formatPrice(totalPrice)}
+💳 *Payment Method:* ${paymentText}
+
+📝 *Special Instructions:*
+${notes}
+
+---
+_Order received via Mahesh & Company Website_`;
+
+    // Encode message for WhatsApp URL
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappURL = `https://wa.me/917297047681?text=${encodedMessage}`;
 
     closeCheckout();
 
@@ -652,12 +701,23 @@ function placeOrder(e) {
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Phone:</strong> ${phone}</p>
         <p><strong>Total:</strong> ${formatPrice(totalPrice)}</p>
-        <p><strong>Payment:</strong> ${payment === 'cod' ? 'Cash on Delivery' : payment === 'upi' ? 'UPI Payment' : payment === 'bank' ? 'Bank Transfer' : 'EMI'}</p>
+        <p><strong>Payment:</strong> ${paymentText}</p>
         <p><strong>Delivery:</strong> ${address}</p>
     `;
 
+    // Update success modal WhatsApp button to include order details
+    const trackBtn = document.querySelector('#successModal .btn-outline');
+    if (trackBtn) {
+        trackBtn.href = whatsappURL;
+    }
+
     document.getElementById('successModal').classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    // Automatically open WhatsApp to send order to shop owner
+    setTimeout(() => {
+        window.open(whatsappURL, '_blank', 'noopener,noreferrer');
+    }, 1500);
 
     cart = [];
     saveCart();
