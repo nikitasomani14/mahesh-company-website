@@ -2,8 +2,14 @@
 <html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="theme-color" content="#2d6a4f">
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://5.imimg.com">
+    <link rel="dns-prefetch" href="https://i.pinimg.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Mahesh & Co">
@@ -198,7 +204,11 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-slider">
-            <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&q=80')">
+            <div class="hero-slide active">
+                <picture>
+                    <source media="(max-width: 640px)" srcset="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&q=70">
+                    <img class="hero-slide-img" src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&q=80" alt="Agriculture field" loading="eager">
+                </picture>
                 <div class="hero-overlay"></div>
                 <div class="container hero-content">
                     <div class="hero-badge" data-translate="authorized_dealer">Authorized Dealer</div>
@@ -224,7 +234,11 @@
                     </div>
                 </div>
             </div>
-            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1600&q=80')">
+            <div class="hero-slide">
+                <picture>
+                    <source media="(max-width: 640px)" srcset="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=70">
+                    <img class="hero-slide-img" src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=1600&q=80" alt="Sonalika Thresher" loading="lazy">
+                </picture>
                 <div class="hero-overlay"></div>
                 <div class="container hero-content">
                     <div class="hero-badge"><i class="fas fa-star"></i> <span data-translate="premium_quality">Premium Quality</span></div>
@@ -236,7 +250,11 @@
                     </div>
                 </div>
             </div>
-            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1600&q=80')">
+            <div class="hero-slide">
+                <picture>
+                    <source media="(max-width: 640px)" srcset="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=70">
+                    <img class="hero-slide-img" src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1600&q=80" alt="Honda Engine" loading="lazy">
+                </picture>
                 <div class="hero-overlay"></div>
                 <div class="container hero-content">
                     <div class="hero-badge"><i class="fas fa-cog"></i> <span data-translate="honda_engines">Honda Engines</span></div>
