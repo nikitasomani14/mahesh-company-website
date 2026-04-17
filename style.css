@@ -2510,3 +2510,43 @@ a {
         flex-direction: column;
     }
 }
+
+/* ============================
+   Language Toggle Button
+   ============================ */
+.lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.lang-toggle:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.lang-toggle i {
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .lang-toggle {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .lang-toggle span {
+        display: none;
+    }
+}

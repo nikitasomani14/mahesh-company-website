@@ -1,4 +1,520 @@
 // ============================
+// Language Translations
+// ============================
+let currentLang = localStorage.getItem('maheshLang') || 'en';
+
+const translations = {
+    en: {
+        // Navbar
+        home: 'Home',
+        categories: 'Categories',
+        products: 'Products',
+        services: 'Services',
+        about: 'About',
+        contact: 'Contact',
+        searchPlaceholder: 'Search products...',
+        
+        // Hero
+        heroBadge: 'Authorized Dealer',
+        heroTitle1: 'Your Trusted Partner in',
+        heroHighlight1: 'Agriculture',
+        heroDesc1: 'Complete range of agriculture machinery, thresher machines, spare parts & JCB services. Authorized dealer of <strong>Sonalika Thresher</strong> & <strong>Honda Engines</strong>.',
+        shopNow: 'Shop Now',
+        contactUs: 'Contact Us',
+        yearsExp: 'Years Experience',
+        happyCustomers: 'Happy Customers',
+        productsCount: 'Products',
+        
+        // Hero Slide 2
+        heroBadge2: 'Premium Quality',
+        heroTitle2: 'Sonalika Thresher',
+        heroHighlight2: 'Authorized Dealer',
+        heroDesc2: 'Get genuine Sonalika multi-crop threshers with warranty, spare parts and expert service support. Best prices guaranteed!',
+        viewCollection: 'View Collection',
+        getQuote: 'Get Quote',
+        
+        // Hero Slide 3
+        heroBadge3: 'Honda Engines',
+        heroTitle3: 'Powerful',
+        heroHighlight3: 'Honda Engines',
+        heroDesc3: 'Authorized dealer of Honda GX Series engines. Reliable, fuel-efficient engines for agriculture, water pumps, and industrial use.',
+        exploreEngines: 'Explore Engines',
+        ourServices: 'Our Services',
+        
+        // Brands Strip
+        authorizedSonalika: 'Authorized Sonalika Dealer',
+        hondaDealer: 'Honda Engine Dealer',
+        freeDelivery: 'Free Delivery in Aspur',
+        genuineParts: 'Genuine Parts Guaranteed',
+        support247: '24/7 Service Support',
+        
+        // Categories Section
+        whatWeOffer: 'What We Offer',
+        ourProductCategories: 'Our Product',
+        categoriesHighlight: 'Categories',
+        categoriesDesc: 'Explore our wide range of agricultural machinery, parts, and services',
+        thresherMachines: 'Thresher Machines',
+        thresherDesc: 'Sonalika & Multi-crop threshers',
+        engines: 'Engines',
+        enginesDesc: 'Honda & Oil bearing engines',
+        jcbServices: 'JCB Services',
+        jcbDesc: 'Rental & contract services',
+        agricultureParts: 'Agriculture Parts',
+        partsDesc: 'Spare parts & accessories',
+        farmingTools: 'Farming Tools',
+        toolsDesc: 'Hand tools & implements',
+        pumpsIrrigation: 'Pumps & Irrigation',
+        pumpsDesc: 'Water pumps & sprinklers',
+        productsText: 'Products',
+        servicesText: 'Services',
+        
+        // Products Section
+        ourCollection: 'Our Collection',
+        featuredProducts: 'Featured',
+        productsHighlight: 'Products',
+        productsDesc: 'Quality agricultural equipment at competitive prices',
+        allProducts: 'All Products',
+        threshers: 'Threshers',
+        jcb: 'JCB',
+        parts: 'Parts',
+        tools: 'Tools',
+        pumps: 'Pumps',
+        reviews: 'reviews',
+        addToCart: 'Add to Cart',
+        inCart: 'In Cart',
+        
+        // Offer Banner
+        limitedTimeOffer: 'Limited Time Offer',
+        monsoonSale: 'Monsoon Sale - Up to',
+        offerHighlight: '30% OFF',
+        offerDesc: 'Get the best deals on Sonalika Threshers and Honda Engines. Free delivery and installation on orders above ₹50,000!',
+        shopTheSale: 'Shop the Sale',
+        days: 'Days',
+        hours: 'Hours',
+        minutes: 'Minutes',
+        seconds: 'Seconds',
+        
+        // Services Section
+        whatWeDo: 'What We Do',
+        ourServicesTitle: 'Our',
+        servicesHighlight: 'Services',
+        servicesDesc: 'Beyond products, we provide comprehensive agricultural support',
+        jcbOnRent: 'JCB on Rent',
+        jcbRentDesc: 'Heavy-duty JCB machines available for rent. Farm land leveling, digging, loading, and construction work.',
+        startingAt: 'Starting at',
+        perHour: '/hr',
+        bookNow: 'Book Now',
+        machineRepair: 'Machine Repair',
+        repairDesc: 'Expert repair services for threshers, engines, and all agricultural machinery. On-site and workshop repairs.',
+        diagnostic: 'Diagnostic',
+        installation: 'Installation',
+        installDesc: 'Professional installation of thresher machines, engines, and irrigation systems with warranty.',
+        freeAbove: 'Free above ₹50,000',
+        learnMore: 'Learn More',
+        homeDelivery: 'Home Delivery',
+        deliveryDesc: 'Free delivery of all products within Aspur and nearby areas. Pan-India shipping available.',
+        freeInAspur: 'Free in Aspur',
+        inquire: 'Inquire',
+        buybackExchange: 'Buy-back & Exchange',
+        buybackDesc: 'Exchange your old machinery for new. Get best value for your used equipment.',
+        upToValue: 'Up to 40% Value',
+        checkValue: 'Check Value',
+        emiFinancing: 'EMI & Financing',
+        emiDesc: 'Easy EMI options available on all major purchases. Quick loan approval with minimal documentation.',
+        zeroEmi: '0% EMI Available',
+        applyNow: 'Apply Now',
+        
+        // Testimonials
+        customerLove: 'Customer Love',
+        whatCustomersSay: 'What Our',
+        customersHighlight: 'Customers',
+        saySuffix: 'Say',
+        testimonial1: 'Best agriculture shop in Aspur! Bought Sonalika thresher from here. Excellent quality and after-sales service. Highly recommended!',
+        testimonial1Author: 'Ramesh Patel',
+        testimonial1Role: 'Farmer, Aspur',
+        testimonial2: 'JCB service is very reliable. Always on time and reasonable rates. Mahesh ji is very helpful and honest in dealings.',
+        testimonial2Author: 'Suresh Kumar',
+        testimonial2Role: 'Contractor, Dungarpur',
+        testimonial3: 'Got Honda GX390 engine at the best price. Genuine product with proper warranty. The engine runs perfectly for my water pump.',
+        testimonial3Author: 'Mohan Singh',
+        testimonial3Role: 'Farmer, Sagwara',
+        
+        // About Section
+        aboutUs: 'About Us',
+        servingSince: 'Serving Farmers Since',
+        sinceYear: '2001',
+        aboutDesc: 'Mahesh & Company has been the most trusted name in agricultural equipment and services in Aspur, Rajasthan. Founded with a vision to empower farmers with quality machinery, we have grown from a small spare parts shop to the region\'s leading agricultural solutions provider.',
+        authSonalikaDealer: 'Authorized Sonalika Thresher Dealer',
+        authHondaDealer: 'Authorized Honda Engine Dealer',
+        genuinePartsWarranty: 'Genuine Parts with Warranty',
+        expertTechSupport: 'Expert Technical Support',
+        jcbRentalContract: 'JCB Rental & Contract Services',
+        easyEmiOptions: 'Easy EMI & Financing Options',
+        partnerWithUs: 'Partner With Us',
+        callNow: 'Call Now',
+        yearsOfTrust: 'Years of Trust',
+        
+        // Contact Section
+        getInTouch: 'Get in Touch',
+        contactTitle: 'Contact',
+        contactHighlight: 'Us',
+        contactDesc: 'Visit our showroom or reach out for any inquiries',
+        visitOurShop: 'Visit Our Shop',
+        address: 'Main Market Road, Near Bus Stand,<br>Aspur, Dungarpur District,<br>Rajasthan - 314021',
+        callUs: 'Call Us',
+        businessHours: 'Business Hours',
+        hoursText: 'Monday - Saturday: 8:00 AM - 8:00 PM<br>Sunday: 9:00 AM - 2:00 PM',
+        whatsapp: 'WhatsApp',
+        quickResponse: 'Quick response guaranteed!',
+        sendMessage: 'Send us a Message',
+        fullName: 'Full Name',
+        yourName: 'Your name',
+        phoneNumber: 'Phone Number',
+        yourPhone: 'Your phone number',
+        email: 'Email',
+        yourEmail: 'Your email address',
+        subject: 'Subject',
+        selectSubject: 'Select a subject',
+        productInquiry: 'Product Inquiry',
+        jcbBooking: 'JCB Booking',
+        spareParts: 'Spare Parts',
+        serviceRepair: 'Service & Repair',
+        emiFinance: 'EMI & Finance',
+        other: 'Other',
+        message: 'Message',
+        howCanWeHelp: 'How can we help you?',
+        sendMessageBtn: 'Send Message',
+        
+        // Footer
+        footerDesc: 'Your trusted partner for all agricultural needs. Serving farmers with quality products and honest service since 2001.',
+        quickLinks: 'Quick Links',
+        productCategories: 'Product Categories',
+        contactInfo: 'Contact Info',
+        allRightsReserved: 'All Rights Reserved',
+        trustedDealer: 'Trusted Dealer',
+        isoCertified: 'ISO Certified',
+        secureShopping: 'Secure Shopping',
+        
+        // Cart
+        yourCart: 'Your Cart',
+        cartEmpty: 'Your cart is empty',
+        startShopping: 'Start Shopping',
+        total: 'Total',
+        proceedToCheckout: 'Proceed to Checkout',
+        clearCart: 'Clear Cart',
+        
+        // Checkout
+        placeYourOrder: 'Place Your Order',
+        orderSummary: 'Order Summary',
+        deliveryAddress: 'Delivery Address',
+        fullDeliveryAddress: 'Full delivery address',
+        paymentMethod: 'Payment Method',
+        cod: 'Cash on Delivery',
+        upiPayment: 'UPI Payment',
+        bankTransfer: 'Bank Transfer',
+        emi: 'EMI (for orders above ₹25,000)',
+        specialInstructions: 'Special Instructions',
+        anySpecialRequests: 'Any special requests?',
+        placeOrder: 'Place Order',
+        
+        // Success Modal
+        orderSuccess: 'Order Placed Successfully!',
+        orderSuccessDesc: 'Thank you for your order. We will contact you shortly to confirm your order.',
+        continueShopping: 'Continue Shopping',
+        trackOnWhatsapp: 'Track on WhatsApp',
+        
+        // WhatsApp
+        chatWithUs: 'Chat with us',
+        
+        // Language
+        language: 'हिंदी',
+        
+        // Category names for products
+        catThresher: 'Thresher Machine',
+        catEngine: 'Engine',
+        catJcb: 'JCB Service',
+        catParts: 'Agriculture Parts',
+        catTools: 'Farming Tools',
+        catPump: 'Pumps & Irrigation'
+    },
+    hi: {
+        // Navbar
+        home: 'होम',
+        categories: 'श्रेणियाँ',
+        products: 'उत्पाद',
+        services: 'सेवाएं',
+        about: 'हमारे बारे में',
+        contact: 'संपर्क',
+        searchPlaceholder: 'उत्पाद खोजें...',
+        
+        // Hero
+        heroBadge: 'अधिकृत डीलर',
+        heroTitle1: 'में आपका विश्वसनीय साथी',
+        heroHighlight1: 'कृषि',
+        heroDesc1: 'कृषि मशीनरी, थ्रेशर मशीन, स्पेयर पार्ट्स और JCB सेवाओं की पूरी श्रृंखला। <strong>सोनालिका थ्रेशर</strong> और <strong>होंडा इंजन</strong> के अधिकृत डीलर।',
+        shopNow: 'अभी खरीदें',
+        contactUs: 'संपर्क करें',
+        yearsExp: 'वर्षों का अनुभव',
+        happyCustomers: 'खुश ग्राहक',
+        productsCount: 'उत्पाद',
+        
+        // Hero Slide 2
+        heroBadge2: 'प्रीमियम गुणवत्ता',
+        heroTitle2: 'सोनालिका थ्रेशर',
+        heroHighlight2: 'अधिकृत डीलर',
+        heroDesc2: 'वारंटी, स्पेयर पार्ट्स और विशेषज्ञ सेवा सहायता के साथ असली सोनालिका मल्टी-क्रॉप थ्रेशर प्राप्त करें। सर्वोत्तम मूल्य की गारंटी!',
+        viewCollection: 'संग्रह देखें',
+        getQuote: 'कोटेशन लें',
+        
+        // Hero Slide 3
+        heroBadge3: 'होंडा इंजन',
+        heroTitle3: 'शक्तिशाली',
+        heroHighlight3: 'होंडा इंजन',
+        heroDesc3: 'होंडा GX सीरीज़ इंजन के अधिकृत डीलर। कृषि, वॉटर पंप और औद्योगिक उपयोग के लिए विश्वसनीय, ईंधन-कुशल इंजन।',
+        exploreEngines: 'इंजन देखें',
+        ourServices: 'हमारी सेवाएं',
+        
+        // Brands Strip
+        authorizedSonalika: 'अधिकृत सोनालिका डीलर',
+        hondaDealer: 'होंडा इंजन डीलर',
+        freeDelivery: 'आसपुर में मुफ्त डिलीवरी',
+        genuineParts: 'असली पार्ट्स की गारंटी',
+        support247: '24/7 सेवा सहायता',
+        
+        // Categories Section
+        whatWeOffer: 'हम क्या प्रदान करते हैं',
+        ourProductCategories: 'हमारी उत्पाद',
+        categoriesHighlight: 'श्रेणियाँ',
+        categoriesDesc: 'कृषि मशीनरी, पार्ट्स और सेवाओं की विस्तृत श्रृंखला देखें',
+        thresherMachines: 'थ्रेशर मशीन',
+        thresherDesc: 'सोनालिका और मल्टी-क्रॉप थ्रेशर',
+        engines: 'इंजन',
+        enginesDesc: 'होंडा और ऑयल बेयरिंग इंजन',
+        jcbServices: 'JCB सेवाएं',
+        jcbDesc: 'किराये और ठेका सेवाएं',
+        agricultureParts: 'कृषि पार्ट्स',
+        partsDesc: 'स्पेयर पार्ट्स और एक्सेसरीज़',
+        farmingTools: 'खेती के औजार',
+        toolsDesc: 'हैंड टूल्स और उपकरण',
+        pumpsIrrigation: 'पंप और सिंचाई',
+        pumpsDesc: 'वॉटर पंप और स्प्रिंकलर',
+        productsText: 'उत्पाद',
+        servicesText: 'सेवाएं',
+        
+        // Products Section
+        ourCollection: 'हमारा संग्रह',
+        featuredProducts: 'विशेष',
+        productsHighlight: 'उत्पाद',
+        productsDesc: 'प्रतिस्पर्धी मूल्यों पर गुणवत्तापूर्ण कृषि उपकरण',
+        allProducts: 'सभी उत्पाद',
+        threshers: 'थ्रेशर',
+        jcb: 'JCB',
+        parts: 'पार्ट्स',
+        tools: 'औजार',
+        pumps: 'पंप',
+        reviews: 'समीक्षाएं',
+        addToCart: 'कार्ट में डालें',
+        inCart: 'कार्ट में है',
+        
+        // Offer Banner
+        limitedTimeOffer: 'सीमित समय का ऑफर',
+        monsoonSale: 'मानसून सेल - अधिकतम',
+        offerHighlight: '30% छूट',
+        offerDesc: 'सोनालिका थ्रेशर और होंडा इंजन पर सर्वोत्तम सौदे प्राप्त करें। ₹50,000 से ऊपर के ऑर्डर पर मुफ्त डिलीवरी और इंस्टॉलेशन!',
+        shopTheSale: 'सेल में खरीदें',
+        days: 'दिन',
+        hours: 'घंटे',
+        minutes: 'मिनट',
+        seconds: 'सेकंड',
+        
+        // Services Section
+        whatWeDo: 'हम क्या करते हैं',
+        ourServicesTitle: 'हमारी',
+        servicesHighlight: 'सेवाएं',
+        servicesDesc: 'उत्पादों के अलावा, हम व्यापक कृषि सहायता प्रदान करते हैं',
+        jcbOnRent: 'JCB किराये पर',
+        jcbRentDesc: 'भारी-शुल्क JCB मशीनें किराये पर उपलब्ध। खेत समतल करना, खुदाई, लोडिंग और निर्माण कार्य।',
+        startingAt: 'शुरुआत',
+        perHour: '/घंटा',
+        bookNow: 'अभी बुक करें',
+        machineRepair: 'मशीन मरम्मत',
+        repairDesc: 'थ्रेशर, इंजन और सभी कृषि मशीनरी के लिए विशेषज्ञ मरम्मत सेवाएं। साइट पर और वर्कशॉप मरम्मत।',
+        diagnostic: 'डायग्नोस्टिक',
+        installation: 'इंस्टॉलेशन',
+        installDesc: 'थ्रेशर मशीन, इंजन और सिंचाई प्रणालियों की वारंटी के साथ पेशेवर इंस्टॉलेशन।',
+        freeAbove: '₹50,000 से ऊपर मुफ्त',
+        learnMore: 'और जानें',
+        homeDelivery: 'होम डिलीवरी',
+        deliveryDesc: 'आसपुर और आसपास के क्षेत्रों में सभी उत्पादों की मुफ्त डिलीवरी। पूरे भारत में शिपिंग उपलब्ध।',
+        freeInAspur: 'आसपुर में मुफ्त',
+        inquire: 'पूछताछ करें',
+        buybackExchange: 'बायबैक और एक्सचेंज',
+        buybackDesc: 'अपनी पुरानी मशीनरी को नई से बदलें। अपने उपयोग किए गए उपकरणों का सर्वोत्तम मूल्य प्राप्त करें।',
+        upToValue: '40% तक मूल्य',
+        checkValue: 'मूल्य जांचें',
+        emiFinancing: 'EMI और फाइनेंसिंग',
+        emiDesc: 'सभी बड़ी खरीदारी पर आसान EMI विकल्प उपलब्ध। न्यूनतम दस्तावेज़ों के साथ त्वरित लोन स्वीकृति।',
+        zeroEmi: '0% EMI उपलब्ध',
+        applyNow: 'अभी आवेदन करें',
+        
+        // Testimonials
+        customerLove: 'ग्राहकों का प्यार',
+        whatCustomersSay: 'हमारे',
+        customersHighlight: 'ग्राहक',
+        saySuffix: 'क्या कहते हैं',
+        testimonial1: 'आसपुर में सबसे अच्छी कृषि दुकान! यहां से सोनालिका थ्रेशर खरीदा। उत्कृष्ट गुणवत्ता और बिक्री के बाद सेवा। अत्यधिक अनुशंसित!',
+        testimonial1Author: 'रमेश पटेल',
+        testimonial1Role: 'किसान, आसपुर',
+        testimonial2: 'JCB सेवा बहुत विश्वसनीय है। हमेशा समय पर और उचित दरें। महेश जी बहुत मददगार और ईमानदार हैं।',
+        testimonial2Author: 'सुरेश कुमार',
+        testimonial2Role: 'ठेकेदार, डूंगरपुर',
+        testimonial3: 'होंडा GX390 इंजन सबसे अच्छी कीमत पर मिला। उचित वारंटी के साथ असली उत्पाद। इंजन मेरे वॉटर पंप के लिए बिल्कुल सही चलता है।',
+        testimonial3Author: 'मोहन सिंह',
+        testimonial3Role: 'किसान, सागवाड़ा',
+        
+        // About Section
+        aboutUs: 'हमारे बारे में',
+        servingSince: 'किसानों की सेवा में',
+        sinceYear: '2001 से',
+        aboutDesc: 'महेश एंड कंपनी आसपुर, राजस्थान में कृषि उपकरण और सेवाओं में सबसे विश्वसनीय नाम रहा है। गुणवत्तापूर्ण मशीनरी के साथ किसानों को सशक्त बनाने की दृष्टि से स्थापित, हम एक छोटी स्पेयर पार्ट्स की दुकान से क्षेत्र के अग्रणी कृषि समाधान प्रदाता बन गए हैं।',
+        authSonalikaDealer: 'अधिकृत सोनालिका थ्रेशर डीलर',
+        authHondaDealer: 'अधिकृत होंडा इंजन डीलर',
+        genuinePartsWarranty: 'वारंटी के साथ असली पार्ट्स',
+        expertTechSupport: 'विशेषज्ञ तकनीकी सहायता',
+        jcbRentalContract: 'JCB किराया और ठेका सेवाएं',
+        easyEmiOptions: 'आसान EMI और फाइनेंसिंग विकल्प',
+        partnerWithUs: 'हमारे साथ जुड़ें',
+        callNow: 'अभी कॉल करें',
+        yearsOfTrust: 'वर्षों का विश्वास',
+        
+        // Contact Section
+        getInTouch: 'संपर्क करें',
+        contactTitle: 'हमसे',
+        contactHighlight: 'संपर्क',
+        contactDesc: 'हमारे शोरूम पर आएं या किसी भी पूछताछ के लिए संपर्क करें',
+        visitOurShop: 'हमारी दुकान पर आएं',
+        address: 'मुख्य बाजार रोड, बस स्टैंड के पास,<br>आसपुर, डूंगरपुर जिला,<br>राजस्थान - 314021',
+        callUs: 'कॉल करें',
+        businessHours: 'कार्य समय',
+        hoursText: 'सोमवार - शनिवार: सुबह 8:00 - रात 8:00<br>रविवार: सुबह 9:00 - दोपहर 2:00',
+        whatsapp: 'व्हाट्सएप',
+        quickResponse: 'त्वरित प्रतिक्रिया की गारंटी!',
+        sendMessage: 'हमें संदेश भेजें',
+        fullName: 'पूरा नाम',
+        yourName: 'आपका नाम',
+        phoneNumber: 'फोन नंबर',
+        yourPhone: 'आपका फोन नंबर',
+        email: 'ईमेल',
+        yourEmail: 'आपका ईमेल पता',
+        subject: 'विषय',
+        selectSubject: 'विषय चुनें',
+        productInquiry: 'उत्पाद पूछताछ',
+        jcbBooking: 'JCB बुकिंग',
+        spareParts: 'स्पेयर पार्ट्स',
+        serviceRepair: 'सेवा और मरम्मत',
+        emiFinance: 'EMI और फाइनेंस',
+        other: 'अन्य',
+        message: 'संदेश',
+        howCanWeHelp: 'हम आपकी कैसे मदद कर सकते हैं?',
+        sendMessageBtn: 'संदेश भेजें',
+        
+        // Footer
+        footerDesc: 'सभी कृषि जरूरतों के लिए आपका विश्वसनीय साथी। 2001 से गुणवत्तापूर्ण उत्पादों और ईमानदार सेवा के साथ किसानों की सेवा।',
+        quickLinks: 'त्वरित लिंक',
+        productCategories: 'उत्पाद श्रेणियाँ',
+        contactInfo: 'संपर्क जानकारी',
+        allRightsReserved: 'सर्वाधिकार सुरक्षित',
+        trustedDealer: 'विश्वसनीय डीलर',
+        isoCertified: 'ISO प्रमाणित',
+        secureShopping: 'सुरक्षित खरीदारी',
+        
+        // Cart
+        yourCart: 'आपका कार्ट',
+        cartEmpty: 'आपका कार्ट खाली है',
+        startShopping: 'खरीदारी शुरू करें',
+        total: 'कुल',
+        proceedToCheckout: 'चेकआउट करें',
+        clearCart: 'कार्ट खाली करें',
+        
+        // Checkout
+        placeYourOrder: 'अपना ऑर्डर दें',
+        orderSummary: 'ऑर्डर सारांश',
+        deliveryAddress: 'डिलीवरी पता',
+        fullDeliveryAddress: 'पूरा डिलीवरी पता',
+        paymentMethod: 'भुगतान विधि',
+        cod: 'कैश ऑन डिलीवरी',
+        upiPayment: 'UPI भुगतान',
+        bankTransfer: 'बैंक ट्रांसफर',
+        emi: 'EMI (₹25,000 से ऊपर के ऑर्डर के लिए)',
+        specialInstructions: 'विशेष निर्देश',
+        anySpecialRequests: 'कोई विशेष अनुरोध?',
+        placeOrder: 'ऑर्डर दें',
+        
+        // Success Modal
+        orderSuccess: 'ऑर्डर सफलतापूर्वक दिया गया!',
+        orderSuccessDesc: 'आपके ऑर्डर के लिए धन्यवाद। हम जल्द ही आपके ऑर्डर की पुष्टि के लिए संपर्क करेंगे।',
+        continueShopping: 'खरीदारी जारी रखें',
+        trackOnWhatsapp: 'व्हाट्सएप पर ट्रैक करें',
+        
+        // WhatsApp
+        chatWithUs: 'हमसे चैट करें',
+        
+        // Language
+        language: 'English',
+        
+        // Category names for products
+        catThresher: 'थ्रेशर मशीन',
+        catEngine: 'इंजन',
+        catJcb: 'JCB सेवा',
+        catParts: 'कृषि पार्ट्स',
+        catTools: 'खेती के औजार',
+        catPump: 'पंप और सिंचाई'
+    }
+};
+
+// ============================
+// Language Toggle Function
+// ============================
+function toggleLanguage() {
+    currentLang = currentLang === 'en' ? 'hi' : 'en';
+    localStorage.setItem('maheshLang', currentLang);
+    applyTranslations();
+    updateLangButton();
+}
+
+function updateLangButton() {
+    const langBtn = document.getElementById('langToggle');
+    if (langBtn) {
+        langBtn.innerHTML = `<i class="fas fa-globe"></i> ${translations[currentLang].language}`;
+    }
+}
+
+function applyTranslations() {
+    const t = translations[currentLang];
+    
+    // Update all elements with data-translate attribute
+    document.querySelectorAll('[data-translate]').forEach(el => {
+        const key = el.getAttribute('data-translate');
+        if (t[key]) {
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.placeholder = t[key];
+            } else {
+                el.innerHTML = t[key];
+            }
+        }
+    });
+    
+    // Update search placeholder
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.placeholder = t.searchPlaceholder;
+    }
+    
+    // Re-render products with correct language
+    renderProducts(currentFilter);
+}
+
+// ============================
 // Product Data
 // ============================
 const products = [
@@ -352,6 +868,7 @@ let currentFilter = 'all';
 // Initialize
 // ============================
 document.addEventListener('DOMContentLoaded', () => {
+    updateLangButton();
     renderProducts();
     updateCartUI();
     startSlideShow();
@@ -410,7 +927,7 @@ function renderProducts(filter = 'all', searchTerm = '') {
                     <h3 class="product-name">${product.name}</h3>
                     <div class="product-rating">
                         ${generateStars(product.rating)}
-                        <span>(${product.reviews} reviews)</span>
+                        <span>(${product.reviews} ${translations[currentLang].reviews})</span>
                     </div>
                     <div class="product-price">
                         <span class="current-price">${formatPrice(product.price)}</span>
@@ -418,7 +935,7 @@ function renderProducts(filter = 'all', searchTerm = '') {
                     </div>
                     <button class="product-cart-btn ${inCart ? 'added' : ''}" onclick="addToCart(${product.id})">
                         <i class="fas ${inCart ? 'fa-check' : 'fa-shopping-cart'}"></i>
-                        ${inCart ? `In Cart (${inCart.qty})` : 'Add to Cart'}
+                        ${inCart ? `${translations[currentLang].inCart} (${inCart.qty})` : translations[currentLang].addToCart}
                     </button>
                 </div>
             </div>
@@ -436,13 +953,14 @@ function renderProducts(filter = 'all', searchTerm = '') {
 }
 
 function getCategoryName(cat) {
+    const t = translations[currentLang];
     const names = {
-        thresher: 'Thresher Machine',
-        engine: 'Engine',
-        jcb: 'JCB Service',
-        parts: 'Agriculture Parts',
-        tools: 'Farming Tools',
-        pump: 'Pumps & Irrigation'
+        thresher: t.catThresher,
+        engine: t.catEngine,
+        jcb: t.catJcb,
+        parts: t.catParts,
+        tools: t.catTools,
+        pump: t.catPump
     };
     return names[cat] || cat;
 }
