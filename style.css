@@ -4126,20 +4126,28 @@ a {
 }
 
 .compare-float-clear {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.18);
     border: none;
     color: white;
     cursor: pointer;
     width: 36px;
     height: 36px;
     min-width: 36px;
+    min-height: 36px;
     border-radius: 50%;
-    font-size: 1.1rem;
+    font-size: 1.35rem;
+    line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: var(--transition);
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 2;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    padding: 0;
 }
 
 .compare-float-clear:hover,
@@ -4419,10 +4427,11 @@ body.has-mobile-bar {
     }
 
     .compare-float-clear {
-        width: 40px;
-        height: 40px;
-        min-width: 40px;
-        font-size: 1.15rem;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 1.4rem;
     }
 
     .mobile-call-bar .mobile-call-btn {

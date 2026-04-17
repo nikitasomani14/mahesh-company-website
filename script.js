@@ -400,6 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     animateStats();
     setupScrollEffects();
     setupRevealAnimations();
+    initCompareBarButtons();
 });
 
 function initMobileBarClass() {
@@ -775,6 +776,30 @@ function clearCompare() {
     localStorage.setItem('maheshCompare', '[]');
     updateCompareBar();
     renderProducts(currentFilter, document.getElementById('searchInput').value);
+}
+
+function initCompareBarButtons() {
+    var clearBtn = document.getElementById('compareClearBtn');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            clearCompare();
+        });
+        clearBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            clearCompare();
+        });
+    }
+    var openBtn = document.getElementById('compareOpenBtn');
+    if (openBtn) {
+        openBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            openCompareModal();
+        });
+    }
 }
 
 function updateCompareBar() {
