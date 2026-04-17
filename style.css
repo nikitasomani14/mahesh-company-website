@@ -2127,6 +2127,96 @@ a {
     margin-top: 3px;
 }
 
+/* Legal / T&C Section */
+.legal-section {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: 30px;
+    padding-top: 15px;
+}
+
+.legal-toggle {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 14px;
+    transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0.3px;
+    font-family: inherit;
+}
+
+.legal-toggle:hover {
+    color: rgba(255,255,255,0.75);
+    border-color: rgba(255,255,255,0.3);
+}
+
+.legal-toggle-icon {
+    font-size: 0.6rem;
+    transition: transform 0.3s;
+}
+
+.legal-toggle[aria-expanded="true"] .legal-toggle-icon {
+    transform: rotate(180deg);
+}
+
+.legal-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding: 0 2px;
+}
+
+.legal-content.open {
+    max-height: 5000px;
+    padding-top: 12px;
+}
+
+.legal-block {
+    margin-bottom: 10px;
+}
+
+.legal-block h5 {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 3px 0;
+}
+
+.legal-block p {
+    color: rgba(255,255,255,0.38);
+    font-size: 0.6rem;
+    line-height: 1.55;
+    margin: 0 0 5px 0;
+}
+
+.legal-block strong {
+    color: rgba(255,255,255,0.5);
+}
+
+.legal-summary {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 10px;
+    margin-top: 14px;
+}
+
+.legal-summary p:first-child {
+    font-size: 0.62rem;
+}
+
+.legal-updated {
+    font-size: 0.55rem !important;
+    font-style: italic;
+    opacity: 0.5;
+}
+
 .footer-bottom {
     border-top: 1px solid rgba(255,255,255,0.1);
     padding: 20px 0;

@@ -1452,3 +1452,15 @@ document.querySelectorAll('.nav-links a').forEach(link => {
         document.getElementById('navLinks').classList.remove('active');
     });
 });
+
+(function() {
+    var tog = document.getElementById('legalToggle');
+    var content = document.getElementById('legalContent');
+    if (tog && content) {
+        tog.addEventListener('click', function() {
+            var expanded = tog.getAttribute('aria-expanded') === 'true';
+            tog.setAttribute('aria-expanded', String(!expanded));
+            content.classList.toggle('open');
+        });
+    }
+})();
