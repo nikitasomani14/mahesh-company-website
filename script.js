@@ -369,10 +369,6 @@ const products = [
 // ============================
 let cart = JSON.parse(localStorage.getItem('maheshCart') || '[]');
 let wishlist = JSON.parse(localStorage.getItem('maheshWishlist') || '[]');
-let compareIds = JSON.parse(localStorage.getItem('maheshCompare') || '[]')
-    .filter(id => products.some(p => p.id === id))
-    .slice(0, 3);
-localStorage.setItem('maheshCompare', JSON.stringify(compareIds));
 let recentlyViewed = JSON.parse(localStorage.getItem('maheshRecent') || '[]')
     .filter(id => products.some(p => p.id === id))
     .slice(0, 6);
@@ -392,7 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderProductsWithSkeleton();
     updateCartUI();
     updateWishlistUI();
-    updateCompareBar();
     renderRecentlyViewed();
     if (typeof renderFaq === 'function') renderFaq();
     startSlideShow();
@@ -400,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
     animateStats();
     setupScrollEffects();
     setupRevealAnimations();
-    initCompareBarButtons();
 });
 
 function initMobileBarClass() {
@@ -559,7 +553,6 @@ function renderProducts(filter = 'all', searchTerm = '') {
         const discount = Math.round((1 - product.price / product.originalPrice) * 100);
         const inCart = cart.find(c => c.id === product.id);
         const inWish = wishlist.includes(product.id);
-        const inCompare = compareIds.includes(product.id);
         const stock = product.inStock !== false;
 
         return `
@@ -577,9 +570,6 @@ function renderProducts(filter = 'all', searchTerm = '') {
                     <div class="product-actions-overlay">
                         <button type="button" class="action-btn" onclick="quickView(${product.id})" title="Quick View">
                             <i class="fas fa-eye"></i>
-                        </button>
-                        <button type="button" class="action-btn" onclick="event.stopPropagation(); toggleCompare(${product.id})" title="Compare">
-                            <i class="fas ${inCompare ? 'fa-check' : 'fa-columns'}"></i>
                         </button>
                         ${stock ? `<button type="button" class="action-btn" onclick="addToCart(${product.id})" title="Add to Cart">
                             <i class="fas fa-cart-plus"></i>
@@ -679,7 +669,7 @@ function generateStars(rating) {
 }
 
 function formatPrice(price) {
-    return '₹' + price.toLocaleString('en-IN');
+    return '₹' + price.toLocaleString('en-IN') + '*';
 }
 
 // ============================
@@ -750,112 +740,6 @@ function toggleWishlistSidebar() {
     ov.classList.toggle('active');
     document.body.style.overflow = side.classList.contains('active') ? 'hidden' : '';
     renderWishlistSidebar();
-}
-
-// ============================
-// Compare
-// ============================
-function toggleCompare(productId) {
-    const idx = compareIds.indexOf(productId);
-    if (idx >= 0) {
-        compareIds.splice(idx, 1);
-    } else {
-        if (compareIds.length >= 3) {
-            showToast(typeof t === 'function' ? t('compare_max') : 'You can compare up to 3 products');
-            return;
-        }
-        compareIds.push(productId);
-    }
-    localStorage.setItem('maheshCompare', JSON.stringify(compareIds));
-    updateCompareBar();
-    renderProducts(currentFilter, document.getElementById('searchInput').value);
-}
-
-function clearCompare() {
-    compareIds = [];
-    localStorage.setItem('maheshCompare', '[]');
-    updateCompareBar();
-    renderProducts(currentFilter, document.getElementById('searchInput').value);
-}
-
-function initCompareBarButtons() {
-    var clearBtn = document.getElementById('compareClearBtn');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            clearCompare();
-        });
-        clearBtn.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            clearCompare();
-        });
-    }
-    var openBtn = document.getElementById('compareOpenBtn');
-    if (openBtn) {
-        openBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            openCompareModal();
-        });
-    }
-}
-
-function updateCompareBar() {
-    const bar = document.getElementById('compareFloatBar');
-    const text = document.getElementById('compareFloatText');
-    if (!bar || !text) return;
-    const n = compareIds.length;
-    if (n === 0) {
-        bar.hidden = true;
-        return;
-    }
-    bar.hidden = false;
-    const label = typeof t === 'function' ? t('compare_selected') : 'selected';
-    text.textContent = `${n} ${label}`;
-}
-
-function openCompareModal() {
-    const body = document.getElementById('compareModalBody');
-    const modal = document.getElementById('compareModal');
-    if (!body || !modal) return;
-    const items = compareIds.map(id => products.find(p => p.id === id)).filter(Boolean);
-    if (items.length === 0) {
-        showToast('Add products to compare');
-        return;
-    }
-    const rows = [
-        ['Feature', ...items.map(p => p.name)],
-        ['Image', ...items.map(p => `<img src="${p.image}" alt="">`)],
-        ['Price', ...items.map(p => formatPrice(p.price))],
-        ['Rating', ...items.map(p => `${p.rating} ★`)],
-        ['Reviews', ...items.map(p => String(p.reviews))],
-        ...[0, 1, 2, 3, 4].map(i => {
-            const cells = items.map(p => (p.features[i] || '—'));
-            return [`Feature ${i + 1}`, ...cells];
-        })
-    ];
-    body.innerHTML = `
-        <div class="compare-table-wrap">
-            <table class="compare-table">
-                <tbody>
-                    ${rows.map((row, ri) => `
-                        <tr>
-                            ${row.map((cell, ci) => ci === 0 ? `<th>${cell}</th>` : `<td>${cell}</td>`).join('')}
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>`;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeCompareModal() {
-    const modal = document.getElementById('compareModal');
-    if (modal) modal.classList.remove('active');
-    document.body.style.overflow = '';
 }
 
 // ============================
@@ -1553,7 +1437,6 @@ document.addEventListener('keydown', (e) => {
         closeCheckout();
         closeSuccessModal();
         closeQuickView();
-        closeCompareModal();
         closeEmiModal();
         if (document.getElementById('cartSidebar').classList.contains('active')) {
             toggleCart();
