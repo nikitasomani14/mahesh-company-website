@@ -3020,6 +3020,12 @@ a {
     .wishlist-sidebar {
         width: 100%;
         right: -100%;
+        z-index: 10001;
+    }
+
+    .cart-overlay,
+    .wishlist-overlay {
+        z-index: 10000;
     }
     
     .cart-header {
@@ -3046,6 +3052,10 @@ a {
 
     .cart-item-price {
         font-size: 0.85rem;
+    }
+
+    .cart-footer {
+        padding-bottom: 24px;
     }
 
     .whatsapp-float span {
@@ -3092,14 +3102,20 @@ a {
         flex-direction: column;
     }
     
+    .modal-overlay {
+        z-index: 10002;
+        padding: 12px;
+    }
+
     .modal {
-        margin: 8px;
-        max-height: calc(100vh - 16px);
+        margin: 0;
+        max-height: calc(100vh - 24px);
         border-radius: var(--radius);
     }
     
     .modal-body {
         padding: 16px;
+        padding-bottom: 24px;
     }
     
     .modal-header {
@@ -4117,12 +4133,19 @@ a {
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 10000;
+    z-index: 1999;
     padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
     background: var(--bg-alt);
     box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
     gap: 10px;
     justify-content: stretch;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.mobile-call-bar.hidden-by-overlay {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
 }
 
 .mobile-call-bar .mobile-call-btn {

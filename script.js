@@ -732,13 +732,23 @@ function renderWishlistSidebar() {
     }).join('');
 }
 
+function setMobileBarHidden(hidden) {
+    var bar = document.querySelector('.mobile-call-bar');
+    if (bar) {
+        if (hidden) bar.classList.add('hidden-by-overlay');
+        else bar.classList.remove('hidden-by-overlay');
+    }
+}
+
 function toggleWishlistSidebar() {
     const side = document.getElementById('wishlistSidebar');
     const ov = document.getElementById('wishlistOverlay');
     if (!side || !ov) return;
     side.classList.toggle('active');
     ov.classList.toggle('active');
-    document.body.style.overflow = side.classList.contains('active') ? 'hidden' : '';
+    var isOpen = side.classList.contains('active');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    setMobileBarHidden(isOpen);
     renderWishlistSidebar();
 }
 
@@ -783,6 +793,7 @@ function openEmiModal(price) {
     if (modal) {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        setMobileBarHidden(true);
     }
     const res = document.getElementById('emiResult');
     if (res) res.textContent = '';
@@ -792,6 +803,7 @@ function closeEmiModal() {
     const modal = document.getElementById('emiModal');
     if (modal) modal.classList.remove('active');
     document.body.style.overflow = '';
+    setMobileBarHidden(false);
 }
 
 function calculateEmi() {
@@ -969,7 +981,9 @@ function toggleCart() {
     const overlay = document.getElementById('cartOverlay');
     sidebar.classList.toggle('active');
     overlay.classList.toggle('active');
-    document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    var isOpen = sidebar.classList.contains('active');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    setMobileBarHidden(isOpen);
 }
 
 // ============================
@@ -1000,11 +1014,13 @@ function showCheckout() {
 
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    setMobileBarHidden(true);
 }
 
 function closeCheckout() {
     document.getElementById('checkoutModal').classList.remove('active');
     document.body.style.overflow = '';
+    setMobileBarHidden(false);
 }
 
 function placeOrder(e) {
@@ -1081,6 +1097,7 @@ _Order received via Mahesh & Company Website_`;
 
     document.getElementById('successModal').classList.add('active');
     document.body.style.overflow = 'hidden';
+    setMobileBarHidden(true);
 
     setTimeout(() => {
         window.open(whatsappURL, '_blank', 'noopener,noreferrer');
@@ -1096,6 +1113,7 @@ _Order received via Mahesh & Company Website_`;
 function closeSuccessModal() {
     document.getElementById('successModal').classList.remove('active');
     document.body.style.overflow = '';
+    setMobileBarHidden(false);
 }
 
 // ============================
@@ -1161,11 +1179,13 @@ function quickView(productId) {
 
     document.getElementById('quickViewModal').classList.add('active');
     document.body.style.overflow = 'hidden';
+    setMobileBarHidden(true);
 }
 
 function closeQuickView() {
     document.getElementById('quickViewModal').classList.remove('active');
     document.body.style.overflow = '';
+    setMobileBarHidden(false);
 }
 
 // ============================
