@@ -40,33 +40,6 @@
     </div>
   </div>
 
-  <!-- First-time GitHub PAT Screen -->
-  <div id="patScreen" class="auth-screen hidden" aria-hidden="true">
-    <div class="auth-card">
-      <h1 class="auth-title">Connect GitHub</h1>
-      <p class="auth-subtext">Enter a GitHub Personal Access Token for integrations. You can update this later in Settings.</p>
-      <form id="patForm" class="auth-form" novalidate>
-        <label class="field-label" for="githubPat">GitHub Personal Access Token</label>
-        <div class="password-field">
-          <input
-            type="password"
-            id="githubPat"
-            name="githubPat"
-            class="input-control"
-            placeholder="ghp_…"
-            autocomplete="off"
-            required
-          />
-          <button type="button" id="togglePatVisibility" class="icon-btn eye-toggle" aria-label="Show token" title="Show/hide token">
-            <i class="fas fa-eye" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div id="patError" class="error-msg" role="alert" aria-live="polite"></div>
-        <button type="submit" class="btn btn-primary btn-block">Save &amp; Continue</button>
-      </form>
-    </div>
-  </div>
-
   <!-- Main App -->
   <div id="mainApp" class="main-app hidden" aria-hidden="true">
     <header class="top-bar">
@@ -156,11 +129,6 @@
             <input type="password" id="confirmPassword" class="input-control" autocomplete="new-password" />
             <button type="submit" class="btn btn-primary">Update password</button>
           </form>
-        </div>
-        <div class="panel">
-          <h3 class="panel-title">GitHub token</h3>
-          <p class="muted" id="githubTokenHint">No token saved.</p>
-          <button type="button" class="btn btn-secondary" id="updateGithubTokenBtn">Update token</button>
         </div>
         <div class="panel danger-zone">
           <h3 class="panel-title">Data</h3>
@@ -391,31 +359,6 @@
         <button type="button" class="btn btn-secondary" id="billPrintBtn">Print</button>
         <button type="button" class="btn btn-ghost" data-close-modal="billPreviewModal">Close</button>
       </div>
-    </div>
-  </div>
-
-  <!-- GitHub token update (from settings) -->
-  <div id="githubTokenModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="githubTokenModalTitle" aria-hidden="true">
-    <div class="modal-sheet">
-      <div class="modal-head">
-        <h2 id="githubTokenModalTitle" class="modal-title">Update GitHub token</h2>
-        <button type="button" class="icon-btn modal-close" data-close-modal="githubTokenModal" aria-label="Close">
-          <i class="fas fa-times" aria-hidden="true"></i>
-        </button>
-      </div>
-      <form id="githubTokenForm" class="stack-form">
-        <label class="field-label" for="githubPatInput">Personal Access Token</label>
-        <div class="password-field">
-          <input type="password" id="githubPatInput" class="input-control" required autocomplete="off" />
-          <button type="button" id="toggleGithubPatInput" class="icon-btn eye-toggle" aria-label="Show token">
-            <i class="fas fa-eye" aria-hidden="true"></i>
-          </button>
-        </div>
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" data-close-modal="githubTokenModal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
-        </div>
-      </form>
     </div>
   </div>
 

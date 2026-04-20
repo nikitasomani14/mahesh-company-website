@@ -11,8 +11,6 @@
   const LS = {
     LOGGED_IN: "mc_admin_logged_in",
     PASSWORD_HASH: "mc_password_hash",
-    GITHUB_TOKEN: "mc_github_token",
-    PAT_ONBOARDING: "mc_pat_onboarding_done",
     PRODUCTS: "mc_products",
     BILLS: "mc_bills",
     ACTIVITY: "mc_activity",
@@ -130,14 +128,13 @@
 
   function showScreen(name) {
     const login = qs("#loginScreen");
-    const pat = qs("#patScreen");
     const main = qs("#mainApp");
-    [login, pat, main].forEach((el) => {
+    [login, main].forEach((el) => {
       if (!el) return;
       el.classList.add("hidden");
       el.setAttribute("aria-hidden", "true");
     });
-    const map = { login, pat, main };
+    const map = { login, main };
     const el = map[name];
     if (el) {
       el.classList.remove("hidden");
@@ -186,11 +183,9 @@
     }
   }
 
-  /* ---------- Login / PAT ---------- */
+  /* ---------- Login ---------- */
   const loginForm = qs("#loginForm");
   const loginError = qs("#loginError");
-  const patForm = qs("#patForm");
-  const patError = qs("#patError");
 
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
@@ -203,12 +198,6 @@
         return;
       }
       setLoggedIn(true);
-      const onboardingDone = localStorage.getItem(LS.PAT_ONBOARDING) === "1";
-      const hasToken = !!localStorage.getItem(LS.GITHUB_TOKEN);
-      if (!onboardingDone && !hasToken) {
-        showScreen("pat");
-        return;
-      }
       showScreen("main");
       bootMainApp();
     });
@@ -225,39 +214,9 @@
     }
   });
 
-  qs("#togglePatVisibility")?.addEventListener("click", () => {
-    const inp = qs("#githubPat");
-    if (!inp) return;
-    const show = inp.type === "password";
-    inp.type = show ? "text" : "password";
-    const i = qs("#togglePatVisibility i");
-    if (i) {
-      i.className = show ? "fas fa-eye-slash" : "fas fa-eye";
-    }
-  });
-
-  if (patForm) {
-    patForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (patError) patError.textContent = "";
-      const token = (qs("#githubPat") && qs("#githubPat").value.trim()) || "";
-      if (!token) {
-        if (patError) patError.textContent = "Please enter a valid token.";
-        return;
-      }
-      localStorage.setItem(LS.GITHUB_TOKEN, token);
-      localStorage.setItem(LS.PAT_ONBOARDING, "1");
-      pushActivity("GitHub token saved (first-time setup).");
-      showScreen("main");
-      bootMainApp();
-      showToast("Token saved.", "success");
-    });
-  }
-
   /* ---------- Main app bootstrap ---------- */
   async function bootMainApp() {
     await seedProductsFromJson();
-    updateGithubHint();
     renderDashboard();
     renderProducts();
     renderBills();
@@ -276,17 +235,6 @@
       pushActivity("Products seeded from catalog (" + data.length + " items).");
     } catch (e) {
       console.warn("Could not seed products:", e);
-    }
-  }
-
-  function updateGithubHint() {
-    const token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
-    const el = qs("#githubTokenHint");
-    if (!el) return;
-    if (token.length >= 4) {
-      el.textContent = "Token saved — last 4 characters: " + token.slice(-4);
-    } else {
-      el.textContent = "No token saved.";
     }
   }
 
@@ -1017,33 +965,6 @@
     showToast("Password updated.", "success");
   });
 
-  qs("#updateGithubTokenBtn")?.addEventListener("click", () => openModal("githubTokenModal"));
-
-  qs("#githubTokenForm")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const t = qs("#githubPatInput").value.trim();
-    if (!t) {
-      showToast("Enter a token.", "error");
-      return;
-    }
-    localStorage.setItem(LS.GITHUB_TOKEN, t);
-    localStorage.setItem(LS.PAT_ONBOARDING, "1");
-    qs("#githubPatInput").value = "";
-    closeModal("githubTokenModal");
-    updateGithubHint();
-    pushActivity("GitHub token updated.");
-    showToast("GitHub token saved.", "success");
-  });
-
-  qs("#toggleGithubPatInput")?.addEventListener("click", () => {
-    const inp = qs("#githubPatInput");
-    if (!inp) return;
-    const show = inp.type === "password";
-    inp.type = show ? "text" : "password";
-    const i = qs("#toggleGithubPatInput i");
-    if (i) i.className = show ? "fas fa-eye-slash" : "fas fa-eye";
-  });
-
   qs("#clearAllDataBtn")?.addEventListener("click", async () => {
     const ok = await confirmDialog(
       "Clear all data?",
@@ -1055,8 +976,6 @@
       LS.BILLS,
       LS.ACTIVITY,
       LS.BILL_COUNTER,
-      LS.GITHUB_TOKEN,
-      LS.PAT_ONBOARDING,
       LS.PASSWORD_HASH,
       LS.LOGGED_IN,
     ].forEach((k) => localStorage.removeItem(k));
@@ -1069,14 +988,8 @@
   initDefaultPasswordHash();
 
   if (isLoggedIn()) {
-    const onboardingDone = localStorage.getItem(LS.PAT_ONBOARDING) === "1";
-    const hasToken = !!localStorage.getItem(LS.GITHUB_TOKEN);
-    if (!onboardingDone && !hasToken) {
-      showScreen("pat");
-    } else {
-      showScreen("main");
-      bootMainApp();
-    }
+    showScreen("main");
+    bootMainApp();
   } else {
     showScreen("login");
   }
