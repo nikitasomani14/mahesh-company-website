@@ -44,6 +44,9 @@
   <div id="mainApp" class="main-app hidden" aria-hidden="true">
     <header class="top-bar">
       <h1 class="top-bar-title">Mahesh &amp; Company Admin</h1>
+      <button type="button" id="headerHelpBtn" class="icon-btn top-help" aria-label="Help" title="Help guide">
+        <i class="fas fa-circle-question" aria-hidden="true"></i>
+      </button>
       <button type="button" id="headerLogoutBtn" class="icon-btn top-logout" aria-label="Logout" title="Logout">
         <i class="fas fa-right-from-bracket" aria-hidden="true"></i>
       </button>
@@ -262,8 +265,24 @@
         <input type="number" id="productPrice" name="price" class="input-control" min="0" step="0.01" inputmode="decimal" required />
         <label class="field-label" for="productOriginalPrice">Original price (₹)</label>
         <input type="number" id="productOriginalPrice" name="originalPrice" class="input-control" min="0" step="0.01" inputmode="decimal" />
-        <label class="field-label" for="productImageUrl">Image URL</label>
-        <input type="url" id="productImageUrl" name="imageUrl" class="input-control" placeholder="https://…" />
+        <label class="field-label">Product Image</label>
+        <div class="image-upload-wrap">
+          <div class="image-preview-box" id="imagePreviewBox">
+            <i class="fas fa-image" aria-hidden="true"></i>
+            <span>No image</span>
+          </div>
+          <div class="image-upload-actions">
+            <label class="btn btn-secondary btn-sm image-pick-btn" for="productImageFile">
+              <i class="fas fa-camera" aria-hidden="true"></i> Upload Photo
+            </label>
+            <input type="file" id="productImageFile" accept="image/*" class="visually-hidden" />
+            <span class="image-or-divider">or paste URL</span>
+            <input type="url" id="productImageUrl" name="imageUrl" class="input-control" placeholder="https://…" />
+            <button type="button" id="removeProductImage" class="btn btn-ghost btn-sm" style="color:var(--danger)">
+              <i class="fas fa-trash" aria-hidden="true"></i> Remove Image
+            </button>
+          </div>
+        </div>
         <label class="field-label" for="productDescription">Description</label>
         <textarea id="productDescription" name="description" class="input-control textarea" rows="3"></textarea>
         <label class="field-label" for="productFeatures">Features (comma-separated)</label>
@@ -443,6 +462,113 @@
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" id="confirmDialogCancel">Cancel</button>
         <button type="button" class="btn btn-danger" id="confirmDialogOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal-overlay modal-overlay--fullscreen hidden" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle" aria-hidden="true">
+    <div class="modal-sheet modal-sheet--full">
+      <div class="modal-head modal-head--sticky">
+        <h2 id="helpModalTitle" class="modal-title"><i class="fas fa-circle-question"></i> Admin Guide</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="helpModal" aria-label="Close">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="help-body">
+
+        <details class="help-section" open>
+          <summary class="help-section-title"><i class="fas fa-boxes"></i> Products</summary>
+          <div class="help-content">
+            <h4>Add a new product</h4>
+            <ol>
+              <li>Go to the <strong>Products</strong> tab (bottom nav)</li>
+              <li>Tap the <strong>+ button</strong> (green circle, bottom-right)</li>
+              <li>Fill in name, category, price, stock quantity, etc.</li>
+              <li>To add an image: tap <strong>"Upload Photo"</strong> to pick from your device/camera, or paste an image URL</li>
+              <li>Tap <strong>Save</strong></li>
+            </ol>
+            <h4>Edit a product</h4>
+            <ol>
+              <li>Find the product in the list</li>
+              <li>Tap the <strong>pencil icon</strong> <i class="fas fa-pen"></i> on the right side</li>
+              <li>Change the details and tap <strong>Save</strong></li>
+            </ol>
+            <h4>Delete a product</h4>
+            <ol>
+              <li>Find the product in the list</li>
+              <li>Tap the <strong>trash icon</strong> <i class="fas fa-trash"></i> on the right side</li>
+              <li>Confirm the deletion</li>
+            </ol>
+            <h4>Toggle stock status</h4>
+            <p>Use the <strong>checkbox</strong> next to each product to quickly mark it as in-stock or out-of-stock without opening the edit form.</p>
+            <h4>Search &amp; filter</h4>
+            <p>Use the <strong>search bar</strong> at the top to find products by name. Use the <strong>category chips</strong> (Threshers, Engines, etc.) to filter by category.</p>
+          </div>
+        </details>
+
+        <details class="help-section">
+          <summary class="help-section-title"><i class="fas fa-file-invoice"></i> Bills</summary>
+          <div class="help-content">
+            <h4>Create a new bill</h4>
+            <ol>
+              <li>Go to the <strong>Bills</strong> tab, or tap <strong>"New Bill"</strong> on the Dashboard</li>
+              <li>Enter the customer's <strong>name</strong>, phone, and address</li>
+              <li>Add line items: enter product name (you can pick from catalog), quantity, unit price, and discount</li>
+              <li>Tap <strong>"+ Add Item"</strong> to add more items</li>
+              <li>Choose payment method (Cash / UPI / Bank Transfer) and status (Paid / Unpaid / Partial)</li>
+              <li>Tap <strong>Save Bill</strong></li>
+            </ol>
+            <h4>View / Preview a bill</h4>
+            <ol>
+              <li>In the Bills list, tap <strong>"View"</strong> to see the invoice preview</li>
+              <li>While creating a bill, tap <strong>"Preview PDF"</strong> to see a draft</li>
+            </ol>
+            <h4>Download PDF</h4>
+            <p>Open the invoice preview, then tap <strong>"Download PDF"</strong>. The PDF file will be saved to your device.</p>
+            <h4>Share on WhatsApp</h4>
+            <p>From the invoice preview or the bill card, tap <strong>"Share"</strong> to send the bill summary via WhatsApp.</p>
+            <h4>Edit an existing bill</h4>
+            <p>In the Bills list, tap the <strong>"Edit"</strong> button on any bill card to modify it.</p>
+          </div>
+        </details>
+
+        <details class="help-section">
+          <summary class="help-section-title"><i class="fas fa-chart-line"></i> Dashboard</summary>
+          <div class="help-content">
+            <h4>Overview cards</h4>
+            <p>The dashboard shows: <strong>Total Products</strong>, <strong>In Stock</strong>, <strong>Out of Stock</strong>, <strong>Low Stock</strong> (less than 3 units), and <strong>Admin Logins</strong> count.</p>
+            <h4>Website visitors</h4>
+            <p>If GoatCounter is set up, you'll see <strong>Total Visits</strong> and <strong>Unique Visitors</strong>. With an API token, you'll also see locations, devices, browsers, and referrers.</p>
+            <h4>Recent activity</h4>
+            <p>Shows the last 10 actions performed (product added/edited, bills created, etc.).</p>
+          </div>
+        </details>
+
+        <details class="help-section">
+          <summary class="help-section-title"><i class="fas fa-cog"></i> Settings</summary>
+          <div class="help-content">
+            <h4>Change password</h4>
+            <p>Enter your current password, then the new password twice, and tap <strong>Update password</strong>.</p>
+            <h4>GoatCounter Analytics</h4>
+            <p>Enter your GoatCounter site code and API token to see visitor stats on the dashboard. Follow the step-by-step guide in Settings to get your API token.</p>
+            <h4>Clear all data</h4>
+            <p><strong>Warning:</strong> This removes all products, bills, activity, and resets your password to the default. Use only if you want to start fresh.</p>
+          </div>
+        </details>
+
+        <details class="help-section">
+          <summary class="help-section-title"><i class="fas fa-lightbulb"></i> Tips</summary>
+          <div class="help-content">
+            <ul>
+              <li>All data is stored on <strong>this device only</strong> (browser storage). If you clear browser data, your products and bills will be lost.</li>
+              <li>Use <strong>"Upload Photo"</strong> to add product images directly from your phone camera or gallery — no need to find a URL.</li>
+              <li>Tap the <strong>?</strong> button in the top bar anytime to open this guide.</li>
+              <li>Log out when you're done to keep your panel secure.</li>
+            </ul>
+          </div>
+        </details>
+
       </div>
     </div>
   </div>

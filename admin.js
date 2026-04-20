@@ -441,11 +441,88 @@
     }
   }
 
+  /* ---------- Help ---------- */
+  qs("#headerHelpBtn")?.addEventListener("click", () => openModal("helpModal"));
+
   qs("#dashAddProduct")?.addEventListener("click", () => {
     switchTab("products");
     openProductModal(null);
   });
   qs("#dashNewBill")?.addEventListener("click", () => openBillModal(null));
+
+  /* ---------- Image Upload ---------- */
+  let pendingImageDataUrl = "";
+
+  function resizeImage(file, maxDim, quality) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+      reader.onerror = function() { reject(new Error("File read failed")); };
+      reader.onload = function() {
+        var img = new Image();
+        img.onerror = function() { reject(new Error("Invalid image")); };
+        img.onload = function() {
+          var w = img.width;
+          var h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+            else { w = Math.round(w * maxDim / h); h = maxDim; }
+          }
+          var canvas = document.createElement("canvas");
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", quality || 0.7));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function updateImagePreview(src) {
+    var box = qs("#imagePreviewBox");
+    if (!box) return;
+    if (src && src.trim()) {
+      box.innerHTML = '<img src="' + escapeHtml(src) + '" alt="Preview" />';
+    } else {
+      box.innerHTML = '<i class="fas fa-image" aria-hidden="true"></i><span>No image</span>';
+    }
+  }
+
+  qs("#productImageFile")?.addEventListener("change", async function(e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      showToast("Image too large (max 10 MB).", "error");
+      e.target.value = "";
+      return;
+    }
+    try {
+      var dataUrl = await resizeImage(file, 400, 0.7);
+      pendingImageDataUrl = dataUrl;
+      qs("#productImageUrl").value = "";
+      updateImagePreview(dataUrl);
+      showToast("Photo added.", "success");
+    } catch (err) {
+      showToast("Could not read image.", "error");
+    }
+    e.target.value = "";
+  });
+
+  qs("#productImageUrl")?.addEventListener("input", function() {
+    var val = qs("#productImageUrl").value.trim();
+    if (val) {
+      pendingImageDataUrl = "";
+      updateImagePreview(val);
+    }
+  });
+
+  qs("#removeProductImage")?.addEventListener("click", function() {
+    pendingImageDataUrl = "";
+    qs("#productImageUrl").value = "";
+    updateImagePreview("");
+    showToast("Image removed.", "success");
+  });
 
   /* ---------- Products ---------- */
   let productFilter = "all";
@@ -579,6 +656,7 @@
     if (form) form.reset();
     const hid = qs("#productId");
     if (hid) hid.value = "";
+    pendingImageDataUrl = "";
     if (id) {
       const p = getProducts().find((x) => x.id === id);
       if (!p) return;
@@ -587,7 +665,13 @@
       qs("#productCategory").value = p.category || "thresher";
       qs("#productPrice").value = p.price ?? "";
       qs("#productOriginalPrice").value = p.originalPrice ?? "";
-      qs("#productImageUrl").value = p.imageUrl || "";
+      var imgSrc = p.imageUrl || "";
+      if (imgSrc && imgSrc.startsWith("data:")) {
+        pendingImageDataUrl = imgSrc;
+        qs("#productImageUrl").value = "";
+      } else {
+        qs("#productImageUrl").value = imgSrc;
+      }
       qs("#productDescription").value = p.description || "";
       qs("#productFeatures").value = Array.isArray(p.features)
         ? p.features.join(", ")
@@ -596,9 +680,11 @@
       qs("#productBadgeText").value = p.badgeText || "";
       qs("#productStockQty").value = p.stockQty ?? 0;
       qs("#productInStock").checked = !!p.inStock;
+      updateImagePreview(imgSrc);
     } else {
       qs("#productInStock").checked = true;
       qs("#productStockQty").value = 0;
+      updateImagePreview("");
     }
     openModal("productModal");
   }
@@ -618,7 +704,7 @@
       category: qs("#productCategory").value,
       price: parseFloat(qs("#productPrice").value) || 0,
       originalPrice: parseFloat(qs("#productOriginalPrice").value) || 0,
-      imageUrl: qs("#productImageUrl").value.trim(),
+      imageUrl: pendingImageDataUrl || qs("#productImageUrl").value.trim(),
       description: qs("#productDescription").value.trim(),
       features: qs("#productFeatures").value
         .split(",")
