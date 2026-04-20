@@ -341,20 +341,34 @@
       showVisitorError(true);
       return;
     }
-    const url = "https://" + encodeURIComponent(code) + ".goatcounter.com/counter/" + encodeURIComponent("/") + ".json";
-    try {
-      const resp = await fetch(url);
-      if (!resp.ok) throw new Error("HTTP " + resp.status);
-      const data = await resp.json();
-      const totalEl = qs("#statTotalVisits");
-      const uniqueEl = qs("#statUniqueVisitors");
-      if (totalEl) totalEl.textContent = data.count || "0";
-      if (uniqueEl) uniqueEl.textContent = data.count_unique || "0";
-      showVisitorError(false);
-    } catch (e) {
-      console.warn("GoatCounter fetch failed:", e);
-      showVisitorError(true);
+    const base = "https://" + code + ".goatcounter.com/counter/";
+    const paths = [
+      "/mahesh-company-website/",
+      "/mahesh-company-website/index.html",
+      "/"
+    ];
+    let found = false;
+    let totalCount = 0;
+    let uniqueCount = 0;
+    for (const path of paths) {
+      try {
+        const resp = await fetch(base + encodeURIComponent(path) + ".json");
+        if (!resp.ok) continue;
+        const data = await resp.json();
+        const c = parseInt(String(data.count).replace(/,/g, ""), 10) || 0;
+        const u = parseInt(String(data.count_unique).replace(/,/g, ""), 10) || 0;
+        if (c > totalCount) totalCount = c;
+        if (u > uniqueCount) uniqueCount = u;
+        found = true;
+      } catch (e) {
+        continue;
+      }
     }
+    const totalEl = qs("#statTotalVisits");
+    const uniqueEl = qs("#statUniqueVisitors");
+    if (totalEl) totalEl.textContent = String(totalCount);
+    if (uniqueEl) uniqueEl.textContent = String(uniqueCount);
+    showVisitorError(!found);
   }
 
   function showVisitorError(show) {
