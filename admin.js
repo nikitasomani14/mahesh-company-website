@@ -410,22 +410,78 @@
       showVisitorError(true);
       return;
     }
-    const base = "https://" + code + ".goatcounter.com/counter/";
-    const paths = [
+    const token = localStorage.getItem(LS.GOATCOUNTER_TOKEN) || "";
+    var found = false;
+
+    if (token) {
+      found = await fetchVisitorStatsViaApi(code, token);
+    }
+    if (!found) {
+      found = await fetchVisitorStatsViaPublic(code);
+    }
+    showVisitorError(!found);
+  }
+
+  async function fetchVisitorStatsViaApi(code, token) {
+    try {
+      var headers = { "Authorization": "Bearer " + token };
+      var totalCount = 0;
+      var uniqueCount = 0;
+
+      var hitsResp = await fetch(
+        "https://" + code + ".goatcounter.com/api/v0/stats/hits",
+        { headers: headers }
+      );
+      if (hitsResp.ok) {
+        var hitsData = await hitsResp.json();
+        if (hitsData && Array.isArray(hitsData.hits)) {
+          hitsData.hits.forEach(function(h) {
+            totalCount += parseInt(String(h.count || 0), 10);
+          });
+        }
+        if (hitsData && typeof hitsData.total === "number") {
+          if (hitsData.total > totalCount) totalCount = hitsData.total;
+        }
+      }
+
+      var totalResp = await fetch(
+        "https://" + code + ".goatcounter.com/api/v0/stats/total",
+        { headers: headers }
+      );
+      if (totalResp.ok) {
+        var totData = await totalResp.json();
+        var apiTotal = parseInt(String(totData.total || 0), 10);
+        if (apiTotal > totalCount) totalCount = apiTotal;
+        uniqueCount = apiTotal;
+      }
+
+      var totalEl = qs("#statTotalVisits");
+      var uniqueEl = qs("#statUniqueVisitors");
+      if (totalEl) totalEl.textContent = String(totalCount);
+      if (uniqueEl) uniqueEl.textContent = String(uniqueCount);
+      return totalCount > 0 || uniqueCount > 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  async function fetchVisitorStatsViaPublic(code) {
+    var base = "https://" + code + ".goatcounter.com/counter/";
+    var paths = [
       "/mahesh-company-website/",
       "/mahesh-company-website/index.html",
       "/"
     ];
-    let found = false;
-    let totalCount = 0;
-    let uniqueCount = 0;
-    for (const path of paths) {
+    var found = false;
+    var totalCount = 0;
+    var uniqueCount = 0;
+    for (var i = 0; i < paths.length; i++) {
       try {
-        const resp = await fetch(base + encodeURIComponent(path) + ".json");
+        var resp = await fetch(base + encodeURIComponent(paths[i]) + ".json");
         if (!resp.ok) continue;
-        const data = await resp.json();
-        const c = parseInt(String(data.count).replace(/,/g, ""), 10) || 0;
-        const u = parseInt(String(data.count_unique).replace(/,/g, ""), 10) || 0;
+        var data = await resp.json();
+        var c = parseInt(String(data.count).replace(/,/g, ""), 10) || 0;
+        var u = parseInt(String(data.count_unique).replace(/,/g, ""), 10) || 0;
         if (c > totalCount) totalCount = c;
         if (u > uniqueCount) uniqueCount = u;
         found = true;
@@ -433,11 +489,11 @@
         continue;
       }
     }
-    const totalEl = qs("#statTotalVisits");
-    const uniqueEl = qs("#statUniqueVisitors");
+    var totalEl = qs("#statTotalVisits");
+    var uniqueEl = qs("#statUniqueVisitors");
     if (totalEl) totalEl.textContent = String(totalCount);
     if (uniqueEl) uniqueEl.textContent = String(uniqueCount);
-    showVisitorError(!found);
+    return found;
   }
 
   function showVisitorError(show) {
