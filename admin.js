@@ -15,7 +15,10 @@
     BILLS: "mc_bills",
     ACTIVITY: "mc_activity",
     BILL_COUNTER: "mc_bill_counter",
+    GOATCOUNTER_CODE: "mc_goatcounter_code",
   };
+
+  const DEFAULT_GC_CODE = "mahesh-company";
 
   const APP_VERSION = "1.0.0";
 
@@ -218,8 +221,10 @@
   async function bootMainApp() {
     await seedProductsFromJson();
     renderDashboard();
+    fetchVisitorStats();
     renderProducts();
     renderBills();
+    initGoatcounterSettings();
     switchTab("dashboard");
     qs("#appVersionInfo").textContent = "App version " + APP_VERSION;
   }
@@ -311,6 +316,38 @@
           .join("");
       }
     }
+  }
+
+  /* ---------- Visitor Stats (GoatCounter) ---------- */
+  function getGcCode() {
+    return localStorage.getItem(LS.GOATCOUNTER_CODE) || DEFAULT_GC_CODE;
+  }
+
+  async function fetchVisitorStats() {
+    const code = getGcCode();
+    if (!code) {
+      showVisitorError(true);
+      return;
+    }
+    const url = "https://" + encodeURIComponent(code) + ".goatcounter.com/counter/" + encodeURIComponent("/") + ".json";
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error("HTTP " + resp.status);
+      const data = await resp.json();
+      const totalEl = qs("#statTotalVisits");
+      const uniqueEl = qs("#statUniqueVisitors");
+      if (totalEl) totalEl.textContent = data.count || "0";
+      if (uniqueEl) uniqueEl.textContent = data.count_unique || "0";
+      showVisitorError(false);
+    } catch (e) {
+      console.warn("GoatCounter fetch failed:", e);
+      showVisitorError(true);
+    }
+  }
+
+  function showVisitorError(show) {
+    const el = qs("#visitorError");
+    if (el) el.classList.toggle("hidden", !show);
   }
 
   qs("#dashAddProduct")?.addEventListener("click", () => {
@@ -965,6 +1002,31 @@
     showToast("Password updated.", "success");
   });
 
+  /* ---------- GoatCounter Settings ---------- */
+  function initGoatcounterSettings() {
+    const code = getGcCode();
+    const hint = qs("#goatcounterHint");
+    const input = qs("#goatcounterCode");
+    if (hint) {
+      hint.textContent = code ? "Current: " + code + ".goatcounter.com" : "Not set.";
+    }
+    if (input) input.value = code || "";
+  }
+
+  qs("#goatcounterForm")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const code = (qs("#goatcounterCode").value || "").trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+    if (!code) {
+      showToast("Enter a valid site code.", "error");
+      return;
+    }
+    localStorage.setItem(LS.GOATCOUNTER_CODE, code);
+    initGoatcounterSettings();
+    fetchVisitorStats();
+    pushActivity("GoatCounter site code updated: " + code);
+    showToast("GoatCounter code saved.", "success");
+  });
+
   qs("#clearAllDataBtn")?.addEventListener("click", async () => {
     const ok = await confirmDialog(
       "Clear all data?",
@@ -978,6 +1040,7 @@
       LS.BILL_COUNTER,
       LS.PASSWORD_HASH,
       LS.LOGGED_IN,
+      LS.GOATCOUNTER_CODE,
     ].forEach((k) => localStorage.removeItem(k));
     initDefaultPasswordHash();
     showScreen("login");

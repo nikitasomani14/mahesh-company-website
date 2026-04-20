@@ -316,6 +316,37 @@ body.admin-body {
   color: var(--primary);
 }
 
+.section-subheading {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.stat-card--accent {
+  border-left: 4px solid var(--accent);
+}
+
+.visitor-error {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: #fff8e6;
+  border-radius: 8px;
+  border: 1px solid #f0e0a0;
+}
+
+.visitor-error p {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.visitor-error i {
+  color: #b58a00;
+  margin-right: 4px;
+}
+
 .panel {
   background: var(--surface);
   border-radius: var(--radius);

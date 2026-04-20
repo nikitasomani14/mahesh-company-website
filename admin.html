@@ -71,6 +71,21 @@
             <span class="stat-value" id="statLowStock">0</span>
           </article>
         </div>
+        <h3 class="section-subheading">Website Visitors</h3>
+        <div class="stats-row" id="visitorStats">
+          <article class="stat-card stat-card--accent">
+            <span class="stat-label">Total Visits</span>
+            <span class="stat-value" id="statTotalVisits">--</span>
+          </article>
+          <article class="stat-card stat-card--accent">
+            <span class="stat-label">Unique Visitors</span>
+            <span class="stat-value" id="statUniqueVisitors">--</span>
+          </article>
+        </div>
+        <div id="visitorError" class="visitor-error hidden">
+          <p class="muted"><i class="fas fa-exclamation-circle"></i> Could not load visitor stats. Check GoatCounter site code in Settings.</p>
+        </div>
+
         <div class="panel">
           <h3 class="panel-title">Recent activity</h3>
           <ul class="activity-log" id="activityLog"></ul>
@@ -128,6 +143,16 @@
             <label class="field-label" for="confirmPassword">Confirm new password</label>
             <input type="password" id="confirmPassword" class="input-control" autocomplete="new-password" />
             <button type="submit" class="btn btn-primary">Update password</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3 class="panel-title">GoatCounter Analytics</h3>
+          <p class="muted">Enter your GoatCounter site code to display visitor stats on the dashboard.</p>
+          <form id="goatcounterForm" class="stack-form">
+            <label class="field-label" for="goatcounterCode">Site code</label>
+            <input type="text" id="goatcounterCode" class="input-control" placeholder="e.g. mahesh-company" autocomplete="off" />
+            <p class="muted" id="goatcounterHint">Not set.</p>
+            <button type="submit" class="btn btn-primary">Save</button>
           </form>
         </div>
         <div class="panel danger-zone">
