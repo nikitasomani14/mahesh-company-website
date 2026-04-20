@@ -1,7 +1,3 @@
-/**
- * Mahesh & Company — Admin panel logic
- * Password default: SHA-256 of "atul@2026"
- */
 (function () {
   "use strict";
 
@@ -10,6 +6,7 @@
 
   const LS = {
     LOGGED_IN: "mc_admin_logged_in",
+    LOGIN_TIME: "mc_admin_login_time",
     PASSWORD_HASH: "mc_password_hash",
     PRODUCTS: "mc_products",
     BILLS: "mc_bills",
@@ -18,11 +15,15 @@
     GOATCOUNTER_CODE: "mc_goatcounter_code",
     GOATCOUNTER_TOKEN: "mc_goatcounter_token",
     ADMIN_OPENS: "mc_admin_opens",
+    LOGIN_ATTEMPTS: "mc_login_attempts",
+    LOCKOUT_UNTIL: "mc_lockout_until",
   };
 
   const DEFAULT_GC_CODE = "mahesh-company";
-
-  const APP_VERSION = "1.0.0";
+  const APP_VERSION = "1.1.0";
+  const MAX_LOGIN_ATTEMPTS = 5;
+  const LOCKOUT_DURATION_MS = 5 * 60 * 1000;
+  const SESSION_TIMEOUT_MS = 60 * 60 * 1000;
 
   /** @type {ReturnType<typeof qs>} */
   let pendingConfirmResolve = null;
@@ -197,6 +198,56 @@
     }
   }
 
+  /* ---------- Brute-force protection ---------- */
+  function getLoginAttempts() {
+    return parseInt(localStorage.getItem(LS.LOGIN_ATTEMPTS) || "0", 10);
+  }
+  function setLoginAttempts(n) {
+    localStorage.setItem(LS.LOGIN_ATTEMPTS, String(n));
+  }
+  function getLockoutUntil() {
+    return parseInt(localStorage.getItem(LS.LOCKOUT_UNTIL) || "0", 10);
+  }
+  function setLockoutUntil(ts) {
+    localStorage.setItem(LS.LOCKOUT_UNTIL, String(ts));
+  }
+  function isLockedOut() {
+    const until = getLockoutUntil();
+    if (!until) return false;
+    if (Date.now() < until) return true;
+    localStorage.removeItem(LS.LOCKOUT_UNTIL);
+    setLoginAttempts(0);
+    return false;
+  }
+  function getRemainingLockoutSeconds() {
+    const until = getLockoutUntil();
+    if (!until || Date.now() >= until) return 0;
+    return Math.ceil((until - Date.now()) / 1000);
+  }
+
+  /* ---------- Session timeout (auto-logout) ---------- */
+  let sessionCheckInterval = null;
+  function startSessionTimer() {
+    localStorage.setItem(LS.LOGIN_TIME, String(Date.now()));
+    clearInterval(sessionCheckInterval);
+    sessionCheckInterval = setInterval(checkSessionTimeout, 60000);
+  }
+  function refreshSessionTimer() {
+    if (isLoggedIn()) {
+      localStorage.setItem(LS.LOGIN_TIME, String(Date.now()));
+    }
+  }
+  function checkSessionTimeout() {
+    if (!isLoggedIn()) return;
+    const loginTime = parseInt(localStorage.getItem(LS.LOGIN_TIME) || "0", 10);
+    if (Date.now() - loginTime > SESSION_TIMEOUT_MS) {
+      logout();
+      showToast("Session expired. Please login again.", "error");
+    }
+  }
+  document.addEventListener("click", refreshSessionTimer);
+  document.addEventListener("keydown", refreshSessionTimer);
+
   /* ---------- Login ---------- */
   const loginForm = qs("#loginForm");
   const loginError = qs("#loginError");
@@ -205,13 +256,29 @@
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (loginError) loginError.textContent = "";
+      if (isLockedOut()) {
+        var secs = getRemainingLockoutSeconds();
+        if (loginError) loginError.textContent = "Too many failed attempts. Try again in " + secs + " seconds.";
+        return;
+      }
       const pw = (qs("#adminPassword") && qs("#adminPassword").value) || "";
       const hash = await sha256Hex(pw);
       if (hash !== getPasswordHash()) {
-        if (loginError) loginError.textContent = "Incorrect password.";
+        var attempts = getLoginAttempts() + 1;
+        setLoginAttempts(attempts);
+        if (attempts >= MAX_LOGIN_ATTEMPTS) {
+          setLockoutUntil(Date.now() + LOCKOUT_DURATION_MS);
+          if (loginError) loginError.textContent = "Account locked for 5 minutes due to too many failed attempts.";
+        } else {
+          var remaining = MAX_LOGIN_ATTEMPTS - attempts;
+          if (loginError) loginError.textContent = "Incorrect password. " + remaining + " attempt(s) remaining.";
+        }
         return;
       }
+      setLoginAttempts(0);
+      localStorage.removeItem(LS.LOCKOUT_UNTIL);
       setLoggedIn(true);
+      startSessionTimer();
       incrementAdminOpens();
       showScreen("main");
       bootMainApp();
@@ -1251,8 +1318,15 @@
   initDefaultPasswordHash();
 
   if (isLoggedIn()) {
-    showScreen("main");
-    bootMainApp();
+    var loginTime = parseInt(localStorage.getItem(LS.LOGIN_TIME) || "0", 10);
+    if (Date.now() - loginTime > SESSION_TIMEOUT_MS) {
+      setLoggedIn(false);
+      showScreen("login");
+    } else {
+      startSessionTimer();
+      showScreen("main");
+      bootMainApp();
+    }
   } else {
     showScreen("login");
   }

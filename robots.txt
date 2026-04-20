@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /admin.js
+Disallow: /admin-style.css
 
 Sitemap: https://nikitasomani14.github.io/mahesh-company-website/sitemap.xml

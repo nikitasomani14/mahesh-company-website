@@ -70,6 +70,15 @@ let currentSlide = 0;
 let slideInterval;
 let currentFilter = 'all';
 
+function escHtml(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // ============================
 // Initialize
 // ============================
@@ -250,46 +259,46 @@ function renderProducts(filter = 'all', searchTerm = '') {
         const stock = product.inStock !== false;
 
         return `
-            <div class="product-card" data-category="${product.category}">
-                <button type="button" class="product-wishlist-btn ${inWish ? 'active' : ''}" onclick="event.stopPropagation(); toggleWishlist(${product.id})" aria-label="Wishlist" title="Wishlist">
+            <div class="product-card" data-category="${escHtml(product.category)}">
+                <button type="button" class="product-wishlist-btn ${inWish ? 'active' : ''}" onclick="event.stopPropagation(); toggleWishlist(${parseInt(product.id, 10)})" aria-label="Wishlist" title="Wishlist">
                     <i class="fas fa-heart"></i>
                 </button>
                 <div class="product-badges">
                     ${!stock ? `<span class="product-badge badge-oos">${typeof t === 'function' ? t('out_of_stock') : 'Out of Stock'}</span>` : ''}
-                    ${product.badge ? `<span class="product-badge badge-${product.badge}">${product.badgeText}</span>` : ''}
+                    ${product.badge ? `<span class="product-badge badge-${escHtml(product.badge)}">${escHtml(product.badgeText)}</span>` : ''}
                     ${discount >= 10 ? `<span class="product-badge badge-sale">${discount}% OFF</span>` : ''}
                 </div>
                 <div class="product-image">
-                    <img src="${product.image}" alt="${product.name}" loading="lazy">
+                    <img src="${escHtml(product.image)}" alt="${escHtml(product.name)}" loading="lazy">
                     <div class="product-actions-overlay">
-                        <button type="button" class="action-btn" onclick="quickView(${product.id})" title="Quick View">
+                        <button type="button" class="action-btn" onclick="quickView(${parseInt(product.id, 10)})" title="Quick View">
                             <i class="fas fa-eye"></i>
                         </button>
-                        ${stock ? `<button type="button" class="action-btn" onclick="addToCart(${product.id})" title="Add to Cart">
+                        ${stock ? `<button type="button" class="action-btn" onclick="addToCart(${parseInt(product.id, 10)})" title="Add to Cart">
                             <i class="fas fa-cart-plus"></i>
                         </button>` : ''}
-                        <button type="button" class="action-btn" onclick="shareProduct(${product.id})" title="Share on WhatsApp">
+                        <button type="button" class="action-btn" onclick="shareProduct(${parseInt(product.id, 10)})" title="Share on WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </button>
                     </div>
                 </div>
                 <div class="product-info">
-                    <div class="product-category-tag">${getCategoryName(product.category)}</div>
-                    <h3 class="product-name">${product.name}</h3>
+                    <div class="product-category-tag">${escHtml(getCategoryName(product.category))}</div>
+                    <h3 class="product-name">${escHtml(product.name)}</h3>
                     <div class="product-rating">
                         ${generateStars(product.rating)}
-                        <span>(${product.reviews} reviews)</span>
+                        <span>(${parseInt(product.reviews, 10)} reviews)</span>
                     </div>
                     <div class="product-price">
                         <span class="current-price">${formatPrice(product.price)}</span>
                         <span class="original-price">${formatPrice(product.originalPrice)}</span>
                     </div>
                     ${stock ? `
-                    <button type="button" class="product-cart-btn ${inCart ? 'added' : ''}" onclick="addToCart(${product.id})">
+                    <button type="button" class="product-cart-btn ${inCart ? 'added' : ''}" onclick="addToCart(${parseInt(product.id, 10)})">
                         <i class="fas ${inCart ? 'fa-check' : 'fa-shopping-cart'}"></i>
                         ${inCart ? `In Cart (${inCart.qty})` : (typeof t === 'function' ? t('add_to_cart') : 'Add to Cart')}
                     </button>` : `
-                    <button type="button" class="product-cart-btn notify-btn" onclick="notifyStockWhatsApp(${product.id})">
+                    <button type="button" class="product-cart-btn notify-btn" onclick="notifyStockWhatsApp(${parseInt(product.id, 10)})">
                         <i class="fab fa-whatsapp"></i> ${typeof t === 'function' ? t('notify_me') : 'Notify Me'}
                     </button>`}
                 </div>
@@ -416,12 +425,12 @@ function renderWishlistSidebar() {
         if (!p) return '';
         return `
             <div class="wishlist-item">
-                <img src="${p.image}" alt="">
+                <img src="${escHtml(p.image)}" alt="">
                 <div class="wishlist-item-info">
-                    <div class="wishlist-item-name">${p.name}</div>
+                    <div class="wishlist-item-name">${escHtml(p.name)}</div>
                     <div class="wishlist-item-price">${formatPrice(p.price)}</div>
                 </div>
-                <button type="button" class="btn btn-sm" onclick="quickView(${p.id}); toggleWishlistSidebar();">View</button>
+                <button type="button" class="btn btn-sm" onclick="quickView(${parseInt(p.id, 10)}); toggleWishlistSidebar();">View</button>
             </div>`;
     }).join('');
 }
@@ -470,9 +479,9 @@ function renderRecentlyViewed() {
     row.innerHTML = ids.map(id => {
         const p = products.find(x => x.id === id);
         return `
-            <div class="recent-item" onclick="quickView(${p.id})">
-                <img src="${p.image}" alt="">
-                <div class="recent-item-info">${p.name}</div>
+            <div class="recent-item" onclick="quickView(${parseInt(p.id, 10)})">
+                <img src="${escHtml(p.image)}" alt="">
+                <div class="recent-item-info">${escHtml(p.name)}</div>
             </div>`;
     }).join('');
 }
@@ -649,18 +658,18 @@ function updateCartUI() {
         itemsEl.innerHTML = cart.map(item => `
             <div class="cart-item">
                 <div class="cart-item-img">
-                    <img src="${item.image}" alt="${item.name}">
+                    <img src="${escHtml(item.image)}" alt="${escHtml(item.name)}">
                 </div>
                 <div class="cart-item-details">
-                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-name">${escHtml(item.name)}</div>
                     <div class="cart-item-price">${formatPrice(item.price)}</div>
                     <div class="quantity-controls">
-                        <button type="button" class="qty-btn" onclick="updateQuantity(${item.id}, -1)">−</button>
+                        <button type="button" class="qty-btn" onclick="updateQuantity(${parseInt(item.id, 10)}, -1)">−</button>
                         <span class="qty-value">${item.qty}</span>
-                        <button type="button" class="qty-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                        <button type="button" class="qty-btn" onclick="updateQuantity(${parseInt(item.id, 10)}, 1)">+</button>
                     </div>
                 </div>
-                <button type="button" class="cart-item-remove" onclick="removeFromCart(${item.id})">
+                <button type="button" class="cart-item-remove" onclick="removeFromCart(${parseInt(item.id, 10)})">
                     <i class="fas fa-trash-alt"></i>
                 </button>
             </div>
@@ -694,7 +703,7 @@ function showCheckout() {
         <h4 style="margin-bottom: 12px; color: var(--primary);">Order Summary</h4>
         ${cart.map(item => `
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem;">
-                <span>${item.name} × ${item.qty}</span>
+                <span>${escHtml(item.name)} × ${parseInt(item.qty, 10)}</span>
                 <strong>${formatPrice(item.price * item.qty)}</strong>
             </div>
         `).join('')}
@@ -776,12 +785,12 @@ _Order received via Mahesh & Company Website_`;
 
     const details = document.getElementById('orderDetails');
     details.innerHTML = `
-        <p><strong>Order ID:</strong> ${orderNumber}</p>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Order ID:</strong> ${escHtml(orderNumber)}</p>
+        <p><strong>Name:</strong> ${escHtml(name)}</p>
+        <p><strong>Phone:</strong> ${escHtml(phone)}</p>
         <p><strong>Total:</strong> ${formatPrice(totalPrice)}</p>
-        <p><strong>Payment:</strong> ${paymentText}</p>
-        <p><strong>Delivery:</strong> ${address}</p>
+        <p><strong>Payment:</strong> ${escHtml(paymentText)}</p>
+        <p><strong>Delivery:</strong> ${escHtml(address)}</p>
     `;
 
     const trackBtn = document.querySelector('#successModal .btn-outline');
@@ -825,24 +834,24 @@ function quickView(productId) {
 
     content.innerHTML = `
         <div class="quickview-image quickview-image-zoom-wrap">
-            <img src="${product.image}" alt="${product.name}" draggable="false">
+            <img src="${escHtml(product.image)}" alt="${escHtml(product.name)}" draggable="false">
             <span class="quickview-zoom-hint">${typeof t === 'function' ? t('zoom_hint') : 'Hover to zoom · Pinch on mobile'}</span>
         </div>
         <div class="quickview-details">
-            <div class="product-category-tag">${getCategoryName(product.category)}</div>
-            <h2>${product.name}</h2>
+            <div class="product-category-tag">${escHtml(getCategoryName(product.category))}</div>
+            <h2>${escHtml(product.name)}</h2>
             <div class="product-rating">
                 ${generateStars(product.rating)}
-                <span>(${product.reviews} reviews)</span>
+                <span>(${parseInt(product.reviews, 10)} reviews)</span>
             </div>
             <div class="product-price">
                 <span class="current-price">${formatPrice(product.price)}</span>
                 <span class="original-price">${formatPrice(product.originalPrice)}</span>
                 <span class="discount-percent">${discount}% OFF</span>
             </div>
-            <p class="quickview-description">${product.description}</p>
+            <p class="quickview-description">${escHtml(product.description)}</p>
             <ul class="quickview-features">
-                ${product.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}
+                ${product.features.map(f => `<li><i class="fas fa-check-circle"></i> ${escHtml(f)}</li>`).join('')}
             </ul>
             <div class="delivery-estimator quickview-delivery">
                 <label class="delivery-est-desc" for="qvPin">${typeof t === 'function' ? t('delivery_est_short') : 'PIN code'}</label>
@@ -863,7 +872,7 @@ function quickView(productId) {
                 <i class="fas fa-calculator"></i> ${typeof t === 'function' ? t('emi_calc_link') : 'EMI Calculator'}
             </button>
             <div style="margin-top: 12px; text-align: center;">
-                <a href="https://wa.me/917297047681?text=${encodeURIComponent(`Hi! I'm interested in ${product.name} (${formatPrice(product.price)})`)}" 
+                <a href="https://wa.me/917297047681?text=${encodeURIComponent('Hi! I\'m interested in ' + product.name + ' (' + formatPrice(product.price) + ')')}" 
                    class="btn btn-outline" style="border-color: #25d366; color: #25d366;" target="_blank" rel="noopener noreferrer">
                     <i class="fab fa-whatsapp"></i> Enquire on WhatsApp
                 </a>
