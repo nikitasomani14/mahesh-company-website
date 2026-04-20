@@ -16,6 +16,7 @@
     ACTIVITY: "mc_activity",
     BILL_COUNTER: "mc_bill_counter",
     GOATCOUNTER_CODE: "mc_goatcounter_code",
+    GOATCOUNTER_TOKEN: "mc_goatcounter_token",
     ADMIN_OPENS: "mc_admin_opens",
   };
 
@@ -233,6 +234,7 @@
     await seedProductsFromJson();
     renderDashboard();
     fetchVisitorStats();
+    fetchDetailedAnalytics();
     renderProducts();
     renderBills();
     initGoatcounterSettings();
@@ -374,6 +376,69 @@
   function showVisitorError(show) {
     const el = qs("#visitorError");
     if (el) el.classList.toggle("hidden", !show);
+  }
+
+  async function fetchDetailedAnalytics() {
+    const code = getGcCode();
+    const token = localStorage.getItem(LS.GOATCOUNTER_TOKEN) || "";
+    const detailsWrap = qs("#analyticsDetails");
+    if (!code || !token || !detailsWrap) {
+      if (detailsWrap) detailsWrap.classList.add("hidden");
+      return;
+    }
+    const apiBase = "https://" + code + ".goatcounter.com/api/v0/stats/";
+    const headers = { "Authorization": "Bearer " + token };
+    detailsWrap.classList.remove("hidden");
+
+    const endpoints = [
+      { key: "detailLocations", path: "locations" },
+      { key: "detailSystems", path: "systems" },
+      { key: "detailBrowsers", path: "browsers" },
+      { key: "detailReferrers", path: "toprefs" },
+    ];
+
+    for (const ep of endpoints) {
+      const listEl = qs("#" + ep.key);
+      if (!listEl) continue;
+      try {
+        const resp = await fetch(apiBase + ep.path, { headers });
+        if (!resp.ok) {
+          listEl.innerHTML = '<li class="muted">Could not load.</li>';
+          continue;
+        }
+        const data = await resp.json();
+        let items = [];
+        if (ep.path === "toprefs") {
+          items = Array.isArray(data) ? data : (data.rows || data.refs || []);
+        } else {
+          items = Array.isArray(data) ? data : (data.stats || data.rows || []);
+        }
+        if (ep.path === "toprefs") {
+          items = items.slice(0, 8).map(function(r) {
+            return { name: r.name || r.ref || "Direct", count: r.count || 0 };
+          });
+        } else {
+          items = items.slice(0, 8).map(function(r) {
+            return { name: r.name || r.id || "Unknown", count: r.count || 0 };
+          });
+        }
+        if (!items.length) {
+          listEl.innerHTML = '<li class="muted">No data yet.</li>';
+          continue;
+        }
+        const maxCount = Math.max(1, items[0].count || 1);
+        listEl.innerHTML = items.map(function(item) {
+          const pct = Math.round((item.count / maxCount) * 100);
+          return '<li>' +
+            '<span class="detail-name">' + escapeHtml(item.name) + '</span>' +
+            '<div class="detail-bar-wrap"><div class="detail-bar" style="width:' + pct + '%"></div></div>' +
+            '<span class="detail-count">' + escapeHtml(String(item.count)) + '</span>' +
+            '</li>';
+        }).join("");
+      } catch (e) {
+        listEl.innerHTML = '<li class="muted">Error loading data.</li>';
+      }
+    }
   }
 
   qs("#dashAddProduct")?.addEventListener("click", () => {
@@ -1031,12 +1096,19 @@
   /* ---------- GoatCounter Settings ---------- */
   function initGoatcounterSettings() {
     const code = getGcCode();
+    const token = localStorage.getItem(LS.GOATCOUNTER_TOKEN) || "";
     const hint = qs("#goatcounterHint");
+    const tokenHint = qs("#goatcounterTokenHint");
     const input = qs("#goatcounterCode");
+    const tokenInput = qs("#goatcounterToken");
     if (hint) {
       hint.textContent = code ? "Current: " + code + ".goatcounter.com" : "Not set.";
     }
     if (input) input.value = code || "";
+    if (tokenHint) {
+      tokenHint.textContent = token ? "Token saved (last 4: ..." + token.slice(-4) + ")" : "No token saved.";
+    }
+    if (tokenInput) tokenInput.value = "";
   }
 
   qs("#goatcounterForm")?.addEventListener("submit", (e) => {
@@ -1047,10 +1119,24 @@
       return;
     }
     localStorage.setItem(LS.GOATCOUNTER_CODE, code);
+    const tokenVal = (qs("#goatcounterToken").value || "").trim();
+    if (tokenVal) {
+      localStorage.setItem(LS.GOATCOUNTER_TOKEN, tokenVal);
+    }
     initGoatcounterSettings();
     fetchVisitorStats();
-    pushActivity("GoatCounter site code updated: " + code);
-    showToast("GoatCounter code saved.", "success");
+    fetchDetailedAnalytics();
+    pushActivity("GoatCounter settings updated.");
+    showToast("GoatCounter settings saved.", "success");
+  });
+
+  qs("#toggleGcToken")?.addEventListener("click", () => {
+    const inp = qs("#goatcounterToken");
+    if (!inp) return;
+    const show = inp.type === "password";
+    inp.type = show ? "text" : "password";
+    const i = qs("#toggleGcToken i");
+    if (i) i.className = show ? "fas fa-eye-slash" : "fas fa-eye";
   });
 
   qs("#clearAllDataBtn")?.addEventListener("click", async () => {
@@ -1067,6 +1153,7 @@
       LS.PASSWORD_HASH,
       LS.LOGGED_IN,
       LS.GOATCOUNTER_CODE,
+      LS.GOATCOUNTER_TOKEN,
       LS.ADMIN_OPENS,
     ].forEach((k) => localStorage.removeItem(k));
     initDefaultPasswordHash();

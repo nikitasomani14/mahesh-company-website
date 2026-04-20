@@ -90,6 +90,25 @@
           <p class="muted"><i class="fas fa-exclamation-circle"></i> Could not load visitor stats. Check GoatCounter site code in Settings.</p>
         </div>
 
+        <div id="analyticsDetails" class="hidden">
+          <div class="panel">
+            <h3 class="panel-title"><i class="fas fa-location-dot"></i> Top Locations</h3>
+            <ul class="detail-list" id="detailLocations"></ul>
+          </div>
+          <div class="panel">
+            <h3 class="panel-title"><i class="fas fa-mobile-screen"></i> Devices / OS</h3>
+            <ul class="detail-list" id="detailSystems"></ul>
+          </div>
+          <div class="panel">
+            <h3 class="panel-title"><i class="fas fa-globe"></i> Top Browsers</h3>
+            <ul class="detail-list" id="detailBrowsers"></ul>
+          </div>
+          <div class="panel">
+            <h3 class="panel-title"><i class="fas fa-arrow-right-to-bracket"></i> Top Referrers</h3>
+            <ul class="detail-list" id="detailReferrers"></ul>
+          </div>
+        </div>
+
         <div class="panel">
           <h3 class="panel-title">Recent activity</h3>
           <ul class="activity-log" id="activityLog"></ul>
@@ -151,11 +170,19 @@
         </div>
         <div class="panel">
           <h3 class="panel-title">GoatCounter Analytics</h3>
-          <p class="muted">Enter your GoatCounter site code to display visitor stats on the dashboard.</p>
+          <p class="muted">Site code and API token for visitor analytics on the dashboard.</p>
           <form id="goatcounterForm" class="stack-form">
             <label class="field-label" for="goatcounterCode">Site code</label>
             <input type="text" id="goatcounterCode" class="input-control" placeholder="e.g. mahesh-company" autocomplete="off" />
             <p class="muted" id="goatcounterHint">Not set.</p>
+            <label class="field-label" for="goatcounterToken">API token (for locations, devices, browsers)</label>
+            <div class="password-field">
+              <input type="password" id="goatcounterToken" class="input-control" placeholder="gcak_…" autocomplete="off" />
+              <button type="button" id="toggleGcToken" class="icon-btn eye-toggle" aria-label="Show token">
+                <i class="fas fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="muted" id="goatcounterTokenHint">No token saved.</p>
             <button type="submit" class="btn btn-primary">Save</button>
           </form>
         </div>
