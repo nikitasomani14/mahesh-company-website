@@ -1,378 +1,71 @@
 // ============================
-// Product Data
+// Product Data (loaded from data/products.json, with inline fallback)
 // ============================
-const products = [
-    {
-        id: 1,
-        name: "Sonalika Multi-Crop Thresher 40HP",
-        category: "thresher",
-        price: 185000,
-        originalPrice: 220000,
-        image: "https://5.imimg.com/data5/SELLER/Default/2023/1/MH/PA/LT/132924005/sonalika-thresher-machine-1000x1000.jpg",
-        rating: 4.8,
-        reviews: 124,
-        badge: "auth",
-        badgeText: "Authorized",
-        inStock: true,
-        description: "Heavy-duty multi-crop thresher by Sonalika. Capacity 1200kg with triple blower design. Suitable for wheat, paddy, maize, and more.",
-        features: ["40 HP Power Requirement", "1200 kg Capacity", "Triple Blower Design", "Mild Steel Body", "1-Year Warranty"]
-    },
-    {
-        id: 2,
-        name: "Sonalika Maize Sheller 64\" Dehusker",
-        category: "thresher",
-        price: 230000,
-        originalPrice: 275000,
-        image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=500&q=80",
-        rating: 4.7,
-        reviews: 89,
-        badge: "auth",
-        badgeText: "Authorized",
-        inStock: true,
-        description: "64-inch drum maize sheller with skin dehusker. Double wheel, new model with enhanced performance.",
-        features: ["64\" Drum Size", "35+ HP Required", "640 RPM Speed", "Double Wheel", "Skin Dehusker"]
-    },
-    {
-        id: 3,
-        name: "Sonalika Paddy Thresher - Tractor Op.",
-        category: "thresher",
-        price: 165000,
-        originalPrice: 195000,
-        image: "https://images.unsplash.com/photo-1589923188651-268a9765e432?w=500&q=80",
-        rating: 4.6,
-        reviews: 67,
-        badge: "sale",
-        badgeText: "15% OFF",
-        inStock: true,
-        description: "Tractor-operated paddy thresher with high output. Perfect for rice harvesting season.",
-        features: ["Tractor Operated", "High Output Design", "Low Grain Loss", "Easy Maintenance", "All-Season Use"]
-    },
-    {
-        id: 4,
-        name: "Honda GX200 Engine 6.5 HP",
-        category: "engine",
-        price: 28500,
-        originalPrice: 32000,
-        image: "honda-engines.png",
-        rating: 4.9,
-        reviews: 256,
-        badge: "auth",
-        badgeText: "Honda Dealer",
-        inStock: true,
-        description: "Original Honda GX200 engine. Air-cooled, 4-stroke OHV with recoil start. Ideal for water pumps and agriculture. Available models: GX80, GX160, GX200.",
-        features: ["6.5 HP Power", "Air-Cooled 4-Stroke", "3.1L Fuel Tank", "Low Oil Alert", "3-Year Warranty"]
-    },
-    {
-        id: 5,
-        name: "Honda GX390 Engine 13 HP",
-        category: "engine",
-        price: 45000,
-        originalPrice: 52000,
-        image: "honda-engines.png",
-        rating: 4.8,
-        reviews: 178,
-        badge: "hot",
-        badgeText: "Best Seller",
-        inStock: true,
-        description: "Powerful Honda GX390 engine for heavy-duty applications. Perfect for large water pumps and industrial equipment.",
-        features: ["13 HP Power", "Horizontal Crankshaft", "OHV 4-Stroke", "Electric Start Option", "Commercial Grade"]
-    },
-    {
-        id: 6,
-        name: "Oil Bearing Engine 10 HP Diesel",
-        category: "engine",
-        price: 35000,
-        originalPrice: 42000,
-        image: "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=500&q=80",
-        rating: 4.5,
-        reviews: 92,
-        badge: "sale",
-        badgeText: "20% OFF",
-        inStock: true,
-        description: "Heavy-duty oil bearing diesel engine. Fuel efficient and long-lasting. Ideal for threshers and water pumps.",
-        features: ["10 HP Diesel", "Oil Bearing Design", "Fuel Efficient", "Low Vibration", "Easy Maintenance"]
-    },
-    {
-        id: 7,
-        name: "JCB 3DX Backhoe Rental - Per Hour",
-        category: "jcb",
-        price: 1200,
-        originalPrice: 1500,
-        image: "https://i.pinimg.com/originals/a1/22/45/a12245c7c9a34052eaebf34a9e3ce1ef.jpg",
-        rating: 4.7,
-        reviews: 340,
-        badge: "hot",
-        badgeText: "Popular",
-        inStock: true,
-        description: "JCB 3DX backhoe loader available for rent. Expert operators provided. Minimum 4 hours booking.",
-        features: ["Expert Operator Included", "Min 4 Hours Booking", "Land Leveling", "Digging & Loading", "Construction Work"]
-    },
-    {
-        id: 8,
-        name: "JCB Land Leveling - Per Bigha",
-        category: "jcb",
-        price: 3500,
-        originalPrice: 4500,
-        image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=500&q=80",
-        rating: 4.6,
-        reviews: 156,
-        badge: "sale",
-        badgeText: "Special Rate",
-        inStock: true,
-        description: "Complete farm land leveling service using JCB. Per bigha pricing with professional operators.",
-        features: ["Professional Operators", "Per Bigha Pricing", "Farm Land Leveling", "Precision Work", "Free Site Visit"]
-    },
-    {
-        id: 9,
-        name: "Cultivator Blade Set (12 Pcs)",
-        category: "parts",
-        price: 2800,
-        originalPrice: 3200,
-        image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500&q=80",
-        rating: 4.4,
-        reviews: 201,
-        badge: "new",
-        badgeText: "New Stock",
-        inStock: true,
-        description: "High-quality cultivator blade set. Hardened steel for long life. Compatible with all major tractor models.",
-        features: ["12 Pieces Set", "Hardened Steel", "Universal Fit", "Long Lasting", "Rust Resistant"]
-    },
-    {
-        id: 10,
-        name: "Thresher V-Belt Set (Premium)",
-        category: "parts",
-        price: 1500,
-        originalPrice: 1800,
-        image: "https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=500&q=80",
-        rating: 4.3,
-        reviews: 145,
-        badge: null,
-        badgeText: null,
-        inStock: false,
-        description: "Premium quality V-belt set for thresher machines. Long-lasting, heat resistant. Compatible with Sonalika threshers.",
-        features: ["Premium Quality", "Heat Resistant", "Sonalika Compatible", "Long Life", "Set of 4 Belts"]
-    },
-    {
-        id: 11,
-        name: "Tractor Rotavator Blades (Set of 42)",
-        category: "parts",
-        price: 4500,
-        originalPrice: 5500,
-        image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=500&q=80",
-        rating: 4.6,
-        reviews: 88,
-        badge: "sale",
-        badgeText: "18% OFF",
-        inStock: true,
-        description: "Heavy-duty rotavator blades for tractor rotavators. Forged steel construction for maximum durability.",
-        features: ["42 Pieces", "Forged Steel", "Universal Mount", "High Durability", "All Soil Types"]
-    },
-    {
-        id: 12,
-        name: "Bearing Set for Thresher (Full Kit)",
-        category: "parts",
-        price: 3200,
-        originalPrice: 3800,
-        image: "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?w=500&q=80",
-        rating: 4.5,
-        reviews: 112,
-        badge: null,
-        badgeText: null,
-        inStock: true,
-        description: "Complete bearing set for thresher machines. Includes main shaft, drum, and auxiliary bearings.",
-        features: ["Complete Kit", "Premium Quality", "All Major Parts", "Dust Sealed", "Easy Installation"]
-    },
-    {
-        id: 13,
-        name: "Heavy Duty Khurpi (Weeding Tool)",
-        category: "tools",
-        price: 350,
-        originalPrice: 450,
-        image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=500&q=80",
-        rating: 4.2,
-        reviews: 320,
-        badge: null,
-        badgeText: null,
-        inStock: false,
-        description: "Professional grade khurpi for weeding and garden work. Stainless steel blade with wooden handle.",
-        features: ["Stainless Steel", "Wooden Handle", "Ergonomic Grip", "Multi-Purpose", "Light Weight"]
-    },
-    {
-        id: 14,
-        name: "Spraying Machine 16L (Battery)",
-        category: "tools",
-        price: 3500,
-        originalPrice: 4200,
-        image: "https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?w=500&q=80",
-        rating: 4.7,
-        reviews: 198,
-        badge: "hot",
-        badgeText: "Best Seller",
-        inStock: true,
-        description: "Battery-operated 16-litre spraying machine. Rechargeable with adjustable nozzle. Perfect for pesticide spraying.",
-        features: ["16 Litre Capacity", "Battery Operated", "Adjustable Nozzle", "6-Hour Battery", "Backpack Design"]
-    },
-    {
-        id: 15,
-        name: "Garden Tool Set (8 Pieces)",
-        category: "tools",
-        price: 1800,
-        originalPrice: 2400,
-        image: "https://images.unsplash.com/photo-1617576683096-00fc8eecb3af?w=500&q=80",
-        rating: 4.4,
-        reviews: 156,
-        badge: "new",
-        badgeText: "New Arrival",
-        inStock: true,
-        description: "Complete garden tool set with 8 essential tools. Includes trowel, cultivator, pruner, and more.",
-        features: ["8 Piece Set", "Carbon Steel", "Rubber Grip", "Carrying Bag", "Gift Quality"]
-    },
-    {
-        id: 16,
-        name: "Honda Water Pump 3\" (GX200)",
-        category: "pump",
-        price: 32000,
-        originalPrice: 38000,
-        image: "honda-engines.png",
-        rating: 4.8,
-        reviews: 134,
-        badge: "auth",
-        badgeText: "Honda Dealer",
-        inStock: true,
-        description: "Honda-powered 3-inch water pump. 950L/min max flow rate. Cast aluminum body with cast iron impeller.",
-        features: ["950L/min Flow", "25m Total Head", "GX200 Engine", "Cast Iron Impeller", "Self-Priming"]
-    },
-    {
-        id: 17,
-        name: "Submersible Pump 1.5HP",
-        category: "pump",
-        price: 8500,
-        originalPrice: 10000,
-        image: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=500&q=80",
-        rating: 4.5,
-        reviews: 89,
-        badge: "sale",
-        badgeText: "15% OFF",
-        inStock: true,
-        description: "High-quality 1.5HP submersible pump for borewell and open well. Copper winding motor for long life.",
-        features: ["1.5 HP Motor", "Copper Winding", "Borewell Compatible", "60m Head", "Thermal Protection"]
-    },
-    {
-        id: 18,
-        name: "Drip Irrigation Kit (1 Acre)",
-        category: "pump",
-        price: 12000,
-        originalPrice: 15000,
-        image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&q=80",
-        rating: 4.6,
-        reviews: 67,
-        badge: "new",
-        badgeText: "Eco-Friendly",
-        inStock: true,
-        description: "Complete drip irrigation kit for 1 acre. Saves 60% water. Easy installation with all fittings included.",
-        features: ["1 Acre Coverage", "60% Water Saving", "All Fittings Included", "UV Resistant Pipes", "Easy Installation"]
-    },
-    {
-        id: 19,
-        name: "Mini Sonalika Thresher 20HP",
-        category: "thresher",
-        price: 95000,
-        originalPrice: 115000,
-        image: "https://images.unsplash.com/photo-1560693225-b8507d6f3aa9?w=500&q=80",
-        rating: 4.5,
-        reviews: 78,
-        badge: "sale",
-        badgeText: "17% OFF",
-        inStock: true,
-        description: "Compact mini thresher ideal for small farms. Low power requirement with efficient output.",
-        features: ["20 HP Requirement", "Compact Design", "Easy Transport", "Multi-Crop", "Low Maintenance"]
-    },
-    {
-        id: 20,
-        name: "Oil Bearing Engine 5 HP Diesel",
-        category: "engine",
-        price: 18000,
-        originalPrice: 22000,
-        image: "https://images.unsplash.com/photo-1615811361523-6bd03d7748e7?w=500&q=80",
-        rating: 4.4,
-        reviews: 145,
-        badge: null,
-        badgeText: null,
-        inStock: true,
-        description: "Reliable 5 HP diesel engine with oil bearing technology. Perfect for small-scale farming applications.",
-        features: ["5 HP Diesel", "Oil Bearing", "Compact Size", "Easy Start", "Low Fuel Consumption"]
-    },
-    {
-        id: 21,
-        name: "Sprinkler Irrigation System (Full Set)",
-        category: "pump",
-        price: 8500,
-        originalPrice: 11000,
-        image: "https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=500&q=80",
-        rating: 4.3,
-        reviews: 56,
-        badge: "sale",
-        badgeText: "23% OFF",
-        inStock: true,
-        description: "Complete sprinkler system with pipes, nozzles, and connectors. Coverage up to half acre.",
-        features: ["Half Acre Coverage", "Adjustable Nozzles", "All Pipes Included", "Easy Setup", "Durable Material"]
-    },
-    {
-        id: 22,
-        name: "Plough Blade Set (Heavy Duty)",
-        category: "parts",
-        price: 5500,
-        originalPrice: 6800,
-        image: "https://images.unsplash.com/photo-1586864387789-628af9feed72?w=500&q=80",
-        rating: 4.5,
-        reviews: 93,
-        badge: null,
-        badgeText: null,
-        inStock: false,
-        description: "Heavy-duty plough blade set for deep ploughing. High-carbon steel with protective coating.",
-        features: ["High-Carbon Steel", "Deep Ploughing", "Protective Coating", "Universal Fit", "Long Life"]
-    },
-    {
-        id: 23,
-        name: "JCB Excavator Work - Per Day",
-        category: "jcb",
-        price: 8000,
-        originalPrice: 10000,
-        image: "https://i.pinimg.com/originals/a1/22/45/a12245c7c9a34052eaebf34a9e3ce1ef.jpg",
-        rating: 4.8,
-        reviews: 210,
-        badge: "hot",
-        badgeText: "Most Booked",
-        inStock: true,
-        description: "Full-day JCB excavator service. Expert operator included. Ideal for large-scale farm and construction work.",
-        features: ["Full Day (8 Hours)", "Expert Operator", "Diesel Included", "All Types of Work", "Insurance Covered"]
-    },
-    {
-        id: 24,
-        name: "Seed Drill Machine Attachment",
-        category: "tools",
-        price: 28000,
-        originalPrice: 34000,
-        image: "https://images.unsplash.com/photo-1598512752271-33f913a5af13?w=500&q=80",
-        rating: 4.6,
-        reviews: 45,
-        badge: "new",
-        badgeText: "New Stock",
-        inStock: true,
-        description: "Tractor-mounted seed drill for precise sowing. Adjustable row spacing and seed rate control.",
-        features: ["Tractor Mounted", "9 Row Capacity", "Adjustable Spacing", "Seed Rate Control", "All Seed Types"]
+let products = [];
+
+async function loadProducts() {
+    try {
+        const resp = await fetch('data/products.json');
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        products = data.map(function(p) {
+            return {
+                id: Number(p.id) || p.id,
+                name: p.name,
+                category: p.category,
+                price: p.price,
+                originalPrice: p.originalPrice,
+                image: p.imageUrl || p.image || '',
+                rating: p.rating,
+                reviews: p.reviews,
+                badge: p.badge,
+                badgeText: p.badgeText,
+                inStock: p.inStock,
+                description: p.description,
+                features: p.features
+            };
+        });
+    } catch (e) {
+        console.warn('Failed to load products.json, using fallback:', e);
+        products = getInlineProducts();
     }
-];
+}
+
+function getInlineProducts() {
+    return [
+        { id:1, name:"Sonalika Multi-Crop Thresher 40HP", category:"thresher", price:185000, originalPrice:220000, image:"https://5.imimg.com/data5/SELLER/Default/2023/1/MH/PA/LT/132924005/sonalika-thresher-machine-1000x1000.jpg", rating:4.8, reviews:124, badge:"auth", badgeText:"Authorized", inStock:true, description:"Heavy-duty multi-crop thresher by Sonalika.", features:["40 HP Power Requirement","1200 kg Capacity","Triple Blower Design","Mild Steel Body","1-Year Warranty"] },
+        { id:2, name:"Sonalika Maize Sheller 64\" Dehusker", category:"thresher", price:230000, originalPrice:275000, image:"https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=500&q=80", rating:4.7, reviews:89, badge:"auth", badgeText:"Authorized", inStock:true, description:"64-inch drum maize sheller with skin dehusker.", features:["64\" Drum Size","35+ HP Required","640 RPM Speed","Double Wheel","Skin Dehusker"] },
+        { id:3, name:"Sonalika Paddy Thresher - Tractor Op.", category:"thresher", price:165000, originalPrice:195000, image:"https://images.unsplash.com/photo-1589923188651-268a9765e432?w=500&q=80", rating:4.6, reviews:67, badge:"sale", badgeText:"15% OFF", inStock:true, description:"Tractor-operated paddy thresher.", features:["Tractor Operated","High Output Design","Low Grain Loss","Easy Maintenance","All-Season Use"] },
+        { id:4, name:"Honda GX200 Engine 6.5 HP", category:"engine", price:28500, originalPrice:32000, image:"honda-engines.png", rating:4.9, reviews:256, badge:"auth", badgeText:"Honda Dealer", inStock:true, description:"Original Honda GX200 engine.", features:["6.5 HP Power","Air-Cooled 4-Stroke","3.1L Fuel Tank","Low Oil Alert","3-Year Warranty"] },
+        { id:5, name:"Honda GX390 Engine 13 HP", category:"engine", price:45000, originalPrice:52000, image:"honda-engines.png", rating:4.8, reviews:178, badge:"hot", badgeText:"Best Seller", inStock:true, description:"Powerful Honda GX390 engine.", features:["13 HP Power","Horizontal Crankshaft","OHV 4-Stroke","Electric Start Option","Commercial Grade"] },
+        { id:6, name:"Oil Bearing Engine 10 HP Diesel", category:"engine", price:35000, originalPrice:42000, image:"https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=500&q=80", rating:4.5, reviews:92, badge:"sale", badgeText:"20% OFF", inStock:true, description:"Heavy-duty oil bearing diesel engine.", features:["10 HP Diesel","Oil Bearing Design","Fuel Efficient","Low Vibration","Easy Maintenance"] },
+        { id:7, name:"JCB 3DX Backhoe Rental - Per Hour", category:"jcb", price:1200, originalPrice:1500, image:"https://i.pinimg.com/originals/a1/22/45/a12245c7c9a34052eaebf34a9e3ce1ef.jpg", rating:4.7, reviews:340, badge:"hot", badgeText:"Popular", inStock:true, description:"JCB 3DX backhoe loader for rent.", features:["Expert Operator Included","Min 4 Hours Booking","Land Leveling","Digging & Loading","Construction Work"] },
+        { id:8, name:"JCB Land Leveling - Per Bigha", category:"jcb", price:3500, originalPrice:4500, image:"https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=500&q=80", rating:4.6, reviews:156, badge:"sale", badgeText:"Special Rate", inStock:true, description:"Complete farm land leveling service.", features:["Professional Operators","Per Bigha Pricing","Farm Land Leveling","Precision Work","Free Site Visit"] },
+        { id:9, name:"Cultivator Blade Set (12 Pcs)", category:"parts", price:2800, originalPrice:3200, image:"https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500&q=80", rating:4.4, reviews:201, badge:"new", badgeText:"New Stock", inStock:true, description:"High-quality cultivator blade set.", features:["12 Pieces Set","Hardened Steel","Universal Fit","Long Lasting","Rust Resistant"] },
+        { id:10, name:"Thresher V-Belt Set (Premium)", category:"parts", price:1500, originalPrice:1800, image:"https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=500&q=80", rating:4.3, reviews:145, badge:null, badgeText:null, inStock:false, description:"Premium quality V-belt set.", features:["Premium Quality","Heat Resistant","Sonalika Compatible","Long Life","Set of 4 Belts"] },
+        { id:11, name:"Tractor Rotavator Blades (Set of 42)", category:"parts", price:4500, originalPrice:5500, image:"https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=500&q=80", rating:4.6, reviews:88, badge:"sale", badgeText:"18% OFF", inStock:true, description:"Heavy-duty rotavator blades.", features:["42 Pieces","Forged Steel","Universal Mount","High Durability","All Soil Types"] },
+        { id:12, name:"Bearing Set for Thresher (Full Kit)", category:"parts", price:3200, originalPrice:3800, image:"https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?w=500&q=80", rating:4.5, reviews:112, badge:null, badgeText:null, inStock:true, description:"Complete bearing set for thresher machines.", features:["Complete Kit","Premium Quality","All Major Parts","Dust Sealed","Easy Installation"] },
+        { id:13, name:"Heavy Duty Khurpi (Weeding Tool)", category:"tools", price:350, originalPrice:450, image:"https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=500&q=80", rating:4.2, reviews:320, badge:null, badgeText:null, inStock:false, description:"Professional grade khurpi.", features:["Stainless Steel","Wooden Handle","Ergonomic Grip","Multi-Purpose","Light Weight"] },
+        { id:14, name:"Spraying Machine 16L (Battery)", category:"tools", price:3500, originalPrice:4200, image:"https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?w=500&q=80", rating:4.7, reviews:198, badge:"hot", badgeText:"Best Seller", inStock:true, description:"Battery-operated 16-litre spraying machine.", features:["16 Litre Capacity","Battery Operated","Adjustable Nozzle","6-Hour Battery","Backpack Design"] },
+        { id:15, name:"Garden Tool Set (8 Pieces)", category:"tools", price:1800, originalPrice:2400, image:"https://images.unsplash.com/photo-1617576683096-00fc8eecb3af?w=500&q=80", rating:4.4, reviews:156, badge:"new", badgeText:"New Arrival", inStock:true, description:"Complete garden tool set.", features:["8 Piece Set","Carbon Steel","Rubber Grip","Carrying Bag","Gift Quality"] },
+        { id:16, name:"Honda Water Pump 3\" (GX200)", category:"pump", price:32000, originalPrice:38000, image:"honda-engines.png", rating:4.8, reviews:134, badge:"auth", badgeText:"Honda Dealer", inStock:true, description:"Honda-powered 3-inch water pump.", features:["950L/min Flow","25m Total Head","GX200 Engine","Cast Iron Impeller","Self-Priming"] },
+        { id:17, name:"Submersible Pump 1.5HP", category:"pump", price:8500, originalPrice:10000, image:"https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=500&q=80", rating:4.5, reviews:89, badge:"sale", badgeText:"15% OFF", inStock:true, description:"High-quality 1.5HP submersible pump.", features:["1.5 HP Motor","Copper Winding","Borewell Compatible","60m Head","Thermal Protection"] },
+        { id:18, name:"Drip Irrigation Kit (1 Acre)", category:"pump", price:12000, originalPrice:15000, image:"https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&q=80", rating:4.6, reviews:67, badge:"new", badgeText:"Eco-Friendly", inStock:true, description:"Complete drip irrigation kit for 1 acre.", features:["1 Acre Coverage","60% Water Saving","All Fittings Included","UV Resistant Pipes","Easy Installation"] },
+        { id:19, name:"Mini Sonalika Thresher 20HP", category:"thresher", price:95000, originalPrice:115000, image:"https://images.unsplash.com/photo-1560693225-b8507d6f3aa9?w=500&q=80", rating:4.5, reviews:78, badge:"sale", badgeText:"17% OFF", inStock:true, description:"Compact mini thresher.", features:["20 HP Requirement","Compact Design","Easy Transport","Multi-Crop","Low Maintenance"] },
+        { id:20, name:"Oil Bearing Engine 5 HP Diesel", category:"engine", price:18000, originalPrice:22000, image:"https://images.unsplash.com/photo-1615811361523-6bd03d7748e7?w=500&q=80", rating:4.4, reviews:145, badge:null, badgeText:null, inStock:true, description:"Reliable 5 HP diesel engine.", features:["5 HP Diesel","Oil Bearing","Compact Size","Easy Start","Low Fuel Consumption"] },
+        { id:21, name:"Sprinkler Irrigation System (Full Set)", category:"pump", price:8500, originalPrice:11000, image:"https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=500&q=80", rating:4.3, reviews:56, badge:"sale", badgeText:"23% OFF", inStock:true, description:"Complete sprinkler system.", features:["Half Acre Coverage","Adjustable Nozzles","All Pipes Included","Easy Setup","Durable Material"] },
+        { id:22, name:"Plough Blade Set (Heavy Duty)", category:"parts", price:5500, originalPrice:6800, image:"https://images.unsplash.com/photo-1586864387789-628af9feed72?w=500&q=80", rating:4.5, reviews:93, badge:null, badgeText:null, inStock:false, description:"Heavy-duty plough blade set.", features:["High-Carbon Steel","Deep Ploughing","Protective Coating","Universal Fit","Long Life"] },
+        { id:23, name:"JCB Excavator Work - Per Day", category:"jcb", price:8000, originalPrice:10000, image:"https://i.pinimg.com/originals/a1/22/45/a12245c7c9a34052eaebf34a9e3ce1ef.jpg", rating:4.8, reviews:210, badge:"hot", badgeText:"Most Booked", inStock:true, description:"Full-day JCB excavator service.", features:["Full Day (8 Hours)","Expert Operator","Diesel Included","All Types of Work","Insurance Covered"] },
+        { id:24, name:"Seed Drill Machine Attachment", category:"tools", price:28000, originalPrice:34000, image:"https://images.unsplash.com/photo-1598512752271-33f913a5af13?w=500&q=80", rating:4.6, reviews:45, badge:"new", badgeText:"New Stock", inStock:true, description:"Tractor-mounted seed drill.", features:["Tractor Mounted","9 Row Capacity","Adjustable Spacing","Seed Rate Control","All Seed Types"] }
+    ];
+}
 
 // ============================
 // State
 // ============================
 let cart = JSON.parse(localStorage.getItem('maheshCart') || '[]');
 let wishlist = JSON.parse(localStorage.getItem('maheshWishlist') || '[]');
-let recentlyViewed = JSON.parse(localStorage.getItem('maheshRecent') || '[]')
-    .filter(id => products.some(p => p.id === id))
-    .slice(0, 6);
-localStorage.setItem('maheshRecent', JSON.stringify(recentlyViewed));
+let recentlyViewed = JSON.parse(localStorage.getItem('maheshRecent') || '[]').slice(0, 6);
 let currentSlide = 0;
 let slideInterval;
 let currentFilter = 'all';
@@ -380,11 +73,12 @@ let currentFilter = 'all';
 // ============================
 // Initialize
 // ============================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initDarkMode();
     initMobileBarClass();
     window.addEventListener('resize', initMobileBarClass);
     initSeasonalBanner();
+    await loadProducts();
     renderProductsWithSkeleton();
     updateCartUI();
     updateWishlistUI();

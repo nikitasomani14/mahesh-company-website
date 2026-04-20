@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a472a" />
+  <title>Mahesh &amp; Company — Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="admin-style.css" />
+</head>
+<body class="admin-body">
+  <!-- Login Screen -->
+  <div id="loginScreen" class="auth-screen" aria-hidden="false">
+    <div class="auth-card">
+      <h1 class="auth-title">Mahesh &amp; Company - Admin</h1>
+      <p class="auth-subtitle">Aspur, Rajasthan · Agricultural Equipment</p>
+      <form id="loginForm" class="auth-form" autocomplete="on" novalidate>
+        <label class="field-label" for="adminPassword">Password</label>
+        <div class="password-field">
+          <input
+            type="password"
+            id="adminPassword"
+            name="password"
+            class="input-control"
+            placeholder="Enter password"
+            autocomplete="current-password"
+            required
+            inputmode="text"
+          />
+          <button type="button" id="toggleLoginPassword" class="icon-btn eye-toggle" aria-label="Show password" title="Show/hide password">
+            <i class="fas fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div id="loginError" class="error-msg" role="alert" aria-live="polite"></div>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- First-time GitHub PAT Screen -->
+  <div id="patScreen" class="auth-screen hidden" aria-hidden="true">
+    <div class="auth-card">
+      <h1 class="auth-title">Connect GitHub</h1>
+      <p class="auth-subtext">Enter a GitHub Personal Access Token for integrations. You can update this later in Settings.</p>
+      <form id="patForm" class="auth-form" novalidate>
+        <label class="field-label" for="githubPat">GitHub Personal Access Token</label>
+        <div class="password-field">
+          <input
+            type="password"
+            id="githubPat"
+            name="githubPat"
+            class="input-control"
+            placeholder="ghp_…"
+            autocomplete="off"
+            required
+          />
+          <button type="button" id="togglePatVisibility" class="icon-btn eye-toggle" aria-label="Show token" title="Show/hide token">
+            <i class="fas fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div id="patError" class="error-msg" role="alert" aria-live="polite"></div>
+        <button type="submit" class="btn btn-primary btn-block">Save &amp; Continue</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="mainApp" class="main-app hidden" aria-hidden="true">
+    <header class="top-bar">
+      <h1 class="top-bar-title">Mahesh &amp; Company Admin</h1>
+      <button type="button" id="headerLogoutBtn" class="icon-btn top-logout" aria-label="Logout" title="Logout">
+        <i class="fas fa-right-from-bracket" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <main class="app-main" id="appMain">
+      <!-- Dashboard -->
+      <section id="dashboardSection" class="app-section" data-section="dashboard" aria-labelledby="dashboardHeading">
+        <h2 id="dashboardHeading" class="section-heading">Dashboard</h2>
+        <div class="stats-row" id="dashboardStats">
+          <article class="stat-card">
+            <span class="stat-label">Total Products</span>
+            <span class="stat-value" id="statTotalProducts">0</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">In Stock</span>
+            <span class="stat-value" id="statInStock">0</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Out of Stock</span>
+            <span class="stat-value" id="statOutStock">0</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Low Stock</span>
+            <span class="stat-value" id="statLowStock">0</span>
+          </article>
+        </div>
+        <div class="panel">
+          <h3 class="panel-title">Recent activity</h3>
+          <ul class="activity-log" id="activityLog"></ul>
+        </div>
+        <div class="quick-actions">
+          <button type="button" class="btn btn-secondary" id="dashAddProduct">
+            <i class="fas fa-plus" aria-hidden="true"></i> Add Product
+          </button>
+          <button type="button" class="btn btn-primary" id="dashNewBill">
+            <i class="fas fa-file-invoice" aria-hidden="true"></i> New Bill
+          </button>
+        </div>
+      </section>
+
+      <!-- Products -->
+      <section id="productsSection" class="app-section hidden" data-section="products" aria-labelledby="productsHeading">
+        <h2 id="productsHeading" class="section-heading">Products</h2>
+        <div class="search-wrap">
+          <label class="visually-hidden" for="productSearch">Search products</label>
+          <input type="search" id="productSearch" class="input-control search-input" placeholder="Search products…" autocomplete="off" />
+        </div>
+        <div class="filter-chips" role="group" aria-label="Category filters">
+          <button type="button" class="chip active" data-filter="all">All</button>
+          <button type="button" class="chip" data-filter="thresher">Threshers</button>
+          <button type="button" class="chip" data-filter="engine">Engines</button>
+          <button type="button" class="chip" data-filter="jcb">JCB</button>
+          <button type="button" class="chip" data-filter="parts">Parts</button>
+          <button type="button" class="chip" data-filter="tools">Tools</button>
+          <button type="button" class="chip" data-filter="pump">Pumps</button>
+        </div>
+        <div id="productList" class="product-list"></div>
+      </section>
+
+      <!-- Bills -->
+      <section id="billsSection" class="app-section hidden" data-section="bills" aria-labelledby="billsHeading">
+        <div class="section-head-row">
+          <h2 id="billsHeading" class="section-heading">Bills</h2>
+          <button type="button" class="btn btn-primary btn-sm" id="billsNewBillBtn">
+            <i class="fas fa-plus" aria-hidden="true"></i> New Bill
+          </button>
+        </div>
+        <div id="billsList" class="bills-list"></div>
+      </section>
+
+      <!-- Settings -->
+      <section id="settingsSection" class="app-section hidden" data-section="settings" aria-labelledby="settingsHeading">
+        <h2 id="settingsHeading" class="section-heading">Settings</h2>
+        <div class="panel">
+          <h3 class="panel-title">Change admin password</h3>
+          <form id="passwordChangeForm" class="stack-form">
+            <label class="field-label" for="currentPassword">Current password</label>
+            <input type="password" id="currentPassword" class="input-control" autocomplete="current-password" />
+            <label class="field-label" for="newPassword">New password</label>
+            <input type="password" id="newPassword" class="input-control" autocomplete="new-password" />
+            <label class="field-label" for="confirmPassword">Confirm new password</label>
+            <input type="password" id="confirmPassword" class="input-control" autocomplete="new-password" />
+            <button type="submit" class="btn btn-primary">Update password</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3 class="panel-title">GitHub token</h3>
+          <p class="muted" id="githubTokenHint">No token saved.</p>
+          <button type="button" class="btn btn-secondary" id="updateGithubTokenBtn">Update token</button>
+        </div>
+        <div class="panel danger-zone">
+          <h3 class="panel-title">Data</h3>
+          <button type="button" class="btn btn-danger-outline" id="clearAllDataBtn">Clear all local data</button>
+        </div>
+        <div class="panel">
+          <button type="button" class="btn btn-secondary btn-block" id="settingsLogoutBtn">
+            <i class="fas fa-right-from-bracket" aria-hidden="true"></i> Logout
+          </button>
+          <p class="version-info" id="appVersionInfo">App version 1.0.0</p>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button type="button" class="nav-tab active" data-tab="dashboard" aria-current="page">
+        <i class="fas fa-chart-line" aria-hidden="true"></i>
+        <span>Dashboard</span>
+      </button>
+      <button type="button" class="nav-tab" data-tab="products">
+        <i class="fas fa-boxes" aria-hidden="true"></i>
+        <span>Products</span>
+      </button>
+      <button type="button" class="nav-tab" data-tab="bills">
+        <i class="fas fa-file-invoice" aria-hidden="true"></i>
+        <span>Bills</span>
+      </button>
+      <button type="button" class="nav-tab" data-tab="settings">
+        <i class="fas fa-cog" aria-hidden="true"></i>
+        <span>Settings</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="productModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="productModalTitle" aria-hidden="true">
+    <div class="modal-sheet modal-sheet--lg">
+      <div class="modal-head">
+        <h2 id="productModalTitle" class="modal-title">Add Product</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="productModal" aria-label="Close">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form id="productForm" class="stack-form">
+        <input type="hidden" id="productId" name="id" value="" />
+        <label class="field-label" for="productName">Name</label>
+        <input type="text" id="productName" name="name" class="input-control" required />
+        <label class="field-label" for="productCategory">Category</label>
+        <select id="productCategory" name="category" class="input-control" required>
+          <option value="thresher">Threshers</option>
+          <option value="engine">Engines</option>
+          <option value="jcb">JCB</option>
+          <option value="parts">Parts</option>
+          <option value="tools">Tools</option>
+          <option value="pump">Pumps</option>
+        </select>
+        <label class="field-label" for="productPrice">Price (₹)</label>
+        <input type="number" id="productPrice" name="price" class="input-control" min="0" step="0.01" inputmode="decimal" required />
+        <label class="field-label" for="productOriginalPrice">Original price (₹)</label>
+        <input type="number" id="productOriginalPrice" name="originalPrice" class="input-control" min="0" step="0.01" inputmode="decimal" />
+        <label class="field-label" for="productImageUrl">Image URL</label>
+        <input type="url" id="productImageUrl" name="imageUrl" class="input-control" placeholder="https://…" />
+        <label class="field-label" for="productDescription">Description</label>
+        <textarea id="productDescription" name="description" class="input-control textarea" rows="3"></textarea>
+        <label class="field-label" for="productFeatures">Features (comma-separated)</label>
+        <input type="text" id="productFeatures" name="features" class="input-control" placeholder="e.g. Heavy duty, Warranty" />
+        <label class="field-label" for="productBadge">Badge</label>
+        <select id="productBadge" name="badge" class="input-control">
+          <option value="none">none</option>
+          <option value="sale">sale</option>
+          <option value="new">new</option>
+          <option value="hot">hot</option>
+          <option value="auth">auth</option>
+        </select>
+        <label class="field-label" for="productBadgeText">Badge text</label>
+        <input type="text" id="productBadgeText" name="badgeText" class="input-control" />
+        <label class="field-label" for="productStockQty">Stock quantity</label>
+        <input type="number" id="productStockQty" name="stockQty" class="input-control" min="0" step="1" inputmode="numeric" required />
+        <div class="toggle-row">
+          <label class="field-label" for="productInStock">In stock</label>
+          <input type="checkbox" id="productInStock" name="inStock" class="toggle-input" checked />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close-modal="productModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FAB Products -->
+  <button type="button" id="productFab" class="fab hidden" aria-label="Add new product" title="Add product">
+    <i class="fas fa-plus" aria-hidden="true"></i>
+  </button>
+
+  <!-- New/Edit Bill Modal -->
+  <div id="billModal" class="modal-overlay modal-overlay--fullscreen hidden" role="dialog" aria-modal="true" aria-labelledby="billModalTitle" aria-hidden="true">
+    <div class="modal-sheet modal-sheet--full">
+      <div class="modal-head modal-head--sticky">
+        <h2 id="billModalTitle" class="modal-title">New Bill</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="billModal" aria-label="Close">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form id="billForm" class="stack-form bill-form">
+        <input type="hidden" id="billId" name="id" value="" />
+        <fieldset class="fieldset">
+          <legend>Customer</legend>
+          <label class="field-label" for="billCustomerName">Name</label>
+          <input type="text" id="billCustomerName" name="customerName" class="input-control" required />
+          <label class="field-label" for="billCustomerPhone">Phone</label>
+          <input type="tel" id="billCustomerPhone" name="phone" class="input-control" inputmode="tel" autocomplete="tel" />
+          <label class="field-label" for="billCustomerAddress">Address</label>
+          <textarea id="billCustomerAddress" name="address" class="input-control textarea" rows="2"></textarea>
+        </fieldset>
+        <fieldset class="fieldset">
+          <legend>Line items</legend>
+          <div id="billLineItems" class="line-items"></div>
+          <button type="button" class="btn btn-secondary btn-sm" id="billAddLineItem">
+            <i class="fas fa-plus" aria-hidden="true"></i> Add Item
+          </button>
+        </fieldset>
+        <div class="totals-panel">
+          <div class="total-row">
+            <span>Subtotal</span>
+            <span id="billSubtotal">₹0.00</span>
+          </div>
+          <div class="total-row">
+            <span>Discount total</span>
+            <span id="billDiscountTotal">₹0.00</span>
+          </div>
+          <div class="total-row total-row--grand">
+            <span>Grand total</span>
+            <span id="billGrandTotal">₹0.00</span>
+          </div>
+        </div>
+        <label class="field-label" for="billPaymentMethod">Payment method</label>
+        <select id="billPaymentMethod" name="paymentMethod" class="input-control">
+          <option value="Cash">Cash</option>
+          <option value="UPI">UPI</option>
+          <option value="Bank Transfer">Bank Transfer</option>
+        </select>
+        <label class="field-label" for="billPaymentStatus">Payment status</label>
+        <select id="billPaymentStatus" name="paymentStatus" class="input-control">
+          <option value="Paid">Paid</option>
+          <option value="Unpaid">Unpaid</option>
+          <option value="Partial">Partial</option>
+        </select>
+        <label class="field-label" for="billNotes">Notes</label>
+        <textarea id="billNotes" name="notes" class="input-control textarea" rows="2"></textarea>
+        <div class="modal-actions modal-actions--stack">
+          <button type="button" class="btn btn-secondary" id="billPreviewPdfBtn">Preview PDF</button>
+          <button type="submit" class="btn btn-primary">Save Bill</button>
+          <button type="button" class="btn btn-ghost" data-close-modal="billModal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bill Preview Modal -->
+  <div id="billPreviewModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="billPreviewTitle" aria-hidden="true">
+    <div class="modal-sheet modal-sheet--preview">
+      <div class="modal-head">
+        <h2 id="billPreviewTitle" class="modal-title">Invoice preview</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="billPreviewModal" aria-label="Close">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="preview-scroll">
+        <div id="billPrintArea" class="bill-print-area">
+          <header class="invoice-header">
+            <div class="invoice-logo">
+              <span class="logo-mark">M</span>
+              <div>
+                <strong class="invoice-brand">Mahesh &amp; Company</strong>
+                <p class="invoice-tagline">Agricultural Equipment · Aspur, Rajasthan</p>
+              </div>
+            </div>
+            <div class="invoice-meta-block">
+              <p><strong>Phone:</strong> <span id="invPhone">+91-XXXXXXXXXX</span></p>
+              <p><strong>GSTIN:</strong> <span id="invGstin">08XXXXX0000X1Z5</span></p>
+            </div>
+          </header>
+          <div class="invoice-row">
+            <div>
+              <p class="invoice-label">Bill No.</p>
+              <p id="invBillNo" class="invoice-value">—</p>
+            </div>
+            <div class="text-right">
+              <p class="invoice-label">Date</p>
+              <p id="invDate" class="invoice-value">—</p>
+            </div>
+          </div>
+          <div class="invoice-customer">
+            <p class="invoice-label">Bill To</p>
+            <p id="invCustomerName" class="invoice-strong">—</p>
+            <p id="invCustomerPhone">—</p>
+            <p id="invCustomerAddress">—</p>
+          </div>
+          <table class="invoice-table" aria-label="Line items">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Discount</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="invItemsBody"></tbody>
+          </table>
+          <div class="invoice-totals">
+            <div class="inv-total-row"><span>Subtotal</span><span id="invSubtotal">₹0.00</span></div>
+            <div class="inv-total-row"><span>Discount</span><span id="invDiscount">₹0.00</span></div>
+            <div class="inv-total-row inv-grand"><span>Grand Total</span><span id="invGrand">₹0.00</span></div>
+          </div>
+          <div class="invoice-payment">
+            <p><strong>Payment:</strong> <span id="invPayMethod">—</span> · <span id="invPayStatus">—</span></p>
+            <p id="invNotes" class="invoice-notes"></p>
+          </div>
+          <footer class="invoice-footer">Thank you for your business!</footer>
+        </div>
+      </div>
+      <div class="modal-actions modal-actions--wrap">
+        <button type="button" class="btn btn-primary" id="billDownloadPdfBtn">Download PDF</button>
+        <button type="button" class="btn btn-secondary" id="billWhatsappShareBtn">Share on WhatsApp</button>
+        <button type="button" class="btn btn-secondary" id="billPrintBtn">Print</button>
+        <button type="button" class="btn btn-ghost" data-close-modal="billPreviewModal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GitHub token update (from settings) -->
+  <div id="githubTokenModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="githubTokenModalTitle" aria-hidden="true">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h2 id="githubTokenModalTitle" class="modal-title">Update GitHub token</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="githubTokenModal" aria-label="Close">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form id="githubTokenForm" class="stack-form">
+        <label class="field-label" for="githubPatInput">Personal Access Token</label>
+        <div class="password-field">
+          <input type="password" id="githubPatInput" class="input-control" required autocomplete="off" />
+          <button type="button" id="toggleGithubPatInput" class="icon-btn eye-toggle" aria-label="Show token">
+            <i class="fas fa-eye" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close-modal="githubTokenModal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirmation Dialog -->
+  <div id="confirmDialog" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirmDialogTitle" aria-hidden="true">
+    <div class="modal-sheet modal-sheet--sm">
+      <h2 id="confirmDialogTitle" class="modal-title">Confirm</h2>
+      <p id="confirmDialogMessage" class="confirm-message"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="confirmDialogCancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDialogOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="admin.js" defer></script>
+</body>
+</html>
