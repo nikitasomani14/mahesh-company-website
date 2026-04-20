@@ -16,6 +16,7 @@
     ACTIVITY: "mc_activity",
     BILL_COUNTER: "mc_bill_counter",
     GOATCOUNTER_CODE: "mc_goatcounter_code",
+    ADMIN_OPENS: "mc_admin_opens",
   };
 
   const DEFAULT_GC_CODE = "mahesh-company";
@@ -100,7 +101,16 @@
       t: Date.now(),
       message,
     });
-    localStorage.setItem(LS.ACTIVITY, JSON.stringify(log.slice(0, 50)));
+    localStorage.setItem(LS.ACTIVITY, JSON.stringify(log.slice(0, 10)));
+  }
+
+  function incrementAdminOpens() {
+    const n = parseInt(localStorage.getItem(LS.ADMIN_OPENS) || "0", 10);
+    localStorage.setItem(LS.ADMIN_OPENS, String(n + 1));
+  }
+
+  function getAdminOpens() {
+    return parseInt(localStorage.getItem(LS.ADMIN_OPENS) || "0", 10);
   }
 
   function nextBillNumber() {
@@ -201,6 +211,7 @@
         return;
       }
       setLoggedIn(true);
+      incrementAdminOpens();
       showScreen("main");
       bootMainApp();
     });
@@ -291,6 +302,7 @@
       statInStock: inStock,
       statOutStock: outStock,
       statLowStock: low,
+      statAdminOpens: getAdminOpens(),
     };
     Object.keys(st).forEach((id) => {
       const el = qs("#" + id);
@@ -1041,6 +1053,7 @@
       LS.PASSWORD_HASH,
       LS.LOGGED_IN,
       LS.GOATCOUNTER_CODE,
+      LS.ADMIN_OPENS,
     ].forEach((k) => localStorage.removeItem(k));
     initDefaultPasswordHash();
     showScreen("login");
