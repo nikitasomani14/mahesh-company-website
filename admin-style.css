@@ -680,6 +680,65 @@ body.admin-body {
   font-size: 0.9rem;
 }
 
+.setup-guide {
+  background: #f7f9f5;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.guide-title {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.guide-title i {
+  margin-right: 6px;
+}
+
+.guide-steps {
+  margin: 0 0 10px;
+  padding-left: 20px;
+  font-size: 0.84rem;
+  line-height: 1.7;
+}
+
+.guide-steps a {
+  color: var(--primary-light);
+  text-decoration: underline;
+  word-break: break-all;
+}
+
+.guide-steps code {
+  background: #e8eee8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+
+.guide-fields {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.guide-fields code {
+  background: #e8eee8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.guide-fields a {
+  color: var(--primary-light);
+  text-decoration: underline;
+  word-break: break-all;
+}
+
 .version-info {
   margin: 16px 0 0;
   text-align: center;
