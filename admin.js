@@ -695,6 +695,55 @@
     showToast("Image removed.", "success");
   });
 
+  /* ---------- Badges ---------- */
+  let pendingBadges = [];
+
+  function renderBadgeChips() {
+    var list = qs("#badgesList");
+    if (!list) return;
+    if (!pendingBadges.length) {
+      list.innerHTML = '<span class="muted" style="font-size:0.82rem">No badges added.</span>';
+      return;
+    }
+    list.innerHTML = pendingBadges.map(function(b, i) {
+      return '<span class="badge-chip badge-chip--' + escapeHtml(b.type) + '">' +
+        escapeHtml(b.text) +
+        '<button type="button" class="badge-remove" data-badge-idx="' + i + '" aria-label="Remove badge">' +
+        '<i class="fas fa-times"></i></button></span>';
+    }).join("");
+    list.querySelectorAll(".badge-remove").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var idx = parseInt(btn.getAttribute("data-badge-idx"), 10);
+        pendingBadges.splice(idx, 1);
+        renderBadgeChips();
+      });
+    });
+  }
+
+  qs("#addBadgeBtn")?.addEventListener("click", function() {
+    var typeEl = qs("#badgeTypeSelect");
+    var textEl = qs("#badgeTextInput");
+    var type = typeEl ? typeEl.value : "sale";
+    var text = textEl ? textEl.value.trim() : "";
+    if (!text) {
+      showToast("Enter badge text.", "error");
+      return;
+    }
+    pendingBadges.push({ type: type, text: text });
+    if (textEl) textEl.value = "";
+    renderBadgeChips();
+  });
+
+  function badgesFromLegacy(p) {
+    var arr = [];
+    if (Array.isArray(p.badges)) {
+      arr = p.badges.slice();
+    } else if (p.badge && p.badge !== "none") {
+      arr.push({ type: p.badge, text: p.badgeText || p.badge });
+    }
+    return arr;
+  }
+
   /* ---------- Products ---------- */
   let productFilter = "all";
   let productSearch = "";
@@ -751,12 +800,10 @@
               escapeHtml(p.imageUrl) +
               '" alt="" loading="lazy" />'
             : '<div class="product-thumb placeholder" aria-hidden="true"><i class="fas fa-image"></i></div>';
-        const badge =
-          p.badge && p.badge !== "none"
-            ? '<span class="prod-badge">' +
-              escapeHtml(p.badgeText || p.badge) +
-              "</span>"
-            : "";
+        var badgeArr = badgesFromLegacy(p);
+        const badge = badgeArr.map(function(b) {
+          return '<span class="prod-badge">' + escapeHtml(b.text) + '</span>';
+        }).join(" ");
         return (
           '<article class="product-card" data-id="' +
           escapeHtml(p.id) +
@@ -848,12 +895,14 @@
       qs("#productFeatures").value = Array.isArray(p.features)
         ? p.features.join(", ")
         : p.features || "";
-      qs("#productBadge").value = p.badge || "none";
-      qs("#productBadgeText").value = p.badgeText || "";
+      pendingBadges = badgesFromLegacy(p);
+      renderBadgeChips();
       qs("#productStockQty").value = p.stockQty ?? 0;
       qs("#productInStock").checked = !!p.inStock;
       updateImagePreview(imgSrc);
     } else {
+      pendingBadges = [];
+      renderBadgeChips();
       qs("#productInStock").checked = true;
       qs("#productStockQty").value = 0;
       updateImagePreview("");
@@ -872,16 +921,17 @@
     }
     var price = parseFloat(qs("#productPrice").value) || 0;
     var originalPrice = parseFloat(qs("#productOriginalPrice").value) || 0;
-    var badge = qs("#productBadge").value;
-    var badgeText = qs("#productBadgeText").value.trim();
 
-    if (originalPrice > 0 && price > 0 && price < originalPrice) {
+    var badges = pendingBadges.slice();
+    var hasSale = badges.some(function(b) { return b.type === "sale"; });
+    if (!hasSale && originalPrice > 0 && price > 0 && price < originalPrice) {
       var discountPct = Math.round((1 - price / originalPrice) * 100);
       if (discountPct >= 1) {
-        badge = "sale";
-        badgeText = discountPct + "% OFF";
+        badges.unshift({ type: "sale", text: discountPct + "% OFF" });
       }
     }
+
+    var primaryBadge = badges.length > 0 ? badges[0] : null;
 
     const product = {
       id: existingId || uid(),
@@ -895,8 +945,9 @@
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      badge: badge,
-      badgeText: badgeText,
+      badge: primaryBadge ? primaryBadge.type : null,
+      badgeText: primaryBadge ? primaryBadge.text : null,
+      badges: badges,
       stockQty: parseInt(qs("#productStockQty").value, 10) || 0,
       inStock: qs("#productInStock").checked,
     };
@@ -931,19 +982,21 @@
   function updateDiscountBadgePreview() {
     var price = parseFloat(qs("#productPrice").value) || 0;
     var originalPrice = parseFloat(qs("#productOriginalPrice").value) || 0;
-    var badgeSelect = qs("#productBadge");
-    var badgeTextInput = qs("#productBadgeText");
-    if (!badgeSelect || !badgeTextInput) return;
+    var hint = qs("#saleBadgeHint");
+    if (!hint) return;
 
     if (originalPrice > 0 && price > 0 && price < originalPrice) {
       var discountPct = Math.round((1 - price / originalPrice) * 100);
-      if (discountPct >= 1) {
-        badgeSelect.value = "sale";
-        badgeTextInput.value = discountPct + "% OFF";
+      var hasSale = pendingBadges.some(function(b) { return b.type === "sale"; });
+      if (discountPct >= 1 && !hasSale) {
+        hint.textContent = "A \"sale\" badge (" + discountPct + "% OFF) will be added automatically on save.";
+      } else if (hasSale) {
+        hint.textContent = "";
+      } else {
+        hint.textContent = "";
       }
-    } else if (badgeSelect.value === "sale" && /^\d+% OFF$/.test(badgeTextInput.value)) {
-      badgeSelect.value = "none";
-      badgeTextInput.value = "";
+    } else {
+      hint.textContent = "";
     }
   }
 
@@ -1534,6 +1587,7 @@
         reviews: p.reviews || 0,
         badge: p.badge || null,
         badgeText: p.badgeText || null,
+        badges: Array.isArray(p.badges) ? p.badges : [],
         inStock: !!p.inStock,
         stockQty: p.stockQty || 0,
         description: p.description || "",

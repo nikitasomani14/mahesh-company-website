@@ -1365,6 +1365,69 @@ body.admin-body {
   font-size: 0.8rem;
 }
 
+/* Multi-badge UI */
+.badges-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  min-height: 28px;
+}
+
+.badge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+}
+
+.badge-chip--sale { background: #e53e3e; }
+.badge-chip--new { background: #3182ce; }
+.badge-chip--hot { background: #dd6b20; }
+.badge-chip--auth { background: #2d6a4f; }
+
+.badge-chip .badge-remove {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.badge-chip .badge-remove:hover { color: #fff; }
+
+.badge-add-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.input-control--sm {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  flex: 1;
+  min-width: 100px;
+}
+
+.badge-add-row .btn-sm {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#saleBadgeHint {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
 /* How It Works panel */
 .panel--highlight {
   background: linear-gradient(135deg, #f0fdf4, #e8f5e9);

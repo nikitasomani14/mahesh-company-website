@@ -20,6 +20,7 @@ async function loadProducts() {
                 reviews: p.reviews,
                 badge: p.badge,
                 badgeText: p.badgeText,
+                badges: Array.isArray(p.badges) ? p.badges : [],
                 inStock: p.inStock,
                 description: p.description,
                 features: p.features
@@ -265,8 +266,10 @@ function renderProducts(filter = 'all', searchTerm = '') {
                 </button>
                 <div class="product-badges">
                     ${!stock ? `<span class="product-badge badge-oos">${typeof t === 'function' ? t('out_of_stock') : 'Out of Stock'}</span>` : ''}
-                    ${product.badge ? `<span class="product-badge badge-${escHtml(product.badge)}">${escHtml(product.badgeText)}</span>` : ''}
-                    ${discount >= 10 ? `<span class="product-badge badge-sale">${discount}% OFF</span>` : ''}
+                    ${Array.isArray(product.badges) && product.badges.length
+                        ? product.badges.map(b => `<span class="product-badge badge-${escHtml(b.type)}">${escHtml(b.text)}</span>`).join('')
+                        : (product.badge ? `<span class="product-badge badge-${escHtml(product.badge)}">${escHtml(product.badgeText)}</span>` : '')}
+                    ${!Array.isArray(product.badges) && discount >= 10 ? `<span class="product-badge badge-sale">${discount}% OFF</span>` : ''}
                 </div>
                 <div class="product-image">
                     <img src="${escHtml(product.image)}" alt="${escHtml(product.name)}" loading="lazy">

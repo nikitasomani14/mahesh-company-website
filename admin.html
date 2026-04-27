@@ -420,16 +420,21 @@
         <textarea id="productDescription" name="description" class="input-control textarea" rows="3"></textarea>
         <label class="field-label" for="productFeatures">Features (comma-separated)</label>
         <input type="text" id="productFeatures" name="features" class="input-control" placeholder="e.g. Heavy duty, Warranty" />
-        <label class="field-label" for="productBadge">Badge</label>
-        <select id="productBadge" name="badge" class="input-control">
-          <option value="none">none</option>
-          <option value="sale">sale</option>
-          <option value="new">new</option>
-          <option value="hot">hot</option>
-          <option value="auth">auth</option>
-        </select>
-        <label class="field-label" for="productBadgeText">Badge text</label>
-        <input type="text" id="productBadgeText" name="badgeText" class="input-control" />
+        <label class="field-label">Badges</label>
+        <div id="badgesList" class="badges-list"></div>
+        <div class="badge-add-row">
+          <select id="badgeTypeSelect" class="input-control input-control--sm">
+            <option value="sale">sale</option>
+            <option value="new">new</option>
+            <option value="hot">hot</option>
+            <option value="auth">auth</option>
+          </select>
+          <input type="text" id="badgeTextInput" class="input-control input-control--sm" placeholder="Badge text" />
+          <button type="button" id="addBadgeBtn" class="btn btn-secondary btn-sm">
+            <i class="fas fa-plus" aria-hidden="true"></i> Add
+          </button>
+        </div>
+        <p class="muted" id="saleBadgeHint"></p>
         <label class="field-label" for="productStockQty">Stock quantity</label>
         <input type="number" id="productStockQty" name="stockQty" class="input-control" min="0" step="1" inputmode="numeric" required />
         <div class="toggle-row">
