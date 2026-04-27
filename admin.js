@@ -870,20 +870,33 @@
       showToast("Name is required.", "error");
       return;
     }
+    var price = parseFloat(qs("#productPrice").value) || 0;
+    var originalPrice = parseFloat(qs("#productOriginalPrice").value) || 0;
+    var badge = qs("#productBadge").value;
+    var badgeText = qs("#productBadgeText").value.trim();
+
+    if (originalPrice > 0 && price > 0 && price < originalPrice) {
+      var discountPct = Math.round((1 - price / originalPrice) * 100);
+      if (discountPct >= 1) {
+        badge = "sale";
+        badgeText = discountPct + "% OFF";
+      }
+    }
+
     const product = {
       id: existingId || uid(),
       name,
       category: qs("#productCategory").value,
-      price: parseFloat(qs("#productPrice").value) || 0,
-      originalPrice: parseFloat(qs("#productOriginalPrice").value) || 0,
+      price: price,
+      originalPrice: originalPrice,
       imageUrl: pendingImageDataUrl || qs("#productImageUrl").value.trim(),
       description: qs("#productDescription").value.trim(),
       features: qs("#productFeatures").value
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      badge: qs("#productBadge").value,
-      badgeText: qs("#productBadgeText").value.trim(),
+      badge: badge,
+      badgeText: badgeText,
       stockQty: parseInt(qs("#productStockQty").value, 10) || 0,
       inStock: qs("#productInStock").checked,
     };
@@ -914,6 +927,28 @@
     showToast("Product deleted.", "success");
     autoSyncProducts();
   }
+
+  function updateDiscountBadgePreview() {
+    var price = parseFloat(qs("#productPrice").value) || 0;
+    var originalPrice = parseFloat(qs("#productOriginalPrice").value) || 0;
+    var badgeSelect = qs("#productBadge");
+    var badgeTextInput = qs("#productBadgeText");
+    if (!badgeSelect || !badgeTextInput) return;
+
+    if (originalPrice > 0 && price > 0 && price < originalPrice) {
+      var discountPct = Math.round((1 - price / originalPrice) * 100);
+      if (discountPct >= 1) {
+        badgeSelect.value = "sale";
+        badgeTextInput.value = discountPct + "% OFF";
+      }
+    } else if (badgeSelect.value === "sale" && /^\d+% OFF$/.test(badgeTextInput.value)) {
+      badgeSelect.value = "none";
+      badgeTextInput.value = "";
+    }
+  }
+
+  qs("#productPrice")?.addEventListener("input", updateDiscountBadgePreview);
+  qs("#productOriginalPrice")?.addEventListener("input", updateDiscountBadgePreview);
 
   qs("#productFab")?.addEventListener("click", () => openProductModal(null));
 
