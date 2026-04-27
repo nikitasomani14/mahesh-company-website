@@ -181,20 +181,115 @@
       <!-- Settings -->
       <section id="settingsSection" class="app-section hidden" data-section="settings" aria-labelledby="settingsHeading">
         <h2 id="settingsHeading" class="section-heading">Settings</h2>
+
+        <!-- How It Works -->
+        <div class="panel panel--highlight">
+          <h3 class="panel-title"><i class="fas fa-circle-info"></i> How Product Sync Works</h3>
+          <p class="guide-intro">When you add, edit, or delete products in this admin panel, the changes are saved <strong>only on your device</strong> (browser storage). To make them appear on the <strong>live website</strong> that customers visit, the products must be synced to GitHub.</p>
+          <div class="how-it-works-flow">
+            <div class="flow-step">
+              <div class="flow-icon"><i class="fas fa-plus-circle"></i></div>
+              <div class="flow-text"><strong>Step 1:</strong> You add/edit/delete a product in the admin panel</div>
+            </div>
+            <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="flow-step">
+              <div class="flow-icon"><i class="fas fa-database"></i></div>
+              <div class="flow-text"><strong>Step 2:</strong> Product is saved in your browser's local storage</div>
+            </div>
+            <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="flow-step">
+              <div class="flow-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+              <div class="flow-text"><strong>Step 3:</strong> Auto-sync pushes products to GitHub (needs token below)</div>
+            </div>
+            <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+            <div class="flow-step">
+              <div class="flow-icon"><i class="fas fa-globe"></i></div>
+              <div class="flow-text"><strong>Step 4:</strong> Live website loads updated products (within ~30 seconds)</div>
+            </div>
+          </div>
+          <div class="how-it-works-note">
+            <i class="fas fa-key"></i>
+            <span><strong>One-time setup required:</strong> You must create a GitHub token (free, takes 2 minutes) and paste it below. Without this token, products will only be saved locally and <em>won't appear on the live website</em>.</span>
+          </div>
+        </div>
+
+        <!-- GitHub Token Setup -->
         <div class="panel">
-          <h3 class="panel-title">Change admin password</h3>
-          <form id="passwordChangeForm" class="stack-form">
-            <label class="field-label" for="currentPassword">Current password</label>
-            <input type="password" id="currentPassword" class="input-control" autocomplete="current-password" />
-            <label class="field-label" for="newPassword">New password</label>
-            <input type="password" id="newPassword" class="input-control" autocomplete="new-password" />
-            <label class="field-label" for="confirmPassword">Confirm new password</label>
-            <input type="password" id="confirmPassword" class="input-control" autocomplete="new-password" />
-            <button type="submit" class="btn btn-primary">Update password</button>
+          <h3 class="panel-title"><i class="fas fa-link"></i> Live Website Sync (GitHub) — Setup</h3>
+          <p class="muted">Connect to GitHub to automatically push product changes to the live website.</p>
+
+          <div class="setup-guide">
+            <h4 class="guide-title"><i class="fas fa-shoe-prints"></i> Step-by-step: Create a GitHub Token (one-time, 2 minutes)</h4>
+            <ol class="guide-steps guide-steps--detailed">
+              <li>
+                <strong>Open GitHub token page</strong><br>
+                Go to <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer">github.com/settings/tokens/new</a><br>
+                <span class="guide-hint">You must be logged in with the <code>nikitasomani14</code> GitHub account that owns the website repo.</span>
+              </li>
+              <li>
+                <strong>Fill in the token details</strong><br>
+                <span class="guide-hint"><strong>Note:</strong> Type a name like <code>Admin Panel</code> so you remember what this token is for.</span><br>
+                <span class="guide-hint"><strong>Expiration:</strong> Select <code>No expiration</code> so you don't have to redo this.</span>
+              </li>
+              <li>
+                <strong>Select permissions (scopes)</strong><br>
+                <span class="guide-hint">Under <strong>"Select scopes"</strong>, check <strong>only</strong> the box next to <strong>repo</strong> (Full control of private repositories). Do NOT check anything else.</span>
+              </li>
+              <li>
+                <strong>Generate the token</strong><br>
+                <span class="guide-hint">Click the green <strong>"Generate token"</strong> button at the bottom of the page.</span>
+              </li>
+              <li>
+                <strong>Copy the token immediately</strong><br>
+                <span class="guide-hint">You will see a token starting with <code>ghp_</code>. Click the copy icon next to it. <strong>Important:</strong> GitHub will only show this token once! If you leave the page, you cannot see it again.</span>
+              </li>
+              <li>
+                <strong>Paste token below and click Save</strong><br>
+                <span class="guide-hint">Come back to this page, paste the token in the <strong>"Personal Access Token"</strong> field below, and click <strong>Save</strong>. That's it — you're done!</span>
+              </li>
+            </ol>
+          </div>
+
+          <div class="setup-guide setup-guide--after">
+            <h4 class="guide-title"><i class="fas fa-check-circle"></i> After Setup — How Sync Works</h4>
+            <ul class="guide-checklist">
+              <li><i class="fas fa-check"></i> Every time you <strong>add, edit, delete, or toggle stock</strong> of a product, it automatically syncs to the live website.</li>
+              <li><i class="fas fa-check"></i> You can also manually sync by tapping <strong>"Update Live Website"</strong> on the Dashboard or Products tab.</li>
+              <li><i class="fas fa-check"></i> If you see a <strong>yellow banner</strong> on the Dashboard saying "You have product changes not yet live", tap <strong>"Sync Now"</strong>.</li>
+              <li><i class="fas fa-check"></i> After syncing, it takes <strong>about 30 seconds</strong> for changes to appear on the live website.</li>
+              <li><i class="fas fa-check"></i> The token is saved in <strong>this browser only</strong>. If you switch browsers or devices, go to Settings and paste the token again.</li>
+            </ul>
+          </div>
+
+          <div class="setup-guide setup-guide--links">
+            <h4 class="guide-title"><i class="fas fa-external-link-alt"></i> Quick Links</h4>
+            <p class="guide-fields">
+              <strong>Live website:</strong> <a href="https://nikitasomani14.github.io/mahesh-company-website/" target="_blank" rel="noopener noreferrer">nikitasomani14.github.io/mahesh-company-website</a><br>
+              <strong>GitHub repo:</strong> <a href="https://github.com/nikitasomani14/mahesh-company-website" target="_blank" rel="noopener noreferrer">github.com/nikitasomani14/mahesh-company-website</a><br>
+              <strong>Create new token:</strong> <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer">github.com/settings/tokens/new</a><br>
+              <strong>Manage existing tokens:</strong> <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">github.com/settings/tokens</a>
+            </p>
+          </div>
+
+          <form id="githubForm" class="stack-form">
+            <label class="field-label" for="githubRepo">Repository (owner/repo)</label>
+            <input type="text" id="githubRepo" class="input-control" placeholder="e.g. nikitasomani14/mahesh-company-website" autocomplete="off" />
+            <p class="muted" id="githubRepoHint">Not set.</p>
+            <label class="field-label" for="githubToken">Personal Access Token</label>
+            <div class="password-field">
+              <input type="password" id="githubToken" class="input-control" placeholder="ghp_…" autocomplete="off" />
+              <button type="button" id="toggleGhToken" class="icon-btn eye-toggle" aria-label="Show token">
+                <i class="fas fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="muted" id="githubTokenHint">No token saved.</p>
+            <button type="submit" class="btn btn-primary">Save</button>
           </form>
         </div>
+
+        <!-- GoatCounter -->
         <div class="panel">
-          <h3 class="panel-title">GoatCounter Analytics</h3>
+          <h3 class="panel-title"><i class="fas fa-chart-bar"></i> GoatCounter Analytics</h3>
           <p class="muted">Site code and API token for visitor analytics on the dashboard.</p>
 
           <div class="setup-guide">
@@ -228,42 +323,22 @@
             <button type="submit" class="btn btn-primary">Save</button>
           </form>
         </div>
+
+        <!-- Password -->
         <div class="panel">
-          <h3 class="panel-title">Live Website Sync (GitHub)</h3>
-          <p class="muted">Connect to GitHub to push product changes to the live website with one tap.</p>
-
-          <div class="setup-guide">
-            <h4 class="guide-title"><i class="fas fa-circle-info"></i> How to get a GitHub token (one-time)</h4>
-            <ol class="guide-steps">
-              <li>Open <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer">github.com/settings/tokens/new</a></li>
-              <li>Log in with the GitHub account that owns the website repo</li>
-              <li><strong>Note:</strong> enter a name like <code>Admin Panel</code></li>
-              <li><strong>Expiration:</strong> select <code>No expiration</code></li>
-              <li>Under <strong>Select scopes</strong>, check only <strong>repo</strong></li>
-              <li>Click <strong>"Generate token"</strong></li>
-              <li>Copy the token (starts with <code>ghp_</code>)</li>
-              <li>Paste it in the field below and click <strong>Save</strong></li>
-            </ol>
-            <p class="guide-fields">
-              <strong>Manage tokens:</strong> <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">github.com/settings/tokens</a>
-            </p>
-          </div>
-
-          <form id="githubForm" class="stack-form">
-            <label class="field-label" for="githubRepo">Repository (owner/repo)</label>
-            <input type="text" id="githubRepo" class="input-control" placeholder="e.g. nikitasomani14/mahesh-company-website" autocomplete="off" />
-            <p class="muted" id="githubRepoHint">Not set.</p>
-            <label class="field-label" for="githubToken">Personal Access Token</label>
-            <div class="password-field">
-              <input type="password" id="githubToken" class="input-control" placeholder="ghp_…" autocomplete="off" />
-              <button type="button" id="toggleGhToken" class="icon-btn eye-toggle" aria-label="Show token">
-                <i class="fas fa-eye" aria-hidden="true"></i>
-              </button>
-            </div>
-            <p class="muted" id="githubTokenHint">No token saved.</p>
-            <button type="submit" class="btn btn-primary">Save</button>
+          <h3 class="panel-title"><i class="fas fa-lock"></i> Change Admin Password</h3>
+          <form id="passwordChangeForm" class="stack-form">
+            <label class="field-label" for="currentPassword">Current password</label>
+            <input type="password" id="currentPassword" class="input-control" autocomplete="current-password" />
+            <label class="field-label" for="newPassword">New password</label>
+            <input type="password" id="newPassword" class="input-control" autocomplete="new-password" />
+            <label class="field-label" for="confirmPassword">Confirm new password</label>
+            <input type="password" id="confirmPassword" class="input-control" autocomplete="new-password" />
+            <button type="submit" class="btn btn-primary">Update password</button>
           </form>
         </div>
+
+        <!-- Data & Logout -->
         <div class="panel danger-zone">
           <h3 class="panel-title">Data</h3>
           <button type="button" class="btn btn-danger-outline" id="clearAllDataBtn">Clear all local data</button>
@@ -272,7 +347,7 @@
           <button type="button" class="btn btn-secondary btn-block" id="settingsLogoutBtn">
             <i class="fas fa-right-from-bracket" aria-hidden="true"></i> Logout
           </button>
-          <p class="version-info" id="appVersionInfo">App version 1.1.0</p>
+          <p class="version-info" id="appVersionInfo">App version 1.2.0</p>
         </div>
       </section>
     </main>
