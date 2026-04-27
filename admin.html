@@ -121,6 +121,15 @@
           <h3 class="panel-title">Recent activity</h3>
           <ul class="activity-log" id="activityLog"></ul>
         </div>
+        <div id="unsyncedBanner" class="unsynced-banner hidden" role="alert">
+          <div class="unsynced-banner-content">
+            <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+            <span>You have product changes not yet live on the website.</span>
+          </div>
+          <button type="button" class="btn btn-accent btn-sm" id="bannerSyncBtn">
+            <i class="fas fa-cloud-arrow-up" aria-hidden="true"></i> Sync Now
+          </button>
+        </div>
         <div class="quick-actions">
           <button type="button" class="btn btn-secondary" id="dashAddProduct">
             <i class="fas fa-plus" aria-hidden="true"></i> Add Product

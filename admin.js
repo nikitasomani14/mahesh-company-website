@@ -19,12 +19,13 @@
     ADMIN_OPENS: "mc_admin_opens",
     LOGIN_ATTEMPTS: "mc_login_attempts",
     LOCKOUT_UNTIL: "mc_lockout_until",
+    PENDING_SYNC: "mc_pending_sync",
   };
 
   const DEFAULT_GITHUB_REPO = "nikitasomani14/mahesh-company-website";
 
   const DEFAULT_GC_CODE = "mahesh-company";
-  const APP_VERSION = "1.1.0";
+  const APP_VERSION = "1.2.0";
   const MAX_LOGIN_ATTEMPTS = 5;
   const LOCKOUT_DURATION_MS = 5 * 60 * 1000;
   const SESSION_TIMEOUT_MS = 60 * 60 * 1000;
@@ -108,6 +109,40 @@
       message,
     });
     localStorage.setItem(LS.ACTIVITY, JSON.stringify(log.slice(0, 10)));
+  }
+
+  function markPendingSync() {
+    localStorage.setItem(LS.PENDING_SYNC, "1");
+    updateUnsyncedBanner();
+  }
+
+  function clearPendingSync() {
+    localStorage.removeItem(LS.PENDING_SYNC);
+    updateUnsyncedBanner();
+  }
+
+  function hasPendingSync() {
+    return localStorage.getItem(LS.PENDING_SYNC) === "1";
+  }
+
+  function updateUnsyncedBanner() {
+    var banner = qs("#unsyncedBanner");
+    if (!banner) return;
+    if (hasPendingSync()) {
+      banner.classList.remove("hidden");
+    } else {
+      banner.classList.add("hidden");
+    }
+  }
+
+  function autoSyncProducts() {
+    markPendingSync();
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) {
+      showToast("Product saved locally. Set up GitHub token in Settings to sync to live website.", "error");
+      return;
+    }
+    syncProductsToGithub();
   }
 
   function incrementAdminOpens() {
@@ -310,6 +345,7 @@
     renderBills();
     initGoatcounterSettings();
     initGithubSettings();
+    updateUnsyncedBanner();
     switchTab("dashboard");
     qs("#appVersionInfo").textContent = "App version " + APP_VERSION;
   }
@@ -775,6 +811,7 @@
         pushActivity("Stock toggle: " + (all[ix].name || id));
         renderDashboard();
         showToast("Stock updated.", "success");
+        autoSyncProducts();
       });
     });
   }
@@ -858,6 +895,7 @@
     renderProducts();
     renderDashboard();
     showToast("Product saved.", "success");
+    autoSyncProducts();
   });
 
   async function deleteProduct(id) {
@@ -869,6 +907,7 @@
     renderProducts();
     renderDashboard();
     showToast("Product deleted.", "success");
+    autoSyncProducts();
   }
 
   qs("#productFab")?.addEventListener("click", () => openProductModal(null));
@@ -1500,6 +1539,7 @@
       });
 
       if (putResp.ok) {
+        clearPendingSync();
         pushActivity("Products synced to live website (" + products.length + " items).");
         renderDashboard();
         showToast("Live website updated! Changes will appear in ~30 seconds.", "success");
@@ -1525,6 +1565,7 @@
 
   qs("#dashSyncBtn")?.addEventListener("click", function() { syncProductsToGithub(); });
   qs("#productsSyncBtn")?.addEventListener("click", function() { syncProductsToGithub(); });
+  qs("#bannerSyncBtn")?.addEventListener("click", function() { syncProductsToGithub(); });
 
   qs("#clearAllDataBtn")?.addEventListener("click", async () => {
     const ok = await confirmDialog(
