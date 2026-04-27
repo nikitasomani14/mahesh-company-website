@@ -10,7 +10,7 @@
     "reviews": 0,
     "badge": "sale",
     "badgeText": "11% OFF",
-    "inStock": true,
+    "inStock": false,
     "stockQty": 5,
     "description": "Heavy-duty multi-crop thresher by Sonalika. Capacity 1200kg with triple blower design. Suitable for wheat, paddy, maize, and more.",
     "features": [
