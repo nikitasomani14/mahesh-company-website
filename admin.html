@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
   <meta name="theme-color" content="#1a472a" />
   <meta name="robots" content="noindex, nofollow">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.goatcounter.com https://api.github.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(), geolocation=(), payment=()">
@@ -128,12 +128,20 @@
           <button type="button" class="btn btn-primary" id="dashNewBill">
             <i class="fas fa-file-invoice" aria-hidden="true"></i> New Bill
           </button>
+          <button type="button" class="btn btn-accent" id="dashSyncBtn">
+            <i class="fas fa-cloud-arrow-up" aria-hidden="true"></i> Update Live Website
+          </button>
         </div>
       </section>
 
       <!-- Products -->
       <section id="productsSection" class="app-section hidden" data-section="products" aria-labelledby="productsHeading">
-        <h2 id="productsHeading" class="section-heading">Products</h2>
+        <div class="section-head-row">
+          <h2 id="productsHeading" class="section-heading">Products</h2>
+          <button type="button" class="btn btn-accent btn-sm" id="productsSyncBtn">
+            <i class="fas fa-cloud-arrow-up" aria-hidden="true"></i> Update Live
+          </button>
+        </div>
         <div class="search-wrap">
           <label class="visually-hidden" for="productSearch">Search products</label>
           <input type="search" id="productSearch" class="input-control search-input" placeholder="Search products…" autocomplete="off" />
@@ -208,6 +216,42 @@
               </button>
             </div>
             <p class="muted" id="goatcounterTokenHint">No token saved.</p>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3 class="panel-title">Live Website Sync (GitHub)</h3>
+          <p class="muted">Connect to GitHub to push product changes to the live website with one tap.</p>
+
+          <div class="setup-guide">
+            <h4 class="guide-title"><i class="fas fa-circle-info"></i> How to get a GitHub token (one-time)</h4>
+            <ol class="guide-steps">
+              <li>Open <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer">github.com/settings/tokens/new</a></li>
+              <li>Log in with the GitHub account that owns the website repo</li>
+              <li><strong>Note:</strong> enter a name like <code>Admin Panel</code></li>
+              <li><strong>Expiration:</strong> select <code>No expiration</code></li>
+              <li>Under <strong>Select scopes</strong>, check only <strong>repo</strong></li>
+              <li>Click <strong>"Generate token"</strong></li>
+              <li>Copy the token (starts with <code>ghp_</code>)</li>
+              <li>Paste it in the field below and click <strong>Save</strong></li>
+            </ol>
+            <p class="guide-fields">
+              <strong>Manage tokens:</strong> <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">github.com/settings/tokens</a>
+            </p>
+          </div>
+
+          <form id="githubForm" class="stack-form">
+            <label class="field-label" for="githubRepo">Repository (owner/repo)</label>
+            <input type="text" id="githubRepo" class="input-control" placeholder="e.g. nikitasomani14/mahesh-company-website" autocomplete="off" />
+            <p class="muted" id="githubRepoHint">Not set.</p>
+            <label class="field-label" for="githubToken">Personal Access Token</label>
+            <div class="password-field">
+              <input type="password" id="githubToken" class="input-control" placeholder="ghp_…" autocomplete="off" />
+              <button type="button" id="toggleGhToken" class="icon-btn eye-toggle" aria-label="Show token">
+                <i class="fas fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="muted" id="githubTokenHint">No token saved.</p>
             <button type="submit" class="btn btn-primary">Save</button>
           </form>
         </div>
@@ -551,12 +595,39 @@
         </details>
 
         <details class="help-section">
+          <summary class="help-section-title"><i class="fas fa-cloud-arrow-up"></i> Live Website Sync</summary>
+          <div class="help-content">
+            <h4>What is this?</h4>
+            <p>When you add, edit, or remove products in the admin panel, the changes are saved locally. Tap <strong>"Update Live Website"</strong> to push those changes to your live website so visitors can see them.</p>
+            <h4>One-time setup</h4>
+            <ol>
+              <li>Go to the <strong>Settings</strong> tab (bottom nav)</li>
+              <li>Find the <strong>"Live Website Sync (GitHub)"</strong> section</li>
+              <li>Follow the step-by-step guide there to create a GitHub token</li>
+              <li>Paste the token and click <strong>Save</strong></li>
+              <li>You only need to do this once per browser</li>
+            </ol>
+            <h4>How to sync</h4>
+            <ol>
+              <li>Make your product changes (add, edit, delete, toggle stock)</li>
+              <li>Tap <strong>"Update Live Website"</strong> on the Dashboard or Products tab</li>
+              <li>Wait a few seconds for the sync to complete</li>
+              <li>Your live website updates automatically in about 30 seconds</li>
+            </ol>
+            <h4>Switching browsers?</h4>
+            <p>The token is saved in your browser. If you switch browsers, go to <strong>Settings</strong> and paste the token again. You can find your existing token at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">github.com/settings/tokens</a>.</p>
+          </div>
+        </details>
+
+        <details class="help-section">
           <summary class="help-section-title"><i class="fas fa-cog"></i> Settings</summary>
           <div class="help-content">
             <h4>Change password</h4>
             <p>Enter your current password, then the new password twice, and tap <strong>Update password</strong>.</p>
             <h4>GoatCounter Analytics</h4>
             <p>Enter your GoatCounter site code and API token to see visitor stats on the dashboard. Follow the step-by-step guide in Settings to get your API token.</p>
+            <h4>GitHub Sync</h4>
+            <p>Enter your GitHub repository and Personal Access Token to enable one-tap product sync to the live website. See the <strong>"Live Website Sync"</strong> help section above for details.</p>
             <h4>Clear all data</h4>
             <p><strong>Warning:</strong> This removes all products, bills, activity, and resets your password to the default. Use only if you want to start fresh.</p>
           </div>
@@ -568,6 +639,7 @@
             <ul>
               <li>All data is stored on <strong>this device only</strong> (browser storage). If you clear browser data, your products and bills will be lost.</li>
               <li>Use <strong>"Upload Photo"</strong> to add product images directly from your phone camera or gallery — no need to find a URL.</li>
+              <li>After changing products, tap <strong>"Update Live Website"</strong> to push changes to the live site. Set up a GitHub token in Settings first (one-time).</li>
               <li>Tap the <strong>?</strong> button in the top bar anytime to open this guide.</li>
               <li>Log out when you're done to keep your panel secure.</li>
             </ul>

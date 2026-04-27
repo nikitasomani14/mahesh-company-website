@@ -14,10 +14,14 @@
     BILL_COUNTER: "mc_bill_counter",
     GOATCOUNTER_CODE: "mc_goatcounter_code",
     GOATCOUNTER_TOKEN: "mc_goatcounter_token",
+    GITHUB_TOKEN: "mc_github_token",
+    GITHUB_REPO: "mc_github_repo",
     ADMIN_OPENS: "mc_admin_opens",
     LOGIN_ATTEMPTS: "mc_login_attempts",
     LOCKOUT_UNTIL: "mc_lockout_until",
   };
+
+  const DEFAULT_GITHUB_REPO = "nikitasomani14/mahesh-company-website";
 
   const DEFAULT_GC_CODE = "mahesh-company";
   const APP_VERSION = "1.1.0";
@@ -305,6 +309,7 @@
     renderProducts();
     renderBills();
     initGoatcounterSettings();
+    initGithubSettings();
     switchTab("dashboard");
     qs("#appVersionInfo").textContent = "App version " + APP_VERSION;
   }
@@ -451,8 +456,10 @@
       if (totalResp.ok) {
         var totData = await totalResp.json();
         var apiTotal = parseInt(String(totData.total || 0), 10);
+        var apiUnique = parseInt(String(totData.total_unique || 0), 10);
         if (apiTotal > totalCount) totalCount = apiTotal;
-        uniqueCount = apiTotal;
+        uniqueCount = apiUnique;
+        if (uniqueCount === 0 && apiTotal > 0) uniqueCount = apiTotal;
       }
 
       var totalEl = qs("#statTotalVisits");
@@ -1348,6 +1355,177 @@
     if (i) i.className = show ? "fas fa-eye-slash" : "fas fa-eye";
   });
 
+  /* ---------- GitHub Settings ---------- */
+  function getGithubRepo() {
+    return localStorage.getItem(LS.GITHUB_REPO) || DEFAULT_GITHUB_REPO;
+  }
+
+  function initGithubSettings() {
+    const repo = getGithubRepo();
+    const token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    const repoInput = qs("#githubRepo");
+    const repoHint = qs("#githubRepoHint");
+    const tokenHint = qs("#githubTokenHint");
+    const tokenInput = qs("#githubToken");
+    if (repoInput) repoInput.value = repo;
+    if (repoHint) {
+      repoHint.textContent = repo ? "Current: github.com/" + repo : "Not set.";
+    }
+    if (tokenHint) {
+      tokenHint.textContent = token
+        ? "Token saved (last 4: ..." + token.slice(-4) + ")"
+        : "No token saved.";
+    }
+    if (tokenInput) tokenInput.value = "";
+  }
+
+  qs("#githubForm")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const repo = (qs("#githubRepo").value || "").trim();
+    if (!repo || !repo.includes("/")) {
+      showToast("Enter a valid owner/repo (e.g. user/my-website).", "error");
+      return;
+    }
+    localStorage.setItem(LS.GITHUB_REPO, repo);
+    const tokenVal = (qs("#githubToken").value || "").trim();
+    if (tokenVal) {
+      localStorage.setItem(LS.GITHUB_TOKEN, tokenVal);
+    }
+    initGithubSettings();
+    pushActivity("GitHub sync settings updated.");
+    showToast("GitHub settings saved.", "success");
+  });
+
+  qs("#toggleGhToken")?.addEventListener("click", () => {
+    const inp = qs("#githubToken");
+    if (!inp) return;
+    const show = inp.type === "password";
+    inp.type = show ? "text" : "password";
+    const i = qs("#toggleGhToken i");
+    if (i) i.className = show ? "fas fa-eye-slash" : "fas fa-eye";
+  });
+
+  /* ---------- GitHub Sync ---------- */
+  let isSyncing = false;
+
+  function setSyncButtonState(busy) {
+    var btns = [qs("#dashSyncBtn"), qs("#productsSyncBtn")];
+    btns.forEach(function(btn) {
+      if (!btn) return;
+      if (busy) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Syncing…';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-cloud-arrow-up" aria-hidden="true"></i> Update Live Website';
+      }
+    });
+    var prodBtn = qs("#productsSyncBtn");
+    if (prodBtn && !busy) {
+      prodBtn.innerHTML = '<i class="fas fa-cloud-arrow-up" aria-hidden="true"></i> Update Live';
+    }
+  }
+
+  async function syncProductsToGithub() {
+    if (isSyncing) return;
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) {
+      showToast("Set your GitHub token in Settings first.", "error");
+      return;
+    }
+    var repo = getGithubRepo();
+    if (!repo || !repo.includes("/")) {
+      showToast("Set your GitHub repository in Settings first.", "error");
+      return;
+    }
+
+    isSyncing = true;
+    setSyncButtonState(true);
+
+    var products = getProducts();
+    var cleanProducts = products.map(function(p) {
+      return {
+        id: p.id,
+        name: p.name,
+        category: p.category,
+        price: p.price,
+        originalPrice: p.originalPrice,
+        imageUrl: p.imageUrl,
+        rating: p.rating || 0,
+        reviews: p.reviews || 0,
+        badge: p.badge || null,
+        badgeText: p.badgeText || null,
+        inStock: !!p.inStock,
+        stockQty: p.stockQty || 0,
+        description: p.description || "",
+        features: Array.isArray(p.features) ? p.features : []
+      };
+    });
+
+    var jsonContent = JSON.stringify(cleanProducts, null, 2) + "\n";
+    var apiBase = "https://api.github.com/repos/" + repo + "/contents/data/products.json";
+    var headers = {
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github.v3+json",
+      "Content-Type": "application/json"
+    };
+
+    try {
+      var getResp = await fetch(apiBase, { headers: headers });
+      var sha = "";
+      if (getResp.ok) {
+        var fileData = await getResp.json();
+        sha = fileData.sha || "";
+      } else if (getResp.status === 401 || getResp.status === 403) {
+        showToast("GitHub token is invalid or expired. Check Settings.", "error");
+        isSyncing = false;
+        setSyncButtonState(false);
+        return;
+      }
+
+      var encoded = btoa(unescape(encodeURIComponent(jsonContent)));
+
+      var putBody = {
+        message: "Update products from admin panel",
+        content: encoded
+      };
+      if (sha) {
+        putBody.sha = sha;
+      }
+
+      var putResp = await fetch(apiBase, {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify(putBody)
+      });
+
+      if (putResp.ok) {
+        pushActivity("Products synced to live website (" + products.length + " items).");
+        renderDashboard();
+        showToast("Live website updated! Changes will appear in ~30 seconds.", "success");
+      } else if (putResp.status === 401 || putResp.status === 403) {
+        showToast("GitHub token is invalid or expired. Check Settings.", "error");
+      } else if (putResp.status === 404) {
+        showToast("Repository not found. Check repo name in Settings.", "error");
+      } else if (putResp.status === 409) {
+        showToast("Conflict — someone else updated the file. Try again.", "error");
+      } else {
+        var errData = null;
+        try { errData = await putResp.json(); } catch (e) { /* ignore */ }
+        var errMsg = (errData && errData.message) ? errData.message : "Unknown error";
+        showToast("Sync failed: " + errMsg, "error");
+      }
+    } catch (e) {
+      showToast("Network error. Check your internet connection.", "error");
+    } finally {
+      isSyncing = false;
+      setSyncButtonState(false);
+    }
+  }
+
+  qs("#dashSyncBtn")?.addEventListener("click", function() { syncProductsToGithub(); });
+  qs("#productsSyncBtn")?.addEventListener("click", function() { syncProductsToGithub(); });
+
   qs("#clearAllDataBtn")?.addEventListener("click", async () => {
     const ok = await confirmDialog(
       "Clear all data?",
@@ -1363,6 +1541,8 @@
       LS.LOGGED_IN,
       LS.GOATCOUNTER_CODE,
       LS.GOATCOUNTER_TOKEN,
+      LS.GITHUB_TOKEN,
+      LS.GITHUB_REPO,
       LS.ADMIN_OPENS,
     ].forEach((k) => localStorage.removeItem(k));
     initDefaultPasswordHash();

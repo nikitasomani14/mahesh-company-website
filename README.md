@@ -73,7 +73,7 @@ A **single-page, static e-commerce website** for Mahesh & Company, an agricultur
 | **Founded** | 2001 |
 | **Founder** | Mukesh Mantri |
 | **Co-Founder / Manager** | Atul Mantri |
-| **Phone Numbers** | +91-94147 24472, +91-91660 3621 |
+| **Phone Numbers** | +91-94147 24472, +91-91660 36211 |
 | **WhatsApp** | +91-7297047681 (Atul Mantri) |
 | **Business Hours** | Mon-Sat: 8:00 AM - 8:00 PM, Sunday: 9:00 AM - 2:00 PM |
 | **GPS Coordinates** | 23.9583635, 74.0804451 |
@@ -1064,7 +1064,7 @@ The CSS for `.video-section`, `.video-embed-wrap`, and `.video-aspect` still exi
 | Role | Name | Phone | WhatsApp |
 |------|------|-------|----------|
 | Founder | Mukesh Mantri | +91-94147 24472 | — |
-| Co-Founder | Atul Mantri | +91-91660 3621 | +91-7297047681 |
+| Co-Founder | Atul Mantri | +91-91660 36211 | +91-7297047681 |
 
 **Address**: Dabrawat Complex, Near Roadways Bus Stand, Aspur, Dungarpur District, Rajasthan - 314021
 
