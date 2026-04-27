@@ -135,6 +135,8 @@
     }
   }
 
+  var autoSyncTimer = null;
+
   function autoSyncProducts() {
     markPendingSync();
     var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
@@ -142,7 +144,10 @@
       showToast("Product saved locally. Set up GitHub token in Settings to sync to live website.", "error");
       return;
     }
-    syncProductsToGithub();
+    clearTimeout(autoSyncTimer);
+    autoSyncTimer = setTimeout(function() {
+      syncProductsToGithub();
+    }, 2000);
   }
 
   function incrementAdminOpens() {
@@ -1509,51 +1514,62 @@
       "Content-Type": "application/json"
     };
 
+    var encoded = btoa(unescape(encodeURIComponent(jsonContent)));
+    var maxRetries = 3;
+
     try {
-      var getResp = await fetch(apiBase, { headers: headers });
-      var sha = "";
-      if (getResp.ok) {
-        var fileData = await getResp.json();
-        sha = fileData.sha || "";
-      } else if (getResp.status === 401 || getResp.status === 403) {
-        showToast("GitHub token is invalid or expired. Check Settings.", "error");
-        isSyncing = false;
-        setSyncButtonState(false);
-        return;
-      }
+      for (var attempt = 0; attempt < maxRetries; attempt++) {
+        var getResp = await fetch(apiBase, { headers: headers });
+        var sha = "";
+        if (getResp.ok) {
+          var fileData = await getResp.json();
+          sha = fileData.sha || "";
+        } else if (getResp.status === 401 || getResp.status === 403) {
+          showToast("GitHub token is invalid or expired. Check Settings.", "error");
+          isSyncing = false;
+          setSyncButtonState(false);
+          return;
+        }
 
-      var encoded = btoa(unescape(encodeURIComponent(jsonContent)));
+        var putBody = {
+          message: "Update products from admin panel",
+          content: encoded
+        };
+        if (sha) {
+          putBody.sha = sha;
+        }
 
-      var putBody = {
-        message: "Update products from admin panel",
-        content: encoded
-      };
-      if (sha) {
-        putBody.sha = sha;
-      }
+        var putResp = await fetch(apiBase, {
+          method: "PUT",
+          headers: headers,
+          body: JSON.stringify(putBody)
+        });
 
-      var putResp = await fetch(apiBase, {
-        method: "PUT",
-        headers: headers,
-        body: JSON.stringify(putBody)
-      });
-
-      if (putResp.ok) {
-        clearPendingSync();
-        pushActivity("Products synced to live website (" + products.length + " items).");
-        renderDashboard();
-        showToast("Live website updated! Changes will appear in ~30 seconds.", "success");
-      } else if (putResp.status === 401 || putResp.status === 403) {
-        showToast("GitHub token is invalid or expired. Check Settings.", "error");
-      } else if (putResp.status === 404) {
-        showToast("Repository not found. Check repo name in Settings.", "error");
-      } else if (putResp.status === 409) {
-        showToast("Conflict — someone else updated the file. Try again.", "error");
-      } else {
-        var errData = null;
-        try { errData = await putResp.json(); } catch (e) { /* ignore */ }
-        var errMsg = (errData && errData.message) ? errData.message : "Unknown error";
-        showToast("Sync failed: " + errMsg, "error");
+        if (putResp.ok) {
+          clearPendingSync();
+          pushActivity("Products synced to live website (" + products.length + " items).");
+          renderDashboard();
+          showToast("Live website updated! Changes will appear in ~30 seconds.", "success");
+          return;
+        } else if (putResp.status === 409 && attempt < maxRetries - 1) {
+          await new Promise(function(r) { setTimeout(r, 1000); });
+          continue;
+        } else if (putResp.status === 401 || putResp.status === 403) {
+          showToast("GitHub token is invalid or expired. Check Settings.", "error");
+          return;
+        } else if (putResp.status === 404) {
+          showToast("Repository not found. Check repo name in Settings.", "error");
+          return;
+        } else if (putResp.status === 409) {
+          showToast("Sync conflict. Please try again in a few seconds.", "error");
+          return;
+        } else {
+          var errData = null;
+          try { errData = await putResp.json(); } catch (e) { /* ignore */ }
+          var errMsg = (errData && errData.message) ? errData.message : "Unknown error";
+          showToast("Sync failed: " + errMsg, "error");
+          return;
+        }
       }
     } catch (e) {
       showToast("Network error. Check your internet connection.", "error");
