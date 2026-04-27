@@ -13,7 +13,13 @@
     "inStock": true,
     "stockQty": 5,
     "description": "Heavy-duty multi-crop thresher by Sonalika. Capacity 1200kg with triple blower design. Suitable for wheat, paddy, maize, and more.",
-    "features": ["40 HP Power Requirement", "1200 kg Capacity", "Triple Blower Design", "Mild Steel Body", "1-Year Warranty"]
+    "features": [
+      "40 HP Power Requirement",
+      "1200 kg Capacity",
+      "Triple Blower Design",
+      "Mild Steel Body",
+      "1-Year Warranty"
+    ]
   },
   {
     "id": "2",
@@ -29,7 +35,13 @@
     "inStock": true,
     "stockQty": 3,
     "description": "64-inch drum maize sheller with skin dehusker. Double wheel, new model with enhanced performance.",
-    "features": ["64\" Drum Size", "35+ HP Required", "640 RPM Speed", "Double Wheel", "Skin Dehusker"]
+    "features": [
+      "64\" Drum Size",
+      "35+ HP Required",
+      "640 RPM Speed",
+      "Double Wheel",
+      "Skin Dehusker"
+    ]
   },
   {
     "id": "3",
@@ -45,7 +57,13 @@
     "inStock": true,
     "stockQty": 4,
     "description": "Tractor-operated paddy thresher with high output. Perfect for rice harvesting season.",
-    "features": ["Tractor Operated", "High Output Design", "Low Grain Loss", "Easy Maintenance", "All-Season Use"]
+    "features": [
+      "Tractor Operated",
+      "High Output Design",
+      "Low Grain Loss",
+      "Easy Maintenance",
+      "All-Season Use"
+    ]
   },
   {
     "id": "4",
@@ -61,7 +79,13 @@
     "inStock": true,
     "stockQty": 10,
     "description": "Original Honda GX200 engine. Air-cooled, 4-stroke OHV with recoil start. Ideal for water pumps and agriculture. Available models: GX80, GX160, GX200.",
-    "features": ["6.5 HP Power", "Air-Cooled 4-Stroke", "3.1L Fuel Tank", "Low Oil Alert", "3-Year Warranty"]
+    "features": [
+      "6.5 HP Power",
+      "Air-Cooled 4-Stroke",
+      "3.1L Fuel Tank",
+      "Low Oil Alert",
+      "3-Year Warranty"
+    ]
   },
   {
     "id": "5",
@@ -77,7 +101,13 @@
     "inStock": true,
     "stockQty": 7,
     "description": "Powerful Honda GX390 engine for heavy-duty applications. Perfect for large water pumps and industrial equipment.",
-    "features": ["13 HP Power", "Horizontal Crankshaft", "OHV 4-Stroke", "Electric Start Option", "Commercial Grade"]
+    "features": [
+      "13 HP Power",
+      "Horizontal Crankshaft",
+      "OHV 4-Stroke",
+      "Electric Start Option",
+      "Commercial Grade"
+    ]
   },
   {
     "id": "6",
@@ -93,7 +123,13 @@
     "inStock": true,
     "stockQty": 6,
     "description": "Heavy-duty oil bearing diesel engine. Fuel efficient and long-lasting. Ideal for threshers and water pumps.",
-    "features": ["10 HP Diesel", "Oil Bearing Design", "Fuel Efficient", "Low Vibration", "Easy Maintenance"]
+    "features": [
+      "10 HP Diesel",
+      "Oil Bearing Design",
+      "Fuel Efficient",
+      "Low Vibration",
+      "Easy Maintenance"
+    ]
   },
   {
     "id": "7",
@@ -109,7 +145,13 @@
     "inStock": true,
     "stockQty": 2,
     "description": "JCB 3DX backhoe loader available for rent. Expert operators provided. Minimum 4 hours booking.",
-    "features": ["Expert Operator Included", "Min 4 Hours Booking", "Land Leveling", "Digging & Loading", "Construction Work"]
+    "features": [
+      "Expert Operator Included",
+      "Min 4 Hours Booking",
+      "Land Leveling",
+      "Digging & Loading",
+      "Construction Work"
+    ]
   },
   {
     "id": "8",
@@ -125,7 +167,13 @@
     "inStock": true,
     "stockQty": 2,
     "description": "Complete farm land leveling service using JCB. Per bigha pricing with professional operators.",
-    "features": ["Professional Operators", "Per Bigha Pricing", "Farm Land Leveling", "Precision Work", "Free Site Visit"]
+    "features": [
+      "Professional Operators",
+      "Per Bigha Pricing",
+      "Farm Land Leveling",
+      "Precision Work",
+      "Free Site Visit"
+    ]
   },
   {
     "id": "9",
@@ -141,7 +189,13 @@
     "inStock": true,
     "stockQty": 15,
     "description": "High-quality cultivator blade set. Hardened steel for long life. Compatible with all major tractor models.",
-    "features": ["12 Pieces Set", "Hardened Steel", "Universal Fit", "Long Lasting", "Rust Resistant"]
+    "features": [
+      "12 Pieces Set",
+      "Hardened Steel",
+      "Universal Fit",
+      "Long Lasting",
+      "Rust Resistant"
+    ]
   },
   {
     "id": "10",
@@ -157,7 +211,13 @@
     "inStock": false,
     "stockQty": 0,
     "description": "Premium quality V-belt set for thresher machines. Long-lasting, heat resistant. Compatible with Sonalika threshers.",
-    "features": ["Premium Quality", "Heat Resistant", "Sonalika Compatible", "Long Life", "Set of 4 Belts"]
+    "features": [
+      "Premium Quality",
+      "Heat Resistant",
+      "Sonalika Compatible",
+      "Long Life",
+      "Set of 4 Belts"
+    ]
   },
   {
     "id": "11",
@@ -173,7 +233,13 @@
     "inStock": true,
     "stockQty": 12,
     "description": "Heavy-duty rotavator blades for tractor rotavators. Forged steel construction for maximum durability.",
-    "features": ["42 Pieces", "Forged Steel", "Universal Mount", "High Durability", "All Soil Types"]
+    "features": [
+      "42 Pieces",
+      "Forged Steel",
+      "Universal Mount",
+      "High Durability",
+      "All Soil Types"
+    ]
   },
   {
     "id": "12",
@@ -189,7 +255,13 @@
     "inStock": true,
     "stockQty": 8,
     "description": "Complete bearing set for thresher machines. Includes main shaft, drum, and auxiliary bearings.",
-    "features": ["Complete Kit", "Premium Quality", "All Major Parts", "Dust Sealed", "Easy Installation"]
+    "features": [
+      "Complete Kit",
+      "Premium Quality",
+      "All Major Parts",
+      "Dust Sealed",
+      "Easy Installation"
+    ]
   },
   {
     "id": "13",
@@ -205,7 +277,13 @@
     "inStock": false,
     "stockQty": 0,
     "description": "Professional grade khurpi for weeding and garden work. Stainless steel blade with wooden handle.",
-    "features": ["Stainless Steel", "Wooden Handle", "Ergonomic Grip", "Multi-Purpose", "Light Weight"]
+    "features": [
+      "Stainless Steel",
+      "Wooden Handle",
+      "Ergonomic Grip",
+      "Multi-Purpose",
+      "Light Weight"
+    ]
   },
   {
     "id": "14",
@@ -221,7 +299,13 @@
     "inStock": true,
     "stockQty": 9,
     "description": "Battery-operated 16-litre spraying machine. Rechargeable with adjustable nozzle. Perfect for pesticide spraying.",
-    "features": ["16 Litre Capacity", "Battery Operated", "Adjustable Nozzle", "6-Hour Battery", "Backpack Design"]
+    "features": [
+      "16 Litre Capacity",
+      "Battery Operated",
+      "Adjustable Nozzle",
+      "6-Hour Battery",
+      "Backpack Design"
+    ]
   },
   {
     "id": "15",
@@ -237,7 +321,13 @@
     "inStock": true,
     "stockQty": 11,
     "description": "Complete garden tool set with 8 essential tools. Includes trowel, cultivator, pruner, and more.",
-    "features": ["8 Piece Set", "Carbon Steel", "Rubber Grip", "Carrying Bag", "Gift Quality"]
+    "features": [
+      "8 Piece Set",
+      "Carbon Steel",
+      "Rubber Grip",
+      "Carrying Bag",
+      "Gift Quality"
+    ]
   },
   {
     "id": "16",
@@ -253,7 +343,13 @@
     "inStock": true,
     "stockQty": 4,
     "description": "Honda-powered 3-inch water pump. 950L/min max flow rate. Cast aluminum body with cast iron impeller.",
-    "features": ["950L/min Flow", "25m Total Head", "GX200 Engine", "Cast Iron Impeller", "Self-Priming"]
+    "features": [
+      "950L/min Flow",
+      "25m Total Head",
+      "GX200 Engine",
+      "Cast Iron Impeller",
+      "Self-Priming"
+    ]
   },
   {
     "id": "17",
@@ -269,7 +365,13 @@
     "inStock": true,
     "stockQty": 6,
     "description": "High-quality 1.5HP submersible pump for borewell and open well. Copper winding motor for long life.",
-    "features": ["1.5 HP Motor", "Copper Winding", "Borewell Compatible", "60m Head", "Thermal Protection"]
+    "features": [
+      "1.5 HP Motor",
+      "Copper Winding",
+      "Borewell Compatible",
+      "60m Head",
+      "Thermal Protection"
+    ]
   },
   {
     "id": "18",
@@ -285,7 +387,13 @@
     "inStock": true,
     "stockQty": 3,
     "description": "Complete drip irrigation kit for 1 acre. Saves 60% water. Easy installation with all fittings included.",
-    "features": ["1 Acre Coverage", "60% Water Saving", "All Fittings Included", "UV Resistant Pipes", "Easy Installation"]
+    "features": [
+      "1 Acre Coverage",
+      "60% Water Saving",
+      "All Fittings Included",
+      "UV Resistant Pipes",
+      "Easy Installation"
+    ]
   },
   {
     "id": "19",
@@ -301,7 +409,13 @@
     "inStock": true,
     "stockQty": 3,
     "description": "Compact mini thresher ideal for small farms. Low power requirement with efficient output.",
-    "features": ["20 HP Requirement", "Compact Design", "Easy Transport", "Multi-Crop", "Low Maintenance"]
+    "features": [
+      "20 HP Requirement",
+      "Compact Design",
+      "Easy Transport",
+      "Multi-Crop",
+      "Low Maintenance"
+    ]
   },
   {
     "id": "20",
@@ -317,7 +431,13 @@
     "inStock": true,
     "stockQty": 5,
     "description": "Reliable 5 HP diesel engine with oil bearing technology. Perfect for small-scale farming applications.",
-    "features": ["5 HP Diesel", "Oil Bearing", "Compact Size", "Easy Start", "Low Fuel Consumption"]
+    "features": [
+      "5 HP Diesel",
+      "Oil Bearing",
+      "Compact Size",
+      "Easy Start",
+      "Low Fuel Consumption"
+    ]
   },
   {
     "id": "21",
@@ -333,7 +453,13 @@
     "inStock": true,
     "stockQty": 4,
     "description": "Complete sprinkler system with pipes, nozzles, and connectors. Coverage up to half acre.",
-    "features": ["Half Acre Coverage", "Adjustable Nozzles", "All Pipes Included", "Easy Setup", "Durable Material"]
+    "features": [
+      "Half Acre Coverage",
+      "Adjustable Nozzles",
+      "All Pipes Included",
+      "Easy Setup",
+      "Durable Material"
+    ]
   },
   {
     "id": "22",
@@ -349,7 +475,13 @@
     "inStock": false,
     "stockQty": 0,
     "description": "Heavy-duty plough blade set for deep ploughing. High-carbon steel with protective coating.",
-    "features": ["High-Carbon Steel", "Deep Ploughing", "Protective Coating", "Universal Fit", "Long Life"]
+    "features": [
+      "High-Carbon Steel",
+      "Deep Ploughing",
+      "Protective Coating",
+      "Universal Fit",
+      "Long Life"
+    ]
   },
   {
     "id": "23",
@@ -365,7 +497,13 @@
     "inStock": true,
     "stockQty": 2,
     "description": "Full-day JCB excavator service. Expert operator included. Ideal for large-scale farm and construction work.",
-    "features": ["Full Day (8 Hours)", "Expert Operator", "Diesel Included", "All Types of Work", "Insurance Covered"]
+    "features": [
+      "Full Day (8 Hours)",
+      "Expert Operator",
+      "Diesel Included",
+      "All Types of Work",
+      "Insurance Covered"
+    ]
   },
   {
     "id": "24",
@@ -381,6 +519,12 @@
     "inStock": true,
     "stockQty": 2,
     "description": "Tractor-mounted seed drill for precise sowing. Adjustable row spacing and seed rate control.",
-    "features": ["Tractor Mounted", "9 Row Capacity", "Adjustable Spacing", "Seed Rate Control", "All Seed Types"]
+    "features": [
+      "Tractor Mounted",
+      "9 Row Capacity",
+      "Adjustable Spacing",
+      "Seed Rate Control",
+      "All Seed Types"
+    ]
   }
 ]
