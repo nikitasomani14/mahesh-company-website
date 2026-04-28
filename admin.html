@@ -83,6 +83,25 @@
             <span class="stat-value" id="statAdminOpens">0</span>
           </article>
         </div>
+        <h3 class="section-subheading">Profit Overview</h3>
+        <div class="stats-row" id="profitStats">
+          <article class="stat-card stat-card--profit">
+            <span class="stat-label">Total Stock Value (Cost)</span>
+            <span class="stat-value" id="statTotalCost">₹0</span>
+          </article>
+          <article class="stat-card stat-card--profit">
+            <span class="stat-label">Total Stock Value (Selling)</span>
+            <span class="stat-value" id="statTotalSelling">₹0</span>
+          </article>
+          <article class="stat-card stat-card--profit-highlight">
+            <span class="stat-label">Potential Profit</span>
+            <span class="stat-value" id="statPotentialProfit">₹0</span>
+          </article>
+          <article class="stat-card stat-card--profit">
+            <span class="stat-label">Avg. Profit Margin</span>
+            <span class="stat-value" id="statAvgMargin">0%</span>
+          </article>
+        </div>
         <h3 class="section-subheading">Website Visitors</h3>
         <div class="stats-row" id="visitorStats">
           <article class="stat-card stat-card--accent">
@@ -176,6 +195,106 @@
           </button>
         </div>
         <div id="billsList" class="bills-list"></div>
+      </section>
+
+      <!-- Profit & Stock -->
+      <section id="profitSection" class="app-section hidden" data-section="profit" aria-labelledby="profitHeading">
+        <h2 id="profitHeading" class="section-heading">Profit & Stock Management</h2>
+        
+        <!-- Summary Cards -->
+        <div class="stats-row profit-summary-row" id="profitSummaryStats">
+          <article class="stat-card stat-card--profit">
+            <span class="stat-label">Total Cost Value</span>
+            <span class="stat-value" id="profitStatCost">₹0</span>
+          </article>
+          <article class="stat-card stat-card--profit">
+            <span class="stat-label">Total Selling Value</span>
+            <span class="stat-value" id="profitStatSelling">₹0</span>
+          </article>
+          <article class="stat-card stat-card--profit-highlight">
+            <span class="stat-label">Total Potential Profit</span>
+            <span class="stat-value" id="profitStatProfit">₹0</span>
+          </article>
+          <article class="stat-card stat-card--profit">
+            <span class="stat-label">Avg. Margin</span>
+            <span class="stat-value" id="profitStatMargin">0%</span>
+          </article>
+        </div>
+
+        <!-- Filter & Search -->
+        <div class="profit-controls">
+          <div class="search-box">
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <input type="text" id="profitSearchInput" class="input-control" placeholder="Search products..." />
+          </div>
+          <select id="profitCategoryFilter" class="input-control input-control--sm">
+            <option value="">All Categories</option>
+            <option value="thresher">Threshers</option>
+            <option value="engine">Engines</option>
+            <option value="jcb">JCB</option>
+            <option value="parts">Parts</option>
+            <option value="tools">Tools</option>
+            <option value="pump">Pumps</option>
+          </select>
+          <select id="profitSortBy" class="input-control input-control--sm">
+            <option value="name">Sort by Name</option>
+            <option value="profit-high">Profit: High to Low</option>
+            <option value="profit-low">Profit: Low to High</option>
+            <option value="margin-high">Margin: High to Low</option>
+            <option value="margin-low">Margin: Low to High</option>
+            <option value="stock-high">Stock: High to Low</option>
+            <option value="stock-low">Stock: Low to High</option>
+          </select>
+        </div>
+
+        <!-- Products Table -->
+        <div class="profit-table-wrap">
+          <table class="profit-table" id="profitTable">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="text-right">Cost Price</th>
+                <th class="text-right">Selling Price</th>
+                <th class="text-right">Profit/Unit</th>
+                <th class="text-right">Margin %</th>
+                <th class="text-right">Stock</th>
+                <th class="text-right">Total Profit</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="profitTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Quick Edit Modal for Cost Price -->
+        <div class="profit-quick-edit hidden" id="profitQuickEdit">
+          <div class="quick-edit-content">
+            <h4 id="quickEditProductName">Edit Cost Price</h4>
+            <input type="hidden" id="quickEditProductId" />
+            <div class="quick-edit-fields">
+              <label class="field-label">Cost Price (₹)</label>
+              <input type="number" id="quickEditCostPrice" class="input-control" min="0" step="0.01" />
+              <label class="field-label">Selling Price (₹)</label>
+              <input type="number" id="quickEditSellingPrice" class="input-control" min="0" step="0.01" />
+              <label class="field-label">Stock Qty</label>
+              <input type="number" id="quickEditStock" class="input-control" min="0" step="1" />
+            </div>
+            <div class="quick-edit-preview" id="quickEditPreview"></div>
+            <div class="quick-edit-actions">
+              <button type="button" class="btn btn-secondary" id="quickEditCancel">Cancel</button>
+              <button type="button" class="btn btn-primary" id="quickEditSave">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Cost Price Warning -->
+        <div class="panel panel--warning" id="noCostPriceWarning" style="display:none;">
+          <h4><i class="fas fa-exclamation-triangle"></i> Products Missing Cost Price</h4>
+          <p>Some products don't have a cost price set. Add cost prices to track profit accurately.</p>
+          <ul id="missingCostList" class="missing-cost-list"></ul>
+        </div>
       </section>
 
       <!-- Settings -->
@@ -365,6 +484,10 @@
         <i class="fas fa-file-invoice" aria-hidden="true"></i>
         <span>Bills</span>
       </button>
+      <button type="button" class="nav-tab" data-tab="profit">
+        <i class="fas fa-indian-rupee-sign" aria-hidden="true"></i>
+        <span>Profit</span>
+      </button>
       <button type="button" class="nav-tab" data-tab="settings">
         <i class="fas fa-cog" aria-hidden="true"></i>
         <span>Settings</span>
@@ -394,10 +517,17 @@
           <option value="tools">Tools</option>
           <option value="pump">Pumps</option>
         </select>
-        <label class="field-label" for="productPrice">Price (₹)</label>
+        <label class="field-label" for="productCostPrice">Cost Price / Buying Price (₹)</label>
+        <input type="number" id="productCostPrice" name="costPrice" class="input-control" min="0" step="0.01" inputmode="decimal" placeholder="Your buying price" />
+        <label class="field-label" for="productPrice">Selling Price (₹)</label>
         <input type="number" id="productPrice" name="price" class="input-control" min="0" step="0.01" inputmode="decimal" required />
-        <label class="field-label" for="productOriginalPrice">Original price (₹)</label>
+        <label class="field-label" for="productOriginalPrice">MRP / Original price (₹)</label>
         <input type="number" id="productOriginalPrice" name="originalPrice" class="input-control" min="0" step="0.01" inputmode="decimal" />
+        <div id="profitPreview" class="profit-preview hidden">
+          <span class="profit-label">Profit per unit:</span>
+          <span class="profit-value" id="profitPerUnit">₹0</span>
+          <span class="profit-margin" id="profitMargin">(0%)</span>
+        </div>
         <label class="field-label">Product Image</label>
         <div class="image-upload-wrap">
           <div class="image-preview-box" id="imagePreviewBox">

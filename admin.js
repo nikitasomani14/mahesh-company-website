@@ -348,6 +348,7 @@
     fetchDetailedAnalytics();
     renderProducts();
     renderBills();
+    renderProfitSection();
     initGoatcounterSettings();
     initGithubSettings();
     updateUnsyncedBanner();
@@ -381,6 +382,11 @@
     });
     const fab = qs("#productFab");
     if (fab) fab.classList.toggle("hidden", tab !== "products");
+    
+    // Refresh data when switching to profit tab
+    if (tab === "profit") {
+      renderProfitSection();
+    }
   }
 
   qsa(".nav-tab").forEach((btn) => {
@@ -406,12 +412,34 @@
     let inStock = 0;
     let outStock = 0;
     let low = 0;
+    let totalCostValue = 0;
+    let totalSellingValue = 0;
+    let productsWithCost = 0;
+    let totalMargin = 0;
+    
     products.forEach((p) => {
       const qty = Number(p.stockQty) || 0;
+      const costPrice = Number(p.costPrice) || 0;
+      const sellingPrice = Number(p.price) || 0;
+      
       if (p.inStock && qty > 0) inStock += 1;
       else outStock += 1;
       if (p.inStock && qty > 0 && qty < 3) low += 1;
+      
+      // Calculate profit stats for in-stock items
+      if (qty > 0) {
+        totalSellingValue += sellingPrice * qty;
+        if (costPrice > 0) {
+          totalCostValue += costPrice * qty;
+          productsWithCost++;
+          totalMargin += ((sellingPrice - costPrice) / costPrice) * 100;
+        }
+      }
     });
+    
+    const potentialProfit = totalSellingValue - totalCostValue;
+    const avgMargin = productsWithCost > 0 ? (totalMargin / productsWithCost).toFixed(1) : 0;
+    
     const st = {
       statTotalProducts: products.length,
       statInStock: inStock,
@@ -423,6 +451,25 @@
       const el = qs("#" + id);
       if (el) el.textContent = String(st[id]);
     });
+    
+    // Update profit stats
+    const costEl = qs("#statTotalCost");
+    const sellingEl = qs("#statTotalSelling");
+    const profitEl = qs("#statPotentialProfit");
+    const marginEl = qs("#statAvgMargin");
+    
+    if (costEl) costEl.textContent = "₹" + totalCostValue.toLocaleString("en-IN");
+    if (sellingEl) sellingEl.textContent = "₹" + totalSellingValue.toLocaleString("en-IN");
+    if (profitEl) {
+      profitEl.textContent = "₹" + potentialProfit.toLocaleString("en-IN");
+      if (potentialProfit > 0) {
+        profitEl.style.color = "var(--success, #22c55e)";
+      } else if (potentialProfit < 0) {
+        profitEl.style.color = "var(--danger, #ef4444)";
+      }
+    }
+    if (marginEl) marginEl.textContent = avgMargin + "%";
+    
     const logEl = qs("#activityLog");
     if (logEl) {
       const items = getActivity();
@@ -882,8 +929,10 @@
       if (hid) hid.value = p.id;
       qs("#productName").value = p.name || "";
       qs("#productCategory").value = p.category || "thresher";
+      qs("#productCostPrice").value = p.costPrice ?? "";
       qs("#productPrice").value = p.price ?? "";
       qs("#productOriginalPrice").value = p.originalPrice ?? "";
+      updateProfitPreview();
       var imgSrc = p.imageUrl || "";
       if (imgSrc && imgSrc.startsWith("data:")) {
         pendingImageDataUrl = imgSrc;
@@ -905,7 +954,9 @@
       renderBadgeChips();
       qs("#productInStock").checked = true;
       qs("#productStockQty").value = 0;
+      qs("#productCostPrice").value = "";
       updateImagePreview("");
+      updateProfitPreview();
     }
     openModal("productModal");
   }
@@ -919,6 +970,7 @@
       showToast("Name is required.", "error");
       return;
     }
+    var costPrice = parseFloat(qs("#productCostPrice").value) || 0;
     var price = parseFloat(qs("#productPrice").value) || 0;
     var originalPrice = parseFloat(qs("#productOriginalPrice").value) || 0;
 
@@ -937,6 +989,7 @@
       id: existingId || uid(),
       name,
       category: qs("#productCategory").value,
+      costPrice: costPrice,
       price: price,
       originalPrice: originalPrice,
       imageUrl: pendingImageDataUrl || qs("#productImageUrl").value.trim(),
@@ -1002,6 +1055,37 @@
 
   qs("#productPrice")?.addEventListener("input", updateDiscountBadgePreview);
   qs("#productOriginalPrice")?.addEventListener("input", updateDiscountBadgePreview);
+
+  // Profit preview for product form
+  function updateProfitPreview() {
+    var costPrice = parseFloat(qs("#productCostPrice")?.value) || 0;
+    var sellingPrice = parseFloat(qs("#productPrice")?.value) || 0;
+    var previewEl = qs("#profitPreview");
+    var profitEl = qs("#profitPerUnit");
+    var marginEl = qs("#profitMargin");
+    
+    if (!previewEl || !profitEl || !marginEl) return;
+    
+    if (costPrice > 0 && sellingPrice > 0) {
+      var profit = sellingPrice - costPrice;
+      var margin = ((profit / costPrice) * 100).toFixed(1);
+      profitEl.textContent = "₹" + profit.toLocaleString("en-IN");
+      marginEl.textContent = "(" + margin + "% margin)";
+      previewEl.classList.remove("hidden");
+      if (profit > 0) {
+        profitEl.style.color = "var(--success, #22c55e)";
+      } else if (profit < 0) {
+        profitEl.style.color = "var(--danger, #ef4444)";
+      } else {
+        profitEl.style.color = "inherit";
+      }
+    } else {
+      previewEl.classList.add("hidden");
+    }
+  }
+  
+  qs("#productCostPrice")?.addEventListener("input", updateProfitPreview);
+  qs("#productPrice")?.addEventListener("input", updateProfitPreview);
 
   qs("#productFab")?.addEventListener("click", () => openProductModal(null));
 
@@ -1695,6 +1779,234 @@
     showScreen("login");
     showToast("Local data cleared.", "success");
   });
+
+  /* ---------- Profit & Stock Section ---------- */
+  let profitSortBy = "name";
+  let profitCategoryFilter = "";
+  let profitSearchQuery = "";
+
+  function renderProfitSection() {
+    const products = getProducts();
+    let totalCost = 0;
+    let totalSelling = 0;
+    let productsWithCost = 0;
+    let totalMarginSum = 0;
+    const missingCostProducts = [];
+
+    // Calculate totals
+    products.forEach((p) => {
+      const qty = Number(p.stockQty) || 0;
+      const cost = Number(p.costPrice) || 0;
+      const sell = Number(p.price) || 0;
+
+      if (qty > 0) {
+        totalSelling += sell * qty;
+        if (cost > 0) {
+          totalCost += cost * qty;
+          productsWithCost++;
+          totalMarginSum += ((sell - cost) / cost) * 100;
+        }
+      }
+      if (!cost && p.name) {
+        missingCostProducts.push(p);
+      }
+    });
+
+    const totalProfit = totalSelling - totalCost;
+    const avgMargin = productsWithCost > 0 ? (totalMarginSum / productsWithCost).toFixed(1) : 0;
+
+    // Update summary cards
+    const costEl = qs("#profitStatCost");
+    const sellEl = qs("#profitStatSelling");
+    const profitEl = qs("#profitStatProfit");
+    const marginEl = qs("#profitStatMargin");
+
+    if (costEl) costEl.textContent = "₹" + totalCost.toLocaleString("en-IN");
+    if (sellEl) sellEl.textContent = "₹" + totalSelling.toLocaleString("en-IN");
+    if (profitEl) profitEl.textContent = "₹" + totalProfit.toLocaleString("en-IN");
+    if (marginEl) marginEl.textContent = avgMargin + "%";
+
+    // Show missing cost warning
+    const warningEl = qs("#noCostPriceWarning");
+    const missingList = qs("#missingCostList");
+    if (warningEl && missingList) {
+      if (missingCostProducts.length > 0) {
+        warningEl.style.display = "block";
+        missingList.innerHTML = missingCostProducts
+          .slice(0, 10)
+          .map((p) => '<li data-id="' + p.id + '">' + escapeHtml(p.name) + '</li>')
+          .join("");
+        missingList.querySelectorAll("li").forEach((li) => {
+          li.addEventListener("click", () => openQuickEdit(li.getAttribute("data-id")));
+        });
+      } else {
+        warningEl.style.display = "none";
+      }
+    }
+
+    // Filter and sort products
+    let filtered = products.filter((p) => {
+      if (profitCategoryFilter && p.category !== profitCategoryFilter) return false;
+      if (profitSearchQuery) {
+        const q = profitSearchQuery.toLowerCase();
+        if (!(p.name || "").toLowerCase().includes(q)) return false;
+      }
+      return true;
+    });
+
+    // Sort
+    filtered.sort((a, b) => {
+      const aCost = Number(a.costPrice) || 0;
+      const bCost = Number(b.costPrice) || 0;
+      const aProfit = (Number(a.price) || 0) - aCost;
+      const bProfit = (Number(b.price) || 0) - bCost;
+      const aMargin = aCost > 0 ? ((aProfit / aCost) * 100) : 0;
+      const bMargin = bCost > 0 ? ((bProfit / bCost) * 100) : 0;
+      const aStock = Number(a.stockQty) || 0;
+      const bStock = Number(b.stockQty) || 0;
+
+      switch (profitSortBy) {
+        case "profit-high": return bProfit - aProfit;
+        case "profit-low": return aProfit - bProfit;
+        case "margin-high": return bMargin - aMargin;
+        case "margin-low": return aMargin - bMargin;
+        case "stock-high": return bStock - aStock;
+        case "stock-low": return aStock - bStock;
+        default: return (a.name || "").localeCompare(b.name || "");
+      }
+    });
+
+    // Render table
+    const tbody = qs("#profitTableBody");
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">No products found</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((p) => {
+      const cost = Number(p.costPrice) || 0;
+      const sell = Number(p.price) || 0;
+      const stock = Number(p.stockQty) || 0;
+      const profitUnit = sell - cost;
+      const margin = cost > 0 ? ((profitUnit / cost) * 100).toFixed(1) : 0;
+      const totalProfitProduct = profitUnit * stock;
+
+      let profitClass = "profit-zero";
+      if (profitUnit > 0) profitClass = "profit-positive";
+      else if (profitUnit < 0) profitClass = "profit-negative";
+
+      let stockClass = "stock-badge--ok";
+      let stockText = stock;
+      if (stock === 0) {
+        stockClass = "stock-badge--out";
+        stockText = "Out";
+      } else if (stock < 3) {
+        stockClass = "stock-badge--low";
+      }
+
+      return '<tr>' +
+        '<td><span class="product-name">' + escapeHtml(p.name || "Unnamed") + '</span><span class="category-badge">' + (p.category || "—") + '</span></td>' +
+        '<td class="text-right">' + (cost > 0 ? "₹" + cost.toLocaleString("en-IN") : '<span style="color:var(--muted)">Not set</span>') + '</td>' +
+        '<td class="text-right">₹' + sell.toLocaleString("en-IN") + '</td>' +
+        '<td class="text-right ' + profitClass + '">' + (cost > 0 ? "₹" + profitUnit.toLocaleString("en-IN") : "—") + '</td>' +
+        '<td class="text-right ' + profitClass + '">' + (cost > 0 ? margin + "%" : "—") + '</td>' +
+        '<td class="text-right"><span class="stock-badge ' + stockClass + '">' + stockText + '</span></td>' +
+        '<td class="text-right ' + profitClass + '">' + (cost > 0 ? "₹" + totalProfitProduct.toLocaleString("en-IN") : "—") + '</td>' +
+        '<td><button class="action-btn" data-id="' + p.id + '"><i class="fas fa-edit"></i> Edit</button></td>' +
+        '</tr>';
+    }).join("");
+
+    // Attach edit handlers
+    tbody.querySelectorAll(".action-btn").forEach((btn) => {
+      btn.addEventListener("click", () => openQuickEdit(btn.getAttribute("data-id")));
+    });
+  }
+
+  function openQuickEdit(id) {
+    const p = getProducts().find((x) => x.id === id);
+    if (!p) return;
+    
+    qs("#quickEditProductId").value = id;
+    qs("#quickEditProductName").textContent = "Edit: " + (p.name || "Product");
+    qs("#quickEditCostPrice").value = p.costPrice || "";
+    qs("#quickEditSellingPrice").value = p.price || "";
+    qs("#quickEditStock").value = p.stockQty ?? 0;
+    
+    updateQuickEditPreview();
+    qs("#profitQuickEdit").classList.remove("hidden");
+  }
+
+  function closeQuickEdit() {
+    qs("#profitQuickEdit").classList.add("hidden");
+  }
+
+  function updateQuickEditPreview() {
+    const cost = parseFloat(qs("#quickEditCostPrice").value) || 0;
+    const sell = parseFloat(qs("#quickEditSellingPrice").value) || 0;
+    const preview = qs("#quickEditPreview");
+    
+    if (cost > 0 && sell > 0) {
+      const profit = sell - cost;
+      const margin = ((profit / cost) * 100).toFixed(1);
+      const color = profit >= 0 ? "#15803d" : "#dc2626";
+      preview.innerHTML = '<strong style="color:' + color + '">Profit: ₹' + profit.toLocaleString("en-IN") + '</strong> (' + margin + '% margin)';
+    } else {
+      preview.innerHTML = '<span style="color:var(--muted)">Enter cost and selling price to see profit</span>';
+    }
+  }
+
+  function saveQuickEdit() {
+    const id = qs("#quickEditProductId").value;
+    const cost = parseFloat(qs("#quickEditCostPrice").value) || 0;
+    const sell = parseFloat(qs("#quickEditSellingPrice").value) || 0;
+    const stock = parseInt(qs("#quickEditStock").value, 10) || 0;
+    
+    let products = getProducts();
+    products = products.map((p) => {
+      if (p.id === id) {
+        return {
+          ...p,
+          costPrice: cost,
+          price: sell,
+          stockQty: stock,
+          inStock: stock > 0
+        };
+      }
+      return p;
+    });
+    
+    saveProducts(products);
+    closeQuickEdit();
+    renderProfitSection();
+    renderProducts();
+    renderDashboard();
+    showToast("Product updated.", "success");
+    autoSyncProducts();
+  }
+
+  // Event listeners for profit section
+  qs("#profitSearchInput")?.addEventListener("input", (e) => {
+    profitSearchQuery = e.target.value;
+    renderProfitSection();
+  });
+
+  qs("#profitCategoryFilter")?.addEventListener("change", (e) => {
+    profitCategoryFilter = e.target.value;
+    renderProfitSection();
+  });
+
+  qs("#profitSortBy")?.addEventListener("change", (e) => {
+    profitSortBy = e.target.value;
+    renderProfitSection();
+  });
+
+  qs("#quickEditCancel")?.addEventListener("click", closeQuickEdit);
+  qs("#quickEditSave")?.addEventListener("click", saveQuickEdit);
+
+  qs("#quickEditCostPrice")?.addEventListener("input", updateQuickEditPreview);
+  qs("#quickEditSellingPrice")?.addEventListener("input", updateQuickEditPreview);
 
   /* ---------- Init ---------- */
   initDefaultPasswordHash();

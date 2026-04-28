@@ -1577,6 +1577,302 @@ body.admin-body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Profit preview in product form */
+.profit-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #86efac;
+  border-radius: var(--radius);
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.profit-preview.hidden {
+  display: none;
+}
+
+.profit-label {
+  font-size: 0.85rem;
+  color: #166534;
+  font-weight: 500;
+}
+
+.profit-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.profit-margin {
+  font-size: 0.8rem;
+  color: #166534;
+  opacity: 0.8;
+}
+
+/* Profit stat cards */
+.stat-card--profit {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 1px solid #a7f3d0;
+}
+
+.stat-card--profit .stat-label {
+  color: #065f46;
+}
+
+.stat-card--profit .stat-value {
+  color: #047857;
+}
+
+.stat-card--profit-highlight {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: white;
+}
+
+.stat-card--profit-highlight .stat-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.stat-card--profit-highlight .stat-value {
+  color: white;
+  font-weight: 700;
+}
+
+/* Profit & Stock Tab Styles */
+.profit-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.profit-controls .search-box {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.profit-controls .search-box i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+}
+
+.profit-controls .search-box input {
+  padding-left: 36px;
+}
+
+.profit-table-wrap {
+  overflow-x: auto;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.profit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  min-width: 700px;
+}
+
+.profit-table th,
+.profit-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.profit-table th {
+  background: var(--bg);
+  font-weight: 600;
+  color: var(--text);
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+}
+
+.profit-table th.text-right,
+.profit-table td.text-right {
+  text-align: right;
+}
+
+.profit-table tbody tr:hover {
+  background: rgba(26, 71, 42, 0.05);
+}
+
+.profit-table .product-name {
+  font-weight: 500;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profit-table .category-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: var(--bg);
+  border-radius: 4px;
+  color: var(--muted);
+  margin-left: 6px;
+}
+
+.profit-positive {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.profit-negative {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.profit-zero {
+  color: var(--muted);
+}
+
+.stock-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.stock-badge--ok {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.stock-badge--low {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.stock-badge--out {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.profit-table .action-btn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profit-table .action-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Quick Edit Panel */
+.profit-quick-edit {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  z-index: 100;
+  min-width: 320px;
+  max-width: 90vw;
+  border: 1px solid var(--border);
+}
+
+.profit-quick-edit.hidden {
+  display: none;
+}
+
+.quick-edit-content h4 {
+  margin: 0 0 16px;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.quick-edit-fields {
+  display: grid;
+  gap: 10px;
+}
+
+.quick-edit-fields .field-label {
+  margin-bottom: 2px;
+  font-size: 0.8rem;
+}
+
+.quick-edit-preview {
+  margin: 12px 0;
+  padding: 10px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.quick-edit-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* Missing cost price warning */
+.panel--warning {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+}
+
+.panel--warning h4 {
+  color: #92400e;
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+}
+
+.panel--warning p {
+  color: #78350f;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.missing-cost-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.missing-cost-list li {
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  background: white;
+  border-radius: 4px;
+  color: #78350f;
+  cursor: pointer;
+}
+
+.missing-cost-list li:hover {
+  background: #fde68a;
+}
+
+.profit-summary-row {
+  margin-bottom: 20px;
+}
+
 @media (min-width: 600px) {
   .stats-row {
     grid-template-columns: repeat(4, 1fr);
