@@ -20,6 +20,7 @@
     LOGIN_ATTEMPTS: "mc_login_attempts",
     LOCKOUT_UNTIL: "mc_lockout_until",
     PENDING_SYNC: "mc_pending_sync",
+    STOCK_TRANSACTIONS: "mc_stock_transactions",
   };
 
   const DEFAULT_GITHUB_REPO = "nikitasomani14/mahesh-company-website";
@@ -349,6 +350,7 @@
     renderProducts();
     renderBills();
     renderProfitSection();
+    renderLedger();
     initGoatcounterSettings();
     initGithubSettings();
     updateUnsyncedBanner();
@@ -386,6 +388,7 @@
     // Refresh data when switching to profit tab
     if (tab === "profit") {
       renderProfitSection();
+      renderLedger();
     }
   }
 
@@ -1774,6 +1777,7 @@
       LS.GITHUB_TOKEN,
       LS.GITHUB_REPO,
       LS.ADMIN_OPENS,
+      LS.STOCK_TRANSACTIONS,
     ].forEach((k) => localStorage.removeItem(k));
     initDefaultPasswordHash();
     showScreen("login");
@@ -2007,6 +2011,288 @@
 
   qs("#quickEditCostPrice")?.addEventListener("input", updateQuickEditPreview);
   qs("#quickEditSellingPrice")?.addEventListener("input", updateQuickEditPreview);
+
+  /* ---------- Stock Ledger (Buy/Sell Transactions) ---------- */
+  let ledgerTypeFilter = "";
+  let ledgerProductFilter = "";
+  let ledgerDateRange = "";
+
+  function getTransactions() {
+    try {
+      var raw = localStorage.getItem(LS.STOCK_TRANSACTIONS);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveTransactions(list) {
+    localStorage.setItem(LS.STOCK_TRANSACTIONS, JSON.stringify(list));
+  }
+
+  function openTxnModal(type) {
+    var form = qs("#txnForm");
+    if (form) form.reset();
+    var typeField = qs("#txnType");
+    if (typeField) typeField.value = type;
+    var title = qs("#txnModalTitle");
+    if (title) title.textContent = type === "buy" ? "Record Purchase (Buy Stock)" : "Record Sale (Sell Stock)";
+    var submitBtn = qs("#txnSubmitBtn");
+    if (submitBtn) {
+      submitBtn.textContent = type === "buy" ? "Record Purchase" : "Record Sale";
+      submitBtn.className = type === "buy" ? "btn btn-buy" : "btn btn-sell";
+    }
+
+    var select = qs("#txnProduct");
+    if (select) {
+      var products = getProducts();
+      select.innerHTML = '<option value="">Select product…</option>' +
+        products.map(function(p) {
+          return '<option value="' + escapeHtml(p.id) + '">' + escapeHtml(p.name) + ' (Stock: ' + (p.stockQty || 0) + ')</option>';
+        }).join("");
+    }
+
+    var dateField = qs("#txnDate");
+    if (dateField) {
+      var today = new Date();
+      dateField.value = today.getFullYear() + '-' +
+        String(today.getMonth() + 1).padStart(2, '0') + '-' +
+        String(today.getDate()).padStart(2, '0');
+    }
+
+    updateTxnTotalPreview();
+    openModal("txnModal");
+  }
+
+  function updateTxnTotalPreview() {
+    var qty = parseFloat(qs("#txnQty")?.value) || 0;
+    var rate = parseFloat(qs("#txnRate")?.value) || 0;
+    var total = qty * rate;
+    var preview = qs("#txnTotalPreview");
+    if (preview) {
+      preview.innerHTML = "Total: <strong>₹" + total.toLocaleString("en-IN") + "</strong>";
+    }
+  }
+
+  qs("#txnQty")?.addEventListener("input", updateTxnTotalPreview);
+  qs("#txnRate")?.addEventListener("input", updateTxnTotalPreview);
+
+  qs("#txnProduct")?.addEventListener("change", function() {
+    var productId = qs("#txnProduct").value;
+    var type = qs("#txnType").value;
+    if (!productId) return;
+    var product = getProducts().find(function(p) { return p.id === productId; });
+    if (!product) return;
+    if (type === "buy") {
+      qs("#txnRate").value = product.costPrice || "";
+    } else {
+      qs("#txnRate").value = product.price || "";
+    }
+    updateTxnTotalPreview();
+  });
+
+  qs("#ledgerRecordBuyBtn")?.addEventListener("click", function() { openTxnModal("buy"); });
+  qs("#ledgerRecordSellBtn")?.addEventListener("click", function() { openTxnModal("sell"); });
+
+  qs("#txnForm")?.addEventListener("submit", function(e) {
+    e.preventDefault();
+    var type = qs("#txnType").value;
+    var productId = qs("#txnProduct").value;
+    var qty = parseInt(qs("#txnQty").value, 10) || 0;
+    var rate = parseFloat(qs("#txnRate").value) || 0;
+    var dateVal = qs("#txnDate").value;
+    var note = (qs("#txnNote").value || "").trim();
+
+    if (!productId) { showToast("Select a product.", "error"); return; }
+    if (qty <= 0) { showToast("Quantity must be at least 1.", "error"); return; }
+    if (rate <= 0) { showToast("Rate must be greater than 0.", "error"); return; }
+
+    var products = getProducts();
+    var product = products.find(function(p) { return p.id === productId; });
+    if (!product) { showToast("Product not found.", "error"); return; }
+
+    if (type === "sell") {
+      var currentStock = Number(product.stockQty) || 0;
+      if (qty > currentStock) {
+        showToast("Cannot sell " + qty + " units. Only " + currentStock + " in stock.", "error");
+        return;
+      }
+    }
+
+    var total = qty * rate;
+    var txnDate = dateVal ? new Date(dateVal + "T12:00:00").getTime() : Date.now();
+
+    var txn = {
+      id: uid(),
+      type: type,
+      productId: productId,
+      productName: product.name || "Unknown",
+      qty: qty,
+      unitPrice: rate,
+      total: total,
+      date: txnDate,
+      note: note
+    };
+
+    var transactions = getTransactions();
+    transactions.push(txn);
+    saveTransactions(transactions);
+
+    var ix = products.findIndex(function(p) { return p.id === productId; });
+    if (ix !== -1) {
+      var currentQty = Number(products[ix].stockQty) || 0;
+      if (type === "buy") {
+        products[ix].stockQty = currentQty + qty;
+        products[ix].inStock = true;
+      } else {
+        products[ix].stockQty = Math.max(0, currentQty - qty);
+        if (products[ix].stockQty === 0) products[ix].inStock = false;
+      }
+      saveProducts(products);
+      autoSyncProducts();
+    }
+
+    var label = type === "buy" ? "Purchase" : "Sale";
+    pushActivity(label + ": " + qty + "× " + product.name + " @ ₹" + rate.toLocaleString("en-IN"));
+
+    closeModal("txnModal");
+    renderLedger();
+    renderProfitSection();
+    renderProducts();
+    renderDashboard();
+    showToast(label + " recorded. Stock updated.", "success");
+  });
+
+  async function deleteTxn(txnId) {
+    var ok = await confirmDialog("Delete transaction?", "This will remove the transaction record but will NOT reverse the stock change. Adjust stock manually if needed.");
+    if (!ok) return;
+    var transactions = getTransactions().filter(function(t) { return t.id !== txnId; });
+    saveTransactions(transactions);
+    pushActivity("Transaction deleted.");
+    renderLedger();
+    renderProfitSection();
+    renderDashboard();
+    showToast("Transaction deleted.", "success");
+  }
+
+  function renderLedger() {
+    var transactions = getTransactions();
+    var products = getProducts();
+
+    var productSelect = qs("#ledgerProductFilter");
+    if (productSelect) {
+      var prevVal = productSelect.value;
+      var usedProducts = {};
+      transactions.forEach(function(t) {
+        usedProducts[t.productId] = t.productName;
+      });
+      productSelect.innerHTML = '<option value="">All Products</option>' +
+        Object.keys(usedProducts).map(function(id) {
+          return '<option value="' + escapeHtml(id) + '">' + escapeHtml(usedProducts[id]) + '</option>';
+        }).join("");
+      productSelect.value = prevVal || "";
+    }
+
+    var filtered = transactions.slice();
+
+    if (ledgerTypeFilter) {
+      filtered = filtered.filter(function(t) { return t.type === ledgerTypeFilter; });
+    }
+    if (ledgerProductFilter) {
+      filtered = filtered.filter(function(t) { return t.productId === ledgerProductFilter; });
+    }
+    if (ledgerDateRange) {
+      var now = Date.now();
+      var cutoff = 0;
+      var todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      if (ledgerDateRange === "today") cutoff = todayStart.getTime();
+      else if (ledgerDateRange === "7d") cutoff = now - 7 * 86400000;
+      else if (ledgerDateRange === "30d") cutoff = now - 30 * 86400000;
+      else if (ledgerDateRange === "90d") cutoff = now - 90 * 86400000;
+      if (cutoff) {
+        filtered = filtered.filter(function(t) { return t.date >= cutoff; });
+      }
+    }
+
+    filtered.sort(function(a, b) { return b.date - a.date; });
+
+    var totalBought = 0;
+    var totalSold = 0;
+    transactions.forEach(function(t) {
+      if (t.type === "buy") totalBought += t.total;
+      else totalSold += t.total;
+    });
+    var realizedPL = totalSold - totalBought;
+
+    var boughtEl = qs("#ledgerTotalBought");
+    var soldEl = qs("#ledgerTotalSold");
+    var plEl = qs("#ledgerRealizedPL");
+    var countEl = qs("#ledgerTxnCount");
+    var plCard = qs("#ledgerPLCard");
+
+    if (boughtEl) boughtEl.textContent = "₹" + totalBought.toLocaleString("en-IN");
+    if (soldEl) soldEl.textContent = "₹" + totalSold.toLocaleString("en-IN");
+    if (plEl) {
+      plEl.textContent = (realizedPL >= 0 ? "₹" : "−₹") + Math.abs(realizedPL).toLocaleString("en-IN");
+    }
+    if (plCard) {
+      plCard.classList.remove("stat-card--pl-profit", "stat-card--pl-loss");
+      plCard.classList.add(realizedPL >= 0 ? "stat-card--pl-profit" : "stat-card--pl-loss");
+    }
+    if (countEl) countEl.textContent = String(transactions.length);
+
+    var tbody = qs("#ledgerTableBody");
+    var emptyMsg = qs("#ledgerEmptyMsg");
+    var tableWrap = qs(".ledger-table-wrap");
+
+    if (!tbody) return;
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = "";
+      if (tableWrap) tableWrap.classList.add("hidden");
+      if (emptyMsg) emptyMsg.classList.remove("hidden");
+      return;
+    }
+
+    if (tableWrap) tableWrap.classList.remove("hidden");
+    if (emptyMsg) emptyMsg.classList.add("hidden");
+
+    tbody.innerHTML = filtered.map(function(t) {
+      var d = new Date(t.date);
+      var dateStr = d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+      var typeBadge = t.type === "buy"
+        ? '<span class="txn-badge txn-badge--buy"><i class="fas fa-arrow-down"></i> Buy</span>'
+        : '<span class="txn-badge txn-badge--sell"><i class="fas fa-arrow-up"></i> Sell</span>';
+      return '<tr>' +
+        '<td class="txn-date">' + dateStr + '</td>' +
+        '<td>' + typeBadge + '</td>' +
+        '<td class="txn-product-name">' + escapeHtml(t.productName) + '</td>' +
+        '<td class="text-right">' + t.qty + '</td>' +
+        '<td class="text-right">₹' + Number(t.unitPrice).toLocaleString("en-IN") + '</td>' +
+        '<td class="text-right"><strong>₹' + Number(t.total).toLocaleString("en-IN") + '</strong></td>' +
+        '<td class="txn-note">' + escapeHtml(t.note || "—") + '</td>' +
+        '<td><button class="action-btn action-btn--danger delete-txn" data-id="' + t.id + '" title="Delete"><i class="fas fa-trash"></i></button></td>' +
+        '</tr>';
+    }).join("");
+
+    tbody.querySelectorAll(".delete-txn").forEach(function(btn) {
+      btn.addEventListener("click", function() { deleteTxn(btn.getAttribute("data-id")); });
+    });
+  }
+
+  qs("#ledgerTypeFilter")?.addEventListener("change", function(e) {
+    ledgerTypeFilter = e.target.value;
+    renderLedger();
+  });
+  qs("#ledgerProductFilter")?.addEventListener("change", function(e) {
+    ledgerProductFilter = e.target.value;
+    renderLedger();
+  });
+  qs("#ledgerDateRange")?.addEventListener("change", function(e) {
+    ledgerDateRange = e.target.value;
+    renderLedger();
+  });
 
   /* ---------- Init ---------- */
   initDefaultPasswordHash();

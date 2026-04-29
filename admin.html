@@ -295,6 +295,79 @@
           <p>Some products don't have a cost price set. Add cost prices to track profit accurately.</p>
           <ul id="missingCostList" class="missing-cost-list"></ul>
         </div>
+
+        <!-- Stock Ledger -->
+        <h3 class="section-subheading" style="margin-top:24px;"><i class="fas fa-book"></i> Stock Ledger — Buy &amp; Sell Transactions</h3>
+
+        <!-- P&L Summary Cards -->
+        <div class="stats-row ledger-summary-row" id="ledgerSummaryStats">
+          <article class="stat-card stat-card--buy">
+            <span class="stat-label">Total Purchased</span>
+            <span class="stat-value" id="ledgerTotalBought">₹0</span>
+          </article>
+          <article class="stat-card stat-card--sell">
+            <span class="stat-label">Total Sold</span>
+            <span class="stat-value" id="ledgerTotalSold">₹0</span>
+          </article>
+          <article class="stat-card" id="ledgerPLCard">
+            <span class="stat-label">Realized Profit / Loss</span>
+            <span class="stat-value" id="ledgerRealizedPL">₹0</span>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Transactions</span>
+            <span class="stat-value" id="ledgerTxnCount">0</span>
+          </article>
+        </div>
+
+        <!-- Ledger Actions -->
+        <div class="ledger-actions">
+          <button type="button" class="btn btn-buy btn-sm" id="ledgerRecordBuyBtn">
+            <i class="fas fa-arrow-down"></i> Record Purchase
+          </button>
+          <button type="button" class="btn btn-sell btn-sm" id="ledgerRecordSellBtn">
+            <i class="fas fa-arrow-up"></i> Record Sale
+          </button>
+        </div>
+
+        <!-- Ledger Filters -->
+        <div class="ledger-filters">
+          <select id="ledgerTypeFilter" class="input-control input-control--sm">
+            <option value="">All Types</option>
+            <option value="buy">Purchases</option>
+            <option value="sell">Sales</option>
+          </select>
+          <select id="ledgerProductFilter" class="input-control input-control--sm">
+            <option value="">All Products</option>
+          </select>
+          <select id="ledgerDateRange" class="input-control input-control--sm">
+            <option value="">All Time</option>
+            <option value="today">Today</option>
+            <option value="7d">Last 7 Days</option>
+            <option value="30d">Last 30 Days</option>
+            <option value="90d">Last 90 Days</option>
+          </select>
+        </div>
+
+        <!-- Transaction Table -->
+        <div class="ledger-table-wrap">
+          <table class="ledger-table" id="ledgerTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Product</th>
+                <th class="text-right">Qty</th>
+                <th class="text-right">Rate (₹)</th>
+                <th class="text-right">Total (₹)</th>
+                <th>Note</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+            </tbody>
+          </table>
+        </div>
+        <p class="muted ledger-empty-msg hidden" id="ledgerEmptyMsg">No transactions yet. Tap "Record Purchase" or "Record Sale" to get started.</p>
       </section>
 
       <!-- Settings -->
@@ -722,6 +795,46 @@
     </div>
   </div>
 
+  <!-- Stock Transaction Modal -->
+  <div id="txnModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="txnModalTitle" aria-hidden="true">
+    <div class="modal-sheet modal-sheet--lg">
+      <div class="modal-head">
+        <h2 id="txnModalTitle" class="modal-title">Record Purchase</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="txnModal" aria-label="Close">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form id="txnForm" class="stack-form">
+        <input type="hidden" id="txnType" value="buy" />
+        <label class="field-label" for="txnProduct">Product</label>
+        <select id="txnProduct" class="input-control" required>
+          <option value="">Select product…</option>
+        </select>
+        <div class="txn-row-2col">
+          <div>
+            <label class="field-label" for="txnQty">Quantity</label>
+            <input type="number" id="txnQty" class="input-control" min="1" step="1" inputmode="numeric" required value="1" />
+          </div>
+          <div>
+            <label class="field-label" for="txnRate">Rate per unit (₹)</label>
+            <input type="number" id="txnRate" class="input-control" min="0" step="0.01" inputmode="decimal" required />
+          </div>
+        </div>
+        <div class="txn-total-preview" id="txnTotalPreview">
+          Total: <strong>₹0</strong>
+        </div>
+        <label class="field-label" for="txnDate">Date</label>
+        <input type="date" id="txnDate" class="input-control" />
+        <label class="field-label" for="txnNote">Note (optional)</label>
+        <input type="text" id="txnNote" class="input-control" placeholder="e.g. Supplier name, invoice no." maxlength="200" />
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" data-close-modal="txnModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="txnSubmitBtn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Confirmation Dialog -->
   <div id="confirmDialog" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirmDialogTitle" aria-hidden="true">
     <div class="modal-sheet modal-sheet--sm">
@@ -835,6 +948,34 @@
             </ol>
             <h4>Switching browsers?</h4>
             <p>The token is saved in your browser. If you switch browsers, go to <strong>Settings</strong> and paste the token again. You can find your existing token at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">github.com/settings/tokens</a>.</p>
+          </div>
+        </details>
+
+        <details class="help-section">
+          <summary class="help-section-title"><i class="fas fa-indian-rupee-sign"></i> Profit &amp; Stock Ledger</summary>
+          <div class="help-content">
+            <h4>Profit table</h4>
+            <p>Shows each product with its cost price, selling price, profit per unit, margin %, current stock, and total potential profit. Use the search bar, category filter, and sort options to find specific products.</p>
+            <h4>Record a purchase (buy stock)</h4>
+            <ol>
+              <li>Go to the <strong>Profit</strong> tab and scroll to <strong>Stock Ledger</strong></li>
+              <li>Tap <strong>"Record Purchase"</strong></li>
+              <li>Select the product, enter quantity and buying rate</li>
+              <li>Tap <strong>"Record Purchase"</strong> to save</li>
+              <li>Stock quantity is automatically increased</li>
+            </ol>
+            <h4>Record a sale (sell stock)</h4>
+            <ol>
+              <li>Tap <strong>"Record Sale"</strong></li>
+              <li>Select the product, enter quantity and selling rate</li>
+              <li>If quantity exceeds current stock, you will see an error</li>
+              <li>Tap <strong>"Record Sale"</strong> to save</li>
+              <li>Stock quantity is automatically decreased</li>
+            </ol>
+            <h4>Profit &amp; Loss summary</h4>
+            <p>The summary cards show <strong>Total Purchased</strong> (money spent buying stock), <strong>Total Sold</strong> (revenue from sales), and <strong>Realized Profit/Loss</strong> (the difference). Green means profit, red means loss.</p>
+            <h4>Filtering transactions</h4>
+            <p>Use the filters above the transaction table to view only purchases, only sales, a specific product, or a specific date range (today, last 7/30/90 days).</p>
           </div>
         </details>
 
