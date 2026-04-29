@@ -34,7 +34,7 @@
     "badge": "auth",
     "badgeText": "Authorized",
     "badges": [],
-    "inStock": true,
+    "inStock": false,
     "stockQty": 3,
     "description": "64-inch drum maize sheller with skin dehusker. Double wheel, new model with enhanced performance.",
     "features": [
