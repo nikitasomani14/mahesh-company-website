@@ -1713,6 +1713,7 @@
         id: p.id,
         name: p.name,
         category: p.category,
+        costPrice: p.costPrice || 0,
         price: p.price,
         originalPrice: p.originalPrice,
         imageUrl: p.imageUrl,
