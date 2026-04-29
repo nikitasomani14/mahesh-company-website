@@ -16,6 +16,9 @@
     GOATCOUNTER_TOKEN: "mc_goatcounter_token",
     GITHUB_TOKEN: "mc_github_token",
     GITHUB_REPO: "mc_github_repo",
+    GITHUB_DEVICE: "mc_github_device",
+    GITHUB_TOKEN_STATUS: "mc_github_token_status",
+    GITHUB_TOKEN_SAVED: "mc_github_token_saved",
     ADMIN_OPENS: "mc_admin_opens",
     LOGIN_ATTEMPTS: "mc_login_attempts",
     LOCKOUT_UNTIL: "mc_lockout_until",
@@ -134,6 +137,18 @@
     } else {
       banner.classList.add("hidden");
     }
+  }
+
+  function detectDeviceName() {
+    var ua = navigator.userAgent || "";
+    if (/iPad/i.test(ua)) return "iPad";
+    if (/iPhone/i.test(ua)) return "iPhone";
+    if (/Android.*Mobile/i.test(ua)) return "Android Phone";
+    if (/Android/i.test(ua)) return "Android Tablet";
+    if (/Macintosh|Mac OS/i.test(ua)) return "Mac";
+    if (/Windows/i.test(ua)) return "Windows PC";
+    if (/Linux/i.test(ua)) return "Linux PC";
+    return "Unknown Device";
   }
 
   var autoSyncTimer = null;
@@ -357,6 +372,7 @@
     updateUnsyncedBanner();
     switchTab("dashboard");
     qs("#appVersionInfo").textContent = "App version " + APP_VERSION;
+    validateGithubTokenBackground();
   }
 
   async function seedProductsFromJson() {
@@ -1656,20 +1672,53 @@
   function initGithubSettings() {
     const repo = getGithubRepo();
     const token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    const device = localStorage.getItem(LS.GITHUB_DEVICE) || "";
+    const tokenStatus = localStorage.getItem(LS.GITHUB_TOKEN_STATUS) || "";
+    const tokenSaved = localStorage.getItem(LS.GITHUB_TOKEN_SAVED) || "";
+
     const repoInput = qs("#githubRepo");
     const repoHint = qs("#githubRepoHint");
     const tokenHint = qs("#githubTokenHint");
     const tokenInput = qs("#githubToken");
+    const statusCard = qs("#githubTokenStatusCard");
+
     if (repoInput) repoInput.value = repo;
     if (repoHint) {
       repoHint.textContent = repo ? "Current: github.com/" + repo : "Not set.";
     }
     if (tokenHint) {
-      tokenHint.textContent = token
-        ? "Token saved (last 4: ..." + token.slice(-4) + ")"
-        : "No token saved.";
+      if (token) {
+        var hint = "Token saved (last 4: ..." + token.slice(-4) + ")";
+        if (device) hint += " · " + device;
+        tokenHint.textContent = hint;
+      } else {
+        tokenHint.textContent = "No token saved on this device.";
+      }
     }
     if (tokenInput) tokenInput.value = "";
+
+    if (statusCard) {
+      if (token) {
+        var savedDate = tokenSaved ? new Date(tokenSaved).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "Unknown";
+        var isValid = tokenStatus === "valid";
+        var isInvalid = tokenStatus === "invalid";
+        var statusIcon = isValid ? "fa-circle-check" : isInvalid ? "fa-circle-xmark" : "fa-circle-question";
+        var statusColor = isValid ? "#22c55e" : isInvalid ? "#ef4444" : "#f59e0b";
+        var statusText = isValid ? "Valid — sync is working" : isInvalid ? "Invalid — token expired or no repo access" : "Not verified yet";
+
+        statusCard.innerHTML =
+          '<div class="token-status-row">' +
+            '<div class="token-status-item"><i class="fas fa-mobile-screen-button"></i> <strong>Device:</strong> ' + escapeHtml(device || detectDeviceName()) + '</div>' +
+            '<div class="token-status-item"><i class="fas ' + statusIcon + '" style="color:' + statusColor + '"></i> <strong>Status:</strong> ' + statusText + '</div>' +
+            '<div class="token-status-item"><i class="fas fa-calendar"></i> <strong>Saved:</strong> ' + savedDate + '</div>' +
+            '<div class="token-status-item"><i class="fas fa-key"></i> <strong>Token:</strong> ....' + token.slice(-4) + '</div>' +
+          '</div>';
+        statusCard.classList.remove("hidden");
+      } else {
+        statusCard.innerHTML = '<p class="muted"><i class="fas fa-info-circle"></i> No GitHub token saved on this device. Set up a token below to enable sync.</p>';
+        statusCard.classList.remove("hidden");
+      }
+    }
   }
 
   qs("#githubForm")?.addEventListener("submit", async (e) => {
@@ -1708,11 +1757,44 @@
     localStorage.setItem(LS.GITHUB_REPO, repo);
     if (tokenVal) {
       localStorage.setItem(LS.GITHUB_TOKEN, tokenVal);
+      localStorage.setItem(LS.GITHUB_DEVICE, detectDeviceName());
+      localStorage.setItem(LS.GITHUB_TOKEN_SAVED, new Date().toISOString());
+      localStorage.setItem(LS.GITHUB_TOKEN_STATUS, "valid");
     }
     initGithubSettings();
     pushActivity("GitHub sync settings updated.");
     showToast("GitHub settings saved and verified!", "success");
   });
+
+  async function validateGithubTokenBackground() {
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) return;
+    var repo = getGithubRepo();
+    if (!repo || !repo.includes("/")) return;
+    try {
+      var testUrl = "https://api.github.com/repos/" + repo + "/contents/data/products.json";
+      var resp = await fetch(testUrl, {
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Accept": "application/vnd.github.v3+json"
+        }
+      });
+      if (resp.ok) {
+        localStorage.setItem(LS.GITHUB_TOKEN_STATUS, "valid");
+      } else if (resp.status === 401 || resp.status === 403 || resp.status === 404) {
+        localStorage.setItem(LS.GITHUB_TOKEN_STATUS, "invalid");
+      }
+      if (!localStorage.getItem(LS.GITHUB_DEVICE)) {
+        localStorage.setItem(LS.GITHUB_DEVICE, detectDeviceName());
+      }
+      if (!localStorage.getItem(LS.GITHUB_TOKEN_SAVED)) {
+        localStorage.setItem(LS.GITHUB_TOKEN_SAVED, new Date().toISOString());
+      }
+      initGithubSettings();
+    } catch (e) {
+      // network error, keep existing status
+    }
+  }
 
   qs("#toggleGhToken")?.addEventListener("click", () => {
     const inp = qs("#githubToken");
@@ -1801,11 +1883,15 @@
           var fileData = await getResp.json();
           sha = fileData.sha || "";
         } else if (getResp.status === 401 || getResp.status === 403) {
+          localStorage.setItem(LS.GITHUB_TOKEN_STATUS, "invalid");
+          initGithubSettings();
           showToast("GitHub token is invalid or expired. Check Settings.", "error");
           isSyncing = false;
           setSyncButtonState(false);
           return;
         } else if (getResp.status === 404) {
+          localStorage.setItem(LS.GITHUB_TOKEN_STATUS, "invalid");
+          initGithubSettings();
           showToast("Repo not found. Your token may not have access. Use a Classic token with 'repo' scope.", "error");
           isSyncing = false;
           setSyncButtonState(false);
@@ -1828,6 +1914,7 @@
 
         if (putResp.ok) {
           clearPendingSync();
+          localStorage.setItem(LS.GITHUB_TOKEN_STATUS, "valid");
           pushActivity("Products synced to live website (" + products.length + " items).");
           renderDashboard();
           showToast("Live website updated! Changes will appear in ~30 seconds.", "success");
@@ -1836,9 +1923,13 @@
           await new Promise(function(r) { setTimeout(r, 1000); });
           continue;
         } else if (putResp.status === 401 || putResp.status === 403) {
+          localStorage.setItem(LS.GITHUB_TOKEN_STATUS, "invalid");
+          initGithubSettings();
           showToast("GitHub token is invalid or expired. Check Settings.", "error");
           return;
         } else if (putResp.status === 404) {
+          localStorage.setItem(LS.GITHUB_TOKEN_STATUS, "invalid");
+          initGithubSettings();
           showToast("Repo not found. Your token may not have access. Use a Classic token with 'repo' scope.", "error");
           return;
         } else if (putResp.status === 409) {
@@ -1881,6 +1972,9 @@
       LS.GOATCOUNTER_TOKEN,
       LS.GITHUB_TOKEN,
       LS.GITHUB_REPO,
+      LS.GITHUB_DEVICE,
+      LS.GITHUB_TOKEN_STATUS,
+      LS.GITHUB_TOKEN_SAVED,
       LS.ADMIN_OPENS,
       LS.STOCK_TRANSACTIONS,
     ].forEach((k) => localStorage.removeItem(k));
