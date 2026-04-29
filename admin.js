@@ -142,7 +142,7 @@
     markPendingSync();
     var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
     if (!token) {
-      showToast("Product saved locally. Set up GitHub token in Settings to sync to live website.", "error");
+      showToast("Product saved locally. Add GitHub token in Settings to sync online.", "info");
       return;
     }
     clearTimeout(autoSyncTimer);
@@ -178,8 +178,9 @@
   function showToast(message, type = "success") {
     if (!toastEl) return;
     toastEl.textContent = message;
-    toastEl.classList.remove("hidden", "success", "error");
-    toastEl.classList.add(type === "error" ? "error" : "success");
+    toastEl.classList.remove("hidden", "success", "error", "info");
+    var cls = type === "error" ? "error" : type === "info" ? "info" : "success";
+    toastEl.classList.add(cls);
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => {
       toastEl.classList.add("hidden");

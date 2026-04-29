@@ -1214,6 +1214,11 @@ body.admin-body {
   color: #fff;
 }
 
+.toast.info {
+  background: #1a3a5c;
+  color: #fff;
+}
+
 @keyframes toastIn {
   from {
     opacity: 0;
