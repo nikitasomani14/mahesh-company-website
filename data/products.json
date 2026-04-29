@@ -550,5 +550,120 @@
       "Seed Rate Control",
       "All Seed Types"
     ]
+  },
+  {
+    "id": "25",
+    "name": "Glan 10MM",
+    "category": "parts",
+    "costPrice": 300,
+    "price": 450,
+    "originalPrice": 500,
+    "imageUrl": "",
+    "rating": 0,
+    "reviews": 0,
+    "badge": "new",
+    "badgeText": "New Stock",
+    "badges": [{"type": "new", "text": "New Stock"}],
+    "inStock": true,
+    "stockQty": 1,
+    "description": "Glan 10MM - high quality thresher spare part. Sold per kg.",
+    "features": [
+      "10MM Size",
+      "Premium Quality",
+      "Thresher Compatible",
+      "Durable Material"
+    ]
+  },
+  {
+    "id": "26",
+    "name": "Tikoni NW+",
+    "category": "parts",
+    "costPrice": 160,
+    "price": 250,
+    "originalPrice": 300,
+    "imageUrl": "",
+    "rating": 0,
+    "reviews": 0,
+    "badge": "new",
+    "badgeText": "New Stock",
+    "badges": [{"type": "new", "text": "New Stock"}],
+    "inStock": true,
+    "stockQty": 2,
+    "description": "Tikoni NW+ spare part for agricultural machinery. High-grade material.",
+    "features": [
+      "NW+ Grade",
+      "Precision Fit",
+      "Long Lasting",
+      "Agriculture Use"
+    ]
+  },
+  {
+    "id": "27",
+    "name": "Glan Plate NW+",
+    "category": "parts",
+    "costPrice": 50,
+    "price": 80,
+    "originalPrice": 100,
+    "imageUrl": "",
+    "rating": 0,
+    "reviews": 0,
+    "badge": "new",
+    "badgeText": "New Stock",
+    "badges": [{"type": "new", "text": "New Stock"}],
+    "inStock": true,
+    "stockQty": 4,
+    "description": "Glan Plate NW+ for thresher and agricultural equipment. Durable steel construction.",
+    "features": [
+      "NW+ Grade",
+      "Steel Construction",
+      "Thresher Part",
+      "Easy Replacement"
+    ]
+  },
+  {
+    "id": "28",
+    "name": "Bearing Cover Steel",
+    "category": "parts",
+    "costPrice": 50,
+    "price": 80,
+    "originalPrice": 100,
+    "imageUrl": "",
+    "rating": 0,
+    "reviews": 0,
+    "badge": null,
+    "badgeText": null,
+    "badges": [],
+    "inStock": true,
+    "stockQty": 2,
+    "description": "Steel bearing cover for thresher and engine applications. Protects bearings from dust and debris.",
+    "features": [
+      "Steel Material",
+      "Bearing Protection",
+      "Dust Resistant",
+      "Universal Fit"
+    ]
+  },
+  {
+    "id": "29",
+    "name": "LD 3\" Super",
+    "category": "parts",
+    "costPrice": 890,
+    "price": 1200,
+    "originalPrice": 1400,
+    "imageUrl": "",
+    "rating": 0,
+    "reviews": 0,
+    "badge": null,
+    "badgeText": null,
+    "badges": [],
+    "inStock": true,
+    "stockQty": 2,
+    "description": "LD 3-inch Super grade spare part for heavy-duty agricultural machinery.",
+    "features": [
+      "3 Inch Size",
+      "Super Grade",
+      "Heavy Duty",
+      "Long Life"
+    ]
   }
 ]
