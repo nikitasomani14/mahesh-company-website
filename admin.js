@@ -1683,9 +1683,6 @@
     const statusCard = qs("#githubTokenStatusCard");
 
     if (repoInput) repoInput.value = repo;
-    if (repoHint) {
-      repoHint.textContent = repo ? "Current: github.com/" + repo : "Not set.";
-    }
     if (tokenHint) {
       if (token) {
         var hint = "Token saved (last 4: ..." + token.slice(-4) + ")";
