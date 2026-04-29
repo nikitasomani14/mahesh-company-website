@@ -3,6 +3,7 @@
     "id": "1",
     "name": "Sonalika Multi-Crop Thresher 40HP",
     "category": "thresher",
+    "costPrice": 0,
     "price": 195000,
     "originalPrice": 220000,
     "imageUrl": "https://5.imimg.com/data5/SELLER/Default/2023/1/MH/PA/LT/132924005/sonalika-thresher-machine-1000x1000.jpg",
@@ -26,6 +27,7 @@
     "id": "2",
     "name": "Sonalika Maize Sheller 64\" Dehusker",
     "category": "thresher",
+    "costPrice": 0,
     "price": 230000,
     "originalPrice": 275000,
     "imageUrl": "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=500&q=80",
@@ -49,6 +51,7 @@
     "id": "3",
     "name": "Sonalika Paddy Thresher - Tractor Op.",
     "category": "thresher",
+    "costPrice": 0,
     "price": 165000,
     "originalPrice": 195000,
     "imageUrl": "https://images.unsplash.com/photo-1589923188651-268a9765e432?w=500&q=80",
@@ -72,6 +75,7 @@
     "id": "4",
     "name": "Honda GX200 Engine 6.5 HP",
     "category": "engine",
+    "costPrice": 0,
     "price": 28500,
     "originalPrice": 32000,
     "imageUrl": "honda-engines.png",
@@ -95,6 +99,7 @@
     "id": "5",
     "name": "Honda GX390 Engine 13 HP",
     "category": "engine",
+    "costPrice": 0,
     "price": 45000,
     "originalPrice": 52000,
     "imageUrl": "honda-engines.png",
@@ -118,6 +123,7 @@
     "id": "6",
     "name": "Oil Bearing Engine 10 HP Diesel",
     "category": "engine",
+    "costPrice": 0,
     "price": 35000,
     "originalPrice": 42000,
     "imageUrl": "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=500&q=80",
@@ -141,6 +147,7 @@
     "id": "7",
     "name": "JCB 3DX Backhoe Rental - Per Hour",
     "category": "jcb",
+    "costPrice": 0,
     "price": 1200,
     "originalPrice": 1500,
     "imageUrl": "https://i.pinimg.com/originals/a1/22/45/a12245c7c9a34052eaebf34a9e3ce1ef.jpg",
@@ -164,6 +171,7 @@
     "id": "8",
     "name": "JCB Land Leveling - Per Bigha",
     "category": "jcb",
+    "costPrice": 0,
     "price": 3500,
     "originalPrice": 4500,
     "imageUrl": "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=500&q=80",
@@ -187,6 +195,7 @@
     "id": "9",
     "name": "Cultivator Blade Set (12 Pcs)",
     "category": "parts",
+    "costPrice": 0,
     "price": 2800,
     "originalPrice": 3200,
     "imageUrl": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=500&q=80",
@@ -210,6 +219,7 @@
     "id": "10",
     "name": "Thresher V-Belt Set (Premium)",
     "category": "parts",
+    "costPrice": 0,
     "price": 1500,
     "originalPrice": 1800,
     "imageUrl": "https://images.unsplash.com/photo-1581092335397-9583eb92d232?w=500&q=80",
@@ -233,6 +243,7 @@
     "id": "11",
     "name": "Tractor Rotavator Blades (Set of 42)",
     "category": "parts",
+    "costPrice": 0,
     "price": 4500,
     "originalPrice": 5500,
     "imageUrl": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=500&q=80",
@@ -256,6 +267,7 @@
     "id": "12",
     "name": "Bearing Set for Thresher (Full Kit)",
     "category": "parts",
+    "costPrice": 0,
     "price": 3200,
     "originalPrice": 3800,
     "imageUrl": "https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?w=500&q=80",
@@ -279,6 +291,7 @@
     "id": "13",
     "name": "Heavy Duty Khurpi (Weeding Tool)",
     "category": "tools",
+    "costPrice": 0,
     "price": 350,
     "originalPrice": 450,
     "imageUrl": "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=500&q=80",
@@ -302,6 +315,7 @@
     "id": "14",
     "name": "Spraying Machine 16L (Battery)",
     "category": "tools",
+    "costPrice": 0,
     "price": 3500,
     "originalPrice": 4200,
     "imageUrl": "https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?w=500&q=80",
@@ -325,6 +339,7 @@
     "id": "15",
     "name": "Garden Tool Set (8 Pieces)",
     "category": "tools",
+    "costPrice": 0,
     "price": 1800,
     "originalPrice": 2400,
     "imageUrl": "https://images.unsplash.com/photo-1617576683096-00fc8eecb3af?w=500&q=80",
@@ -348,6 +363,7 @@
     "id": "16",
     "name": "Honda Water Pump 3\" (GX200)",
     "category": "pump",
+    "costPrice": 0,
     "price": 32000,
     "originalPrice": 38000,
     "imageUrl": "honda-engines.png",
@@ -371,6 +387,7 @@
     "id": "17",
     "name": "Submersible Pump 1.5HP",
     "category": "pump",
+    "costPrice": 0,
     "price": 8500,
     "originalPrice": 10000,
     "imageUrl": "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?w=500&q=80",
@@ -394,6 +411,7 @@
     "id": "18",
     "name": "Drip Irrigation Kit (1 Acre)",
     "category": "pump",
+    "costPrice": 0,
     "price": 12000,
     "originalPrice": 15000,
     "imageUrl": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=500&q=80",
@@ -417,6 +435,7 @@
     "id": "19",
     "name": "Mini Sonalika Thresher 20HP",
     "category": "thresher",
+    "costPrice": 0,
     "price": 105000,
     "originalPrice": 115000,
     "imageUrl": "https://images.unsplash.com/photo-1560693225-b8507d6f3aa9?w=500&q=80",
@@ -440,6 +459,7 @@
     "id": "20",
     "name": "Oil Bearing Engine 5 HP Diesel",
     "category": "engine",
+    "costPrice": 0,
     "price": 18000,
     "originalPrice": 22000,
     "imageUrl": "https://images.unsplash.com/photo-1615811361523-6bd03d7748e7?w=500&q=80",
@@ -463,6 +483,7 @@
     "id": "21",
     "name": "Sprinkler Irrigation System (Full Set)",
     "category": "pump",
+    "costPrice": 0,
     "price": 8500,
     "originalPrice": 11000,
     "imageUrl": "https://images.unsplash.com/photo-1592150621744-aca64f48394a?w=500&q=80",
@@ -486,6 +507,7 @@
     "id": "22",
     "name": "Plough Blade Set (Heavy Duty)",
     "category": "parts",
+    "costPrice": 0,
     "price": 5500,
     "originalPrice": 6800,
     "imageUrl": "https://images.unsplash.com/photo-1586864387789-628af9feed72?w=500&q=80",
@@ -509,6 +531,7 @@
     "id": "23",
     "name": "JCB Excavator Work - Per Day",
     "category": "jcb",
+    "costPrice": 0,
     "price": 8000,
     "originalPrice": 10000,
     "imageUrl": "https://i.pinimg.com/originals/a1/22/45/a12245c7c9a34052eaebf34a9e3ce1ef.jpg",
@@ -532,6 +555,7 @@
     "id": "24",
     "name": "Seed Drill Machine Attachment",
     "category": "tools",
+    "costPrice": 0,
     "price": 28000,
     "originalPrice": 34000,
     "imageUrl": "https://images.unsplash.com/photo-1598512752271-33f913a5af13?w=500&q=80",
@@ -693,11 +717,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 6,
     "description": "PVC Foot Valve 3 inch for water pump applications.",
-    "features": ["3 Inch Size", "PVC Material", "Pump Compatible", "Durable"]
+    "features": [
+      "3 Inch Size",
+      "PVC Material",
+      "Pump Compatible",
+      "Durable"
+    ]
   },
   {
     "id": "31",
@@ -711,11 +745,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 10,
     "description": "PVC Favara Nozzle for spraying and irrigation.",
-    "features": ["PVC Material", "Spray Nozzle", "Irrigation Use", "Lightweight"]
+    "features": [
+      "PVC Material",
+      "Spray Nozzle",
+      "Irrigation Use",
+      "Lightweight"
+    ]
   },
   {
     "id": "32",
@@ -729,11 +773,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 3,
     "description": "Carborater for W30 engine. OEM quality replacement part.",
-    "features": ["W30 Compatible", "OEM Quality", "Engine Part", "Easy Install"]
+    "features": [
+      "W30 Compatible",
+      "OEM Quality",
+      "Engine Part",
+      "Easy Install"
+    ]
   },
   {
     "id": "33",
@@ -747,11 +801,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 2,
     "description": "Carborater for MK12 engine. High quality replacement.",
-    "features": ["MK12 Compatible", "High Quality", "Engine Part", "Reliable"]
+    "features": [
+      "MK12 Compatible",
+      "High Quality",
+      "Engine Part",
+      "Reliable"
+    ]
   },
   {
     "id": "34",
@@ -765,11 +829,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 6,
     "description": "Aluminium Kan for agricultural and industrial use.",
-    "features": ["Aluminium Body", "Lightweight", "Rust Proof", "Durable"]
+    "features": [
+      "Aluminium Body",
+      "Lightweight",
+      "Rust Proof",
+      "Durable"
+    ]
   },
   {
     "id": "35",
@@ -787,7 +861,12 @@
     "inStock": true,
     "stockQty": 2,
     "description": "PVC Kan Nipple 80mm size for pipe fittings.",
-    "features": ["80mm Size", "PVC Material", "Pipe Fitting", "Leak Proof"]
+    "features": [
+      "80mm Size",
+      "PVC Material",
+      "Pipe Fitting",
+      "Leak Proof"
+    ]
   },
   {
     "id": "36",
@@ -805,7 +884,12 @@
     "inStock": true,
     "stockQty": 4,
     "description": "PVC Kan Nipple 40mm size for pipe fittings.",
-    "features": ["40mm Size", "PVC Material", "Pipe Fitting", "Leak Proof"]
+    "features": [
+      "40mm Size",
+      "PVC Material",
+      "Pipe Fitting",
+      "Leak Proof"
+    ]
   },
   {
     "id": "37",
@@ -819,11 +903,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 101,
     "description": "Yuri 4 inch cutting wheel for grinder. High quality abrasive disc.",
-    "features": ["4 Inch Size", "Abrasive Disc", "Grinder Compatible", "Fast Cutting"]
+    "features": [
+      "4 Inch Size",
+      "Abrasive Disc",
+      "Grinder Compatible",
+      "Fast Cutting"
+    ]
   },
   {
     "id": "38",
@@ -837,11 +931,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 25,
     "description": "4 inch grinding wheel for angle grinder. For metal grinding and finishing.",
-    "features": ["4 Inch Size", "Metal Grinding", "Finishing Work", "Durable"]
+    "features": [
+      "4 Inch Size",
+      "Metal Grinding",
+      "Finishing Work",
+      "Durable"
+    ]
   },
   {
     "id": "39",
@@ -859,7 +963,12 @@
     "inStock": true,
     "stockQty": 6,
     "description": "Dori Moti rope for agricultural and general use.",
-    "features": ["Strong Material", "Multi-Purpose", "Durable", "Agriculture Use"]
+    "features": [
+      "Strong Material",
+      "Multi-Purpose",
+      "Durable",
+      "Agriculture Use"
+    ]
   },
   {
     "id": "40",
@@ -877,7 +986,12 @@
     "inStock": true,
     "stockQty": 6,
     "description": "Air filter for chainsaw. Keeps engine clean and running smooth.",
-    "features": ["Chainsaw Part", "Air Filter", "Engine Protection", "Easy Replace"]
+    "features": [
+      "Chainsaw Part",
+      "Air Filter",
+      "Engine Protection",
+      "Easy Replace"
+    ]
   },
   {
     "id": "41",
@@ -895,7 +1009,12 @@
     "inStock": true,
     "stockQty": 2,
     "description": "Block piston assembly for chainsaw engine. OEM replacement part.",
-    "features": ["Chainsaw Part", "Piston Assembly", "OEM Quality", "Precision Fit"]
+    "features": [
+      "Chainsaw Part",
+      "Piston Assembly",
+      "OEM Quality",
+      "Precision Fit"
+    ]
   },
   {
     "id": "42",
@@ -913,7 +1032,12 @@
     "inStock": true,
     "stockQty": 2,
     "description": "Carburetor for chainsaw. Direct replacement for smooth engine performance.",
-    "features": ["Chainsaw Part", "Carburetor", "Engine Performance", "Direct Fit"]
+    "features": [
+      "Chainsaw Part",
+      "Carburetor",
+      "Engine Performance",
+      "Direct Fit"
+    ]
   },
   {
     "id": "43",
@@ -931,7 +1055,12 @@
     "inStock": true,
     "stockQty": 1,
     "description": "16 inch Speedex chainsaw chain. Sharp cutting teeth for efficient wood cutting.",
-    "features": ["16 Inch", "Speedex Brand", "Sharp Teeth", "Wood Cutting"]
+    "features": [
+      "16 Inch",
+      "Speedex Brand",
+      "Sharp Teeth",
+      "Wood Cutting"
+    ]
   },
   {
     "id": "44",
@@ -949,7 +1078,12 @@
     "inStock": true,
     "stockQty": 2,
     "description": "18 inch Hynix chainsaw chain. Heavy duty chain for professional use.",
-    "features": ["18 Inch", "Hynix Brand", "Heavy Duty", "Professional Grade"]
+    "features": [
+      "18 Inch",
+      "Hynix Brand",
+      "Heavy Duty",
+      "Professional Grade"
+    ]
   },
   {
     "id": "45",
@@ -967,7 +1101,12 @@
     "inStock": true,
     "stockQty": 3,
     "description": "Recoil spring for W30 engine. Essential starter part.",
-    "features": ["W30 Compatible", "Recoil Spring", "Starter Part", "Durable Steel"]
+    "features": [
+      "W30 Compatible",
+      "Recoil Spring",
+      "Starter Part",
+      "Durable Steel"
+    ]
   },
   {
     "id": "46",
@@ -985,7 +1124,12 @@
     "inStock": true,
     "stockQty": 3,
     "description": "Recoil spring for Honda GK200 engine. OEM quality replacement.",
-    "features": ["Honda GK200", "Recoil Spring", "OEM Quality", "Easy Install"]
+    "features": [
+      "Honda GK200",
+      "Recoil Spring",
+      "OEM Quality",
+      "Easy Install"
+    ]
   },
   {
     "id": "47",
@@ -999,11 +1143,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 20,
     "description": "Fix Pana spanner 21x23mm. Double ended fixed wrench.",
-    "features": ["21x23mm Size", "Double Ended", "Chrome Vanadium", "Rust Resistant"]
+    "features": [
+      "21x23mm Size",
+      "Double Ended",
+      "Chrome Vanadium",
+      "Rust Resistant"
+    ]
   },
   {
     "id": "48",
@@ -1017,11 +1171,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 11,
     "description": "Complete packing kit for W30 engine. Includes all gaskets and seals.",
-    "features": ["W30 Compatible", "Full Kit", "Gaskets & Seals", "OEM Quality"]
+    "features": [
+      "W30 Compatible",
+      "Full Kit",
+      "Gaskets & Seals",
+      "OEM Quality"
+    ]
   },
   {
     "id": "49",
@@ -1039,7 +1203,12 @@
     "inStock": true,
     "stockQty": 3,
     "description": "Valve for W30 engine. Precision machined for reliable seal.",
-    "features": ["W30 Compatible", "Precision Machined", "Engine Valve", "Reliable Seal"]
+    "features": [
+      "W30 Compatible",
+      "Precision Machined",
+      "Engine Valve",
+      "Reliable Seal"
+    ]
   },
   {
     "id": "50",
@@ -1053,11 +1222,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 60,
     "description": "Kanghi Barkha 5.5 inch with single hole. Thresher comb part.",
-    "features": ["5.5 Inch", "Single Hole", "Thresher Part", "High Quality"]
+    "features": [
+      "5.5 Inch",
+      "Single Hole",
+      "Thresher Part",
+      "High Quality"
+    ]
   },
   {
     "id": "51",
@@ -1075,7 +1254,12 @@
     "inStock": true,
     "stockQty": 240,
     "description": "Stud bolt 1/2 x 5/8 x 2 inch. Sold per dozen.",
-    "features": ["1/2x5/8x2 Inch", "Threaded Stud", "Steel Material", "Sold Per Dozen"]
+    "features": [
+      "1/2x5/8x2 Inch",
+      "Threaded Stud",
+      "Steel Material",
+      "Sold Per Dozen"
+    ]
   },
   {
     "id": "52",
@@ -1089,11 +1273,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
-    "stockQty": 6,
+    "stockQty": 8,
     "description": "10 inch adjustable wrench. Chrome plated for rust resistance.",
-    "features": ["10 Inch", "Adjustable Jaw", "Chrome Plated", "Multi-Purpose"]
+    "features": [
+      "10 Inch",
+      "Adjustable Jaw",
+      "Chrome Plated",
+      "Multi-Purpose"
+    ]
   },
   {
     "id": "53",
@@ -1107,11 +1301,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 6,
     "description": "14 inch pipe wrench for plumbing and pipe fitting work.",
-    "features": ["14 Inch", "Pipe Wrench", "Heavy Duty", "Strong Grip"]
+    "features": [
+      "14 Inch",
+      "Pipe Wrench",
+      "Heavy Duty",
+      "Strong Grip"
+    ]
   },
   {
     "id": "54",
@@ -1125,11 +1329,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 4,
     "description": "Tanki AV1 fuel tank for engine. Quality steel construction.",
-    "features": ["AV1 Model", "Fuel Tank", "Steel Body", "Leak Proof"]
+    "features": [
+      "AV1 Model",
+      "Fuel Tank",
+      "Steel Body",
+      "Leak Proof"
+    ]
   },
   {
     "id": "55",
@@ -1147,7 +1361,12 @@
     "inStock": true,
     "stockQty": 2,
     "description": "Tanki TV-1 fuel tank for diesel engine applications.",
-    "features": ["TV-1 Model", "Fuel Tank", "Diesel Engine", "Durable"]
+    "features": [
+      "TV-1 Model",
+      "Fuel Tank",
+      "Diesel Engine",
+      "Durable"
+    ]
   },
   {
     "id": "56",
@@ -1165,7 +1384,12 @@
     "inStock": true,
     "stockQty": 3,
     "description": "Tanki for Lister type engine. Heavy duty steel tank.",
-    "features": ["Lister Engine", "Fuel Tank", "Heavy Duty", "Steel Body"]
+    "features": [
+      "Lister Engine",
+      "Fuel Tank",
+      "Heavy Duty",
+      "Steel Body"
+    ]
   },
   {
     "id": "57",
@@ -1179,11 +1403,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 125,
     "description": "Kanghi Biscuit thresher comb part. Bulk quantity available.",
-    "features": ["Thresher Part", "Comb Biscuit", "Bulk Pack", "Durable"]
+    "features": [
+      "Thresher Part",
+      "Comb Biscuit",
+      "Bulk Pack",
+      "Durable"
+    ]
   },
   {
     "id": "58",
@@ -1201,7 +1435,12 @@
     "inStock": true,
     "stockQty": 10,
     "description": "Cross NBC bearing/joint for agricultural machinery.",
-    "features": ["NBC Brand", "Cross Joint", "Precision Made", "Agriculture Use"]
+    "features": [
+      "NBC Brand",
+      "Cross Joint",
+      "Precision Made",
+      "Agriculture Use"
+    ]
   },
   {
     "id": "59",
@@ -1219,7 +1458,12 @@
     "inStock": true,
     "stockQty": 2,
     "description": "UCFL 206 flanged bearing unit. Pillow block bearing for shaft mounting.",
-    "features": ["UCFL 206", "Flanged Unit", "Shaft Mounting", "Self-Aligning"]
+    "features": [
+      "UCFL 206",
+      "Flanged Unit",
+      "Shaft Mounting",
+      "Self-Aligning"
+    ]
   },
   {
     "id": "60",
@@ -1233,11 +1477,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 336,
     "description": "Kanghi 4MM 4 inch thresher comb teeth. Bulk quantity.",
-    "features": ["4MM Thickness", "4 Inch Size", "Thresher Comb", "Bulk Pack"]
+    "features": [
+      "4MM Thickness",
+      "4 Inch Size",
+      "Thresher Comb",
+      "Bulk Pack"
+    ]
   },
   {
     "id": "61",
@@ -1251,11 +1505,21 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 288,
     "description": "Kanghi 3MM 3 inch thresher comb teeth. Bulk quantity.",
-    "features": ["3MM Thickness", "3 Inch Size", "Thresher Comb", "Bulk Pack"]
+    "features": [
+      "3MM Thickness",
+      "3 Inch Size",
+      "Thresher Comb",
+      "Bulk Pack"
+    ]
   },
   {
     "id": "62",
@@ -1273,7 +1537,12 @@
     "inStock": true,
     "stockQty": 3,
     "description": "Extension shaft KIR for machinery. Hardened steel construction.",
-    "features": ["Hardened Steel", "Extension Shaft", "Precision Fit", "Durable"]
+    "features": [
+      "Hardened Steel",
+      "Extension Shaft",
+      "Precision Fit",
+      "Durable"
+    ]
   },
   {
     "id": "63",
@@ -1291,7 +1560,12 @@
     "inStock": true,
     "stockQty": 6,
     "description": "Joomark brand plier. Multi-purpose hand tool.",
-    "features": ["Joomark Brand", "Multi-Purpose", "Strong Grip", "Durable"]
+    "features": [
+      "Joomark Brand",
+      "Multi-Purpose",
+      "Strong Grip",
+      "Durable"
+    ]
   },
   {
     "id": "64",
@@ -1309,7 +1583,12 @@
     "inStock": true,
     "stockQty": 5,
     "description": "Ring spanner 30x32mm. Double ended ring wrench.",
-    "features": ["30x32mm", "Double Ended", "Ring Spanner", "Chrome Finish"]
+    "features": [
+      "30x32mm",
+      "Double Ended",
+      "Ring Spanner",
+      "Chrome Finish"
+    ]
   },
   {
     "id": "65",
@@ -1327,7 +1606,12 @@
     "inStock": true,
     "stockQty": 5,
     "description": "Fix Pana spanner 30x32mm. Double ended fixed wrench.",
-    "features": ["30x32mm", "Double Ended", "Fixed Wrench", "Chrome Finish"]
+    "features": [
+      "30x32mm",
+      "Double Ended",
+      "Fixed Wrench",
+      "Chrome Finish"
+    ]
   },
   {
     "id": "66",
@@ -1345,7 +1629,12 @@
     "inStock": true,
     "stockQty": 10,
     "description": "Ring spanner 7/16 x 9/16 inch. Imperial size ring wrench.",
-    "features": ["7/16x9/16 Inch", "Imperial Size", "Ring Spanner", "Chrome Finish"]
+    "features": [
+      "7/16x9/16 Inch",
+      "Imperial Size",
+      "Ring Spanner",
+      "Chrome Finish"
+    ]
   },
   {
     "id": "67",
@@ -1363,7 +1652,12 @@
     "inStock": true,
     "stockQty": 10,
     "description": "Fix Pana spanner 7/16 x 9/16 inch. Imperial size fixed wrench.",
-    "features": ["7/16x9/16 Inch", "Imperial Size", "Fixed Wrench", "Chrome Finish"]
+    "features": [
+      "7/16x9/16 Inch",
+      "Imperial Size",
+      "Fixed Wrench",
+      "Chrome Finish"
+    ]
   },
   {
     "id": "68",
@@ -1381,7 +1675,12 @@
     "inStock": true,
     "stockQty": 20,
     "description": "Fix Pana spanner 12x13mm. Small double ended wrench.",
-    "features": ["12x13mm", "Double Ended", "Compact Size", "Chrome Finish"]
+    "features": [
+      "12x13mm",
+      "Double Ended",
+      "Compact Size",
+      "Chrome Finish"
+    ]
   },
   {
     "id": "69",
@@ -1399,7 +1698,12 @@
     "inStock": true,
     "stockQty": 20,
     "description": "Fix Pana spanner 14x15mm. Double ended fixed wrench.",
-    "features": ["14x15mm", "Double Ended", "Fixed Wrench", "Chrome Finish"]
+    "features": [
+      "14x15mm",
+      "Double Ended",
+      "Fixed Wrench",
+      "Chrome Finish"
+    ]
   },
   {
     "id": "70",
@@ -1417,7 +1721,12 @@
     "inStock": true,
     "stockQty": 24,
     "description": "Golden heavy duty clip. Sold per dozen.",
-    "features": ["Heavy Duty", "Golden Finish", "Per Dozen", "Strong Grip"]
+    "features": [
+      "Heavy Duty",
+      "Golden Finish",
+      "Per Dozen",
+      "Strong Grip"
+    ]
   },
   {
     "id": "71",
@@ -1435,7 +1744,12 @@
     "inStock": true,
     "stockQty": 12,
     "description": "Foot pin for MK12 engine. Precision machined steel.",
-    "features": ["MK12 Compatible", "Foot Pin", "Steel", "Precision Made"]
+    "features": [
+      "MK12 Compatible",
+      "Foot Pin",
+      "Steel",
+      "Precision Made"
+    ]
   },
   {
     "id": "72",
@@ -1453,7 +1767,12 @@
     "inStock": true,
     "stockQty": 144,
     "description": "Grinded flywheel key. Sold per dozen.",
-    "features": ["Grinded Finish", "Flywheel Key", "Per Dozen", "Precision Fit"]
+    "features": [
+      "Grinded Finish",
+      "Flywheel Key",
+      "Per Dozen",
+      "Precision Fit"
+    ]
   },
   {
     "id": "73",
@@ -1471,7 +1790,12 @@
     "inStock": true,
     "stockQty": 12,
     "description": "Comet brand flywheel key for engine.",
-    "features": ["Comet Brand", "Flywheel Key", "Engine Part", "Durable"]
+    "features": [
+      "Comet Brand",
+      "Flywheel Key",
+      "Engine Part",
+      "Durable"
+    ]
   },
   {
     "id": "74",
@@ -1489,7 +1813,12 @@
     "inStock": true,
     "stockQty": 1,
     "description": "Bearing shim 32211 size. Precision spacer for bearing adjustment.",
-    "features": ["32211 Size", "Precision Shim", "Bearing Spacer", "Steel"]
+    "features": [
+      "32211 Size",
+      "Precision Shim",
+      "Bearing Spacer",
+      "Steel"
+    ]
   },
   {
     "id": "75",
@@ -1507,7 +1836,12 @@
     "inStock": true,
     "stockQty": 12,
     "description": "Lis for Tanki Tea type. Gasket/seal part.",
-    "features": ["Tanki Part", "Gasket Seal", "Leak Prevention", "Easy Replace"]
+    "features": [
+      "Tanki Part",
+      "Gasket Seal",
+      "Leak Prevention",
+      "Easy Replace"
+    ]
   },
   {
     "id": "76",
@@ -1525,7 +1859,12 @@
     "inStock": true,
     "stockQty": 24,
     "description": "Grease gun nozzle tip. Standard fitting for grease guns.",
-    "features": ["Standard Fit", "Grease Gun Part", "Metal Tip", "Leak Proof"]
+    "features": [
+      "Standard Fit",
+      "Grease Gun Part",
+      "Metal Tip",
+      "Leak Proof"
+    ]
   },
   {
     "id": "77",
@@ -1543,7 +1882,12 @@
     "inStock": true,
     "stockQty": 2,
     "description": "Complete gear set for AV1 engine. Hardened steel gears.",
-    "features": ["AV1 Engine", "Complete Set", "Hardened Steel", "Precision Cut"]
+    "features": [
+      "AV1 Engine",
+      "Complete Set",
+      "Hardened Steel",
+      "Precision Cut"
+    ]
   },
   {
     "id": "78",
@@ -1561,7 +1905,12 @@
     "inStock": true,
     "stockQty": 1,
     "description": "Aaripatta double blade for cutting and threshing.",
-    "features": ["Double Blade", "Cutting Tool", "Thresher Part", "Sharp Edge"]
+    "features": [
+      "Double Blade",
+      "Cutting Tool",
+      "Thresher Part",
+      "Sharp Edge"
+    ]
   },
   {
     "id": "79",
@@ -1579,7 +1928,12 @@
     "inStock": true,
     "stockQty": 1,
     "description": "Ideal 801 angle grinder. Heavy duty power tool for cutting and grinding.",
-    "features": ["Ideal 801", "Angle Grinder", "Heavy Duty", "Power Tool"]
+    "features": [
+      "Ideal 801",
+      "Angle Grinder",
+      "Heavy Duty",
+      "Power Tool"
+    ]
   },
   {
     "id": "80",
@@ -1593,10 +1947,20 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 2,
     "description": "4-stroke brush cutter for grass and weed cutting. Professional grade.",
-    "features": ["4 Stroke Engine", "Brush Cutter", "Professional", "Low Vibration"]
+    "features": [
+      "4 Stroke Engine",
+      "Brush Cutter",
+      "Professional",
+      "Low Vibration"
+    ]
   }
 ]
