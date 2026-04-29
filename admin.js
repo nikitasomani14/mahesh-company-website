@@ -1672,21 +1672,46 @@
     if (tokenInput) tokenInput.value = "";
   }
 
-  qs("#githubForm")?.addEventListener("submit", (e) => {
+  qs("#githubForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const repo = (qs("#githubRepo").value || "").trim();
     if (!repo || !repo.includes("/")) {
       showToast("Enter a valid owner/repo (e.g. user/my-website).", "error");
       return;
     }
-    localStorage.setItem(LS.GITHUB_REPO, repo);
     const tokenVal = (qs("#githubToken").value || "").trim();
+    var tokenToUse = tokenVal || localStorage.getItem(LS.GITHUB_TOKEN) || "";
+
+    if (tokenToUse) {
+      showToast("Verifying token...", "info");
+      try {
+        var testUrl = "https://api.github.com/repos/" + repo + "/contents/data/products.json";
+        var testResp = await fetch(testUrl, {
+          headers: {
+            "Authorization": "Bearer " + tokenToUse,
+            "Accept": "application/vnd.github.v3+json"
+          }
+        });
+        if (testResp.status === 401 || testResp.status === 403) {
+          showToast("Token is invalid or expired. Generate a new token with 'repo' permission.", "error");
+          return;
+        }
+        if (testResp.status === 404) {
+          showToast("Token cannot access this repo. Use a Classic token with 'repo' scope, or a Fine-grained token with this repo selected.", "error");
+          return;
+        }
+      } catch (err) {
+        showToast("Could not verify token (network error). Settings saved anyway.", "info");
+      }
+    }
+
+    localStorage.setItem(LS.GITHUB_REPO, repo);
     if (tokenVal) {
       localStorage.setItem(LS.GITHUB_TOKEN, tokenVal);
     }
     initGithubSettings();
     pushActivity("GitHub sync settings updated.");
-    showToast("GitHub settings saved.", "success");
+    showToast("GitHub settings saved and verified!", "success");
   });
 
   qs("#toggleGhToken")?.addEventListener("click", () => {
@@ -1780,6 +1805,11 @@
           isSyncing = false;
           setSyncButtonState(false);
           return;
+        } else if (getResp.status === 404) {
+          showToast("Repo not found. Your token may not have access. Use a Classic token with 'repo' scope.", "error");
+          isSyncing = false;
+          setSyncButtonState(false);
+          return;
         }
 
         var putBody = {
@@ -1809,7 +1839,7 @@
           showToast("GitHub token is invalid or expired. Check Settings.", "error");
           return;
         } else if (putResp.status === 404) {
-          showToast("Repository not found. Check repo name in Settings.", "error");
+          showToast("Repo not found. Your token may not have access. Use a Classic token with 'repo' scope.", "error");
           return;
         } else if (putResp.status === 409) {
           showToast("Sync conflict. Please try again in a few seconds.", "error");
