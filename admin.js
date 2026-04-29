@@ -359,14 +359,30 @@
   }
 
   async function seedProductsFromJson() {
-    const existing = getProducts();
-    if (existing.length > 0) return;
     try {
       const resp = await fetch("data/products.json");
       if (!resp.ok) return;
-      const data = await resp.json();
-      saveProducts(data);
-      pushActivity("Products seeded from catalog (" + data.length + " items).");
+      const catalogData = await resp.json();
+      const existing = getProducts();
+
+      if (existing.length === 0) {
+        saveProducts(catalogData);
+        pushActivity("Products seeded from catalog (" + catalogData.length + " items).");
+        return;
+      }
+
+      var existingIds = {};
+      existing.forEach(function(p) { existingIds[String(p.id)] = true; });
+
+      var newProducts = catalogData.filter(function(p) {
+        return !existingIds[String(p.id)];
+      });
+
+      if (newProducts.length > 0) {
+        var merged = existing.concat(newProducts);
+        saveProducts(merged);
+        pushActivity("Added " + newProducts.length + " new product(s) from catalog.");
+      }
     } catch (e) {
       console.warn("Could not seed products:", e);
     }
