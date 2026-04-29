@@ -361,9 +361,37 @@
 
   async function seedProductsFromJson() {
     try {
-      var resp = await fetch("data/products.json", { cache: "no-store" });
-      if (!resp.ok) return;
-      var catalogData = await resp.json();
+      var catalogData = null;
+
+      var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+      var repo = getGithubRepo();
+      if (token && repo && repo.includes("/")) {
+        try {
+          var apiUrl = "https://api.github.com/repos/" + repo + "/contents/data/products.json";
+          var apiResp = await fetch(apiUrl, {
+            headers: {
+              "Authorization": "Bearer " + token,
+              "Accept": "application/vnd.github.v3+json"
+            }
+          });
+          if (apiResp.ok) {
+            var fileData = await apiResp.json();
+            if (fileData.content) {
+              var decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ""))));
+              catalogData = JSON.parse(decoded);
+            }
+          }
+        } catch (e) {
+          console.warn("GitHub API fetch failed, falling back to local:", e);
+        }
+      }
+
+      if (!catalogData) {
+        var resp = await fetch("data/products.json", { cache: "no-store" });
+        if (!resp.ok) return;
+        catalogData = await resp.json();
+      }
+
       var existing = getProducts();
 
       if (existing.length === 0) {
@@ -1961,9 +1989,9 @@
         '<td><span class="product-name">' + escapeHtml(p.name || "Unnamed") + '</span><span class="category-badge">' + (p.category || "—") + '</span></td>' +
         '<td class="text-right">' + (cost > 0 ? "₹" + cost.toLocaleString("en-IN") : '<span style="color:var(--muted)">Not set</span>') + '</td>' +
         '<td class="text-right">₹' + sell.toLocaleString("en-IN") + '</td>' +
+        '<td class="text-right"><span class="stock-badge ' + stockClass + '">' + stockText + '</span></td>' +
         '<td class="text-right ' + profitClass + '">' + (cost > 0 ? "₹" + profitUnit.toLocaleString("en-IN") : "—") + '</td>' +
         '<td class="text-right ' + profitClass + '">' + (cost > 0 ? margin + "%" : "—") + '</td>' +
-        '<td class="text-right"><span class="stock-badge ' + stockClass + '">' + stockText + '</span></td>' +
         '<td class="text-right ' + profitClass + '">' + (cost > 0 ? "₹" + totalProfitProduct.toLocaleString("en-IN") : "—") + '</td>' +
         '<td><button class="action-btn" data-id="' + p.id + '"><i class="fas fa-edit"></i> Edit</button></td>' +
         '</tr>';
