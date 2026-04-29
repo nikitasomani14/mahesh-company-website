@@ -361,10 +361,10 @@
 
   async function seedProductsFromJson() {
     try {
-      const resp = await fetch("data/products.json");
+      var resp = await fetch("data/products.json", { cache: "no-store" });
       if (!resp.ok) return;
-      const catalogData = await resp.json();
-      const existing = getProducts();
+      var catalogData = await resp.json();
+      var existing = getProducts();
 
       if (existing.length === 0) {
         saveProducts(catalogData);
@@ -372,17 +372,46 @@
         return;
       }
 
+      var catalogMap = {};
+      catalogData.forEach(function(p) { catalogMap[String(p.id)] = p; });
+
       var existingIds = {};
       existing.forEach(function(p) { existingIds[String(p.id)] = true; });
+
+      var changed = false;
+      var updatedCount = 0;
+      var syncFields = ["name","category","costPrice","price","originalPrice",
+        "imageUrl","stockQty","inStock","description","features","badges",
+        "badge","badgeText","rating","reviews"];
+
+      existing.forEach(function(local) {
+        var remote = catalogMap[String(local.id)];
+        if (!remote) return;
+        var updated = false;
+        syncFields.forEach(function(f) {
+          if (remote[f] !== undefined && JSON.stringify(local[f]) !== JSON.stringify(remote[f])) {
+            local[f] = remote[f];
+            updated = true;
+          }
+        });
+        if (updated) { updatedCount++; changed = true; }
+      });
 
       var newProducts = catalogData.filter(function(p) {
         return !existingIds[String(p.id)];
       });
 
       if (newProducts.length > 0) {
-        var merged = existing.concat(newProducts);
-        saveProducts(merged);
-        pushActivity("Added " + newProducts.length + " new product(s) from catalog.");
+        existing = existing.concat(newProducts);
+        changed = true;
+      }
+
+      if (changed) {
+        saveProducts(existing);
+        var msgs = [];
+        if (updatedCount > 0) msgs.push("Updated " + updatedCount + " product(s)");
+        if (newProducts.length > 0) msgs.push("Added " + newProducts.length + " new product(s)");
+        pushActivity(msgs.join("; ") + " from catalog.");
       }
     } catch (e) {
       console.warn("Could not seed products:", e);
