@@ -555,7 +555,6 @@
     "id": "25",
     "name": "Glan 10MM",
     "category": "parts",
-    "costPrice": 300,
     "price": 450,
     "originalPrice": 500,
     "imageUrl": "",
@@ -563,7 +562,12 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 1,
     "description": "Glan 10MM - high quality thresher spare part. Sold per kg.",
@@ -578,7 +582,6 @@
     "id": "26",
     "name": "Tikoni NW+",
     "category": "parts",
-    "costPrice": 160,
     "price": 250,
     "originalPrice": 300,
     "imageUrl": "",
@@ -586,7 +589,12 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 2,
     "description": "Tikoni NW+ spare part for agricultural machinery. High-grade material.",
@@ -601,7 +609,6 @@
     "id": "27",
     "name": "Glan Plate NW+",
     "category": "parts",
-    "costPrice": 50,
     "price": 80,
     "originalPrice": 100,
     "imageUrl": "",
@@ -609,7 +616,12 @@
     "reviews": 0,
     "badge": "new",
     "badgeText": "New Stock",
-    "badges": [{"type": "new", "text": "New Stock"}],
+    "badges": [
+      {
+        "type": "new",
+        "text": "New Stock"
+      }
+    ],
     "inStock": true,
     "stockQty": 4,
     "description": "Glan Plate NW+ for thresher and agricultural equipment. Durable steel construction.",
@@ -624,8 +636,7 @@
     "id": "28",
     "name": "Bearing Cover Steel",
     "category": "parts",
-    "costPrice": 50,
-    "price": 80,
+    "price": 100,
     "originalPrice": 100,
     "imageUrl": "",
     "rating": 0,
@@ -647,7 +658,6 @@
     "id": "29",
     "name": "LD 3\" Super",
     "category": "parts",
-    "costPrice": 890,
     "price": 1200,
     "originalPrice": 1400,
     "imageUrl": "",
