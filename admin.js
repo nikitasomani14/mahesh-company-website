@@ -1730,20 +1730,42 @@
 
     if (tokenToUse) {
       showToast("Verifying token...", "info");
+      var authHeaders = {
+        "Authorization": "Bearer " + tokenToUse,
+        "Accept": "application/vnd.github.v3+json"
+      };
       try {
-        var testUrl = "https://api.github.com/repos/" + repo + "/contents/data/products.json";
-        var testResp = await fetch(testUrl, {
-          headers: {
-            "Authorization": "Bearer " + tokenToUse,
-            "Accept": "application/vnd.github.v3+json"
-          }
-        });
-        if (testResp.status === 401 || testResp.status === 403) {
-          showToast("Token is invalid or expired. Generate a new token with 'repo' permission.", "error");
+        var userResp = await fetch("https://api.github.com/user", { headers: authHeaders });
+        if (userResp.status === 401) {
+          showToast("Token is invalid or expired. Create a new one at github.com/settings/tokens/new", "error");
           return;
         }
-        if (testResp.status === 404) {
-          showToast("Token cannot access this repo. Use a Classic token with 'repo' scope, or a Fine-grained token with this repo selected.", "error");
+        var userData = userResp.ok ? await userResp.json() : null;
+        var tokenUser = userData ? userData.login : "unknown";
+        var repoOwner = repo.split("/")[0];
+
+        if (tokenUser.toLowerCase() !== repoOwner.toLowerCase()) {
+          showToast("Wrong account! Token belongs to '" + tokenUser + "' but repo is owned by '" + repoOwner + "'. Log in as '" + repoOwner + "' on GitHub and create the token there.", "error");
+          return;
+        }
+
+        var repoResp = await fetch("https://api.github.com/repos/" + repo, { headers: authHeaders });
+        if (repoResp.status === 404) {
+          showToast("Token can see your account (" + tokenUser + ") but cannot access this repo. Make sure you created a Classic token with 'repo' scope checked.", "error");
+          return;
+        }
+        if (repoResp.status === 403) {
+          showToast("Token doesn't have 'repo' permission. Create a new Classic token with the 'repo' scope checked.", "error");
+          return;
+        }
+
+        var contentsResp = await fetch("https://api.github.com/repos/" + repo + "/contents/data/products.json", { headers: authHeaders });
+        if (contentsResp.status === 404) {
+          showToast("Token can access the repo but can't find products.json. Check if the file exists.", "error");
+          return;
+        }
+        if (!contentsResp.ok) {
+          showToast("Token verified for account '" + tokenUser + "' but got error " + contentsResp.status + ". Try creating a new Classic token.", "error");
           return;
         }
       } catch (err) {
