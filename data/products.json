@@ -492,7 +492,7 @@
     "badge": "sale",
     "badgeText": "23% OFF",
     "badges": [],
-    "inStock": true,
+    "inStock": false,
     "stockQty": 4,
     "description": "Complete sprinkler system with pipes, nozzles, and connectors. Coverage up to half acre.",
     "features": [
