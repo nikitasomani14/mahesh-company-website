@@ -1348,6 +1348,22 @@
     qsa(".line-name, .line-qty, .line-price, .line-discount", row).forEach((inp) => {
       inp.addEventListener("input", recalcBillTotals);
     });
+    const nameInput = qs(".line-name", row);
+    if (nameInput) {
+      nameInput.addEventListener("input", function () {
+        const val = nameInput.value.trim();
+        const match = getProducts().find(
+          (p) => p.name && p.name.toLowerCase() === val.toLowerCase()
+        );
+        if (match && match.price) {
+          const priceInput = qs(".line-price", row);
+          if (priceInput) {
+            priceInput.value = match.price;
+            recalcBillTotals();
+          }
+        }
+      });
+    }
     recalcBillTotals();
   }
 

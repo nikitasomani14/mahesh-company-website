@@ -1846,7 +1846,7 @@ body.admin-body {
 .profit-table .action-btn {
   padding: 6px 10px;
   font-size: 0.8rem;
-  background: var(--bg);
+  background: #ffffff;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   cursor: pointer;
