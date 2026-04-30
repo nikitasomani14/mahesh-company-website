@@ -166,6 +166,20 @@
     }, 2000);
   }
 
+  var autoBillSyncTimer = null;
+
+  function autoSyncBills() {
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) {
+      showToast("Bill saved locally. Add GitHub token in Settings to sync across devices.", "info");
+      return;
+    }
+    clearTimeout(autoBillSyncTimer);
+    autoBillSyncTimer = setTimeout(function() {
+      syncBillsToGithub();
+    }, 2000);
+  }
+
   function incrementAdminOpens() {
     const n = parseInt(localStorage.getItem(LS.ADMIN_OPENS) || "0", 10);
     localStorage.setItem(LS.ADMIN_OPENS, String(n + 1));
@@ -360,6 +374,7 @@
   /* ---------- Main app bootstrap ---------- */
   async function bootMainApp() {
     await seedProductsFromJson();
+    await seedBillsFromJson();
     renderDashboard();
     fetchVisitorStats();
     fetchDetailedAnalytics();
@@ -459,6 +474,94 @@
       }
     } catch (e) {
       console.warn("Could not seed products:", e);
+    }
+  }
+
+  async function seedBillsFromJson() {
+    try {
+      var remoteBills = null;
+
+      var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+      var repo = getGithubRepo();
+      if (token && repo && repo.includes("/")) {
+        try {
+          var apiUrl = "https://api.github.com/repos/" + repo + "/contents/data/bills.json";
+          var apiResp = await fetch(apiUrl, {
+            headers: {
+              "Authorization": "Bearer " + token,
+              "Accept": "application/vnd.github.v3+json"
+            }
+          });
+          if (apiResp.ok) {
+            var fileData = await apiResp.json();
+            if (fileData.content) {
+              var decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ""))));
+              remoteBills = JSON.parse(decoded);
+            }
+          }
+        } catch (e) {
+          console.warn("GitHub API bills fetch failed, falling back to local:", e);
+        }
+      }
+
+      if (!remoteBills) {
+        try {
+          var resp = await fetch("data/bills.json", { cache: "no-store" });
+          if (resp.ok) remoteBills = await resp.json();
+        } catch (e) { /* ignore */ }
+      }
+
+      if (!Array.isArray(remoteBills) || remoteBills.length === 0) return;
+
+      var localBills = getBills();
+
+      if (localBills.length === 0) {
+        saveBills(remoteBills);
+        pushActivity("Bills seeded from cloud (" + remoteBills.length + " bills).");
+      } else {
+        var localMap = {};
+        localBills.forEach(function(b) { localMap[b.id] = true; });
+
+        var newBills = remoteBills.filter(function(b) { return !localMap[b.id]; });
+
+        var remoteMap = {};
+        remoteBills.forEach(function(b) { remoteMap[b.id] = b; });
+        localBills.forEach(function(local) {
+          var remote = remoteMap[local.id];
+          if (!remote) return;
+          var fields = ["customerName","phone","address","lineItems","subtotal",
+            "discountTotal","grandTotal","paymentMethod","paymentStatus","notes"];
+          fields.forEach(function(f) {
+            if (remote[f] !== undefined && JSON.stringify(local[f]) !== JSON.stringify(remote[f])) {
+              local[f] = remote[f];
+            }
+          });
+        });
+
+        if (newBills.length > 0) {
+          localBills = localBills.concat(newBills);
+        }
+
+        saveBills(localBills);
+        if (newBills.length > 0) {
+          pushActivity("Synced " + newBills.length + " new bill(s) from cloud.");
+        }
+      }
+
+      var maxRemoteNum = 0;
+      remoteBills.forEach(function(b) {
+        if (b.billNumber) {
+          var parts = String(b.billNumber).split("-");
+          var n = parseInt(parts[parts.length - 1], 10);
+          if (!isNaN(n) && n > maxRemoteNum) maxRemoteNum = n;
+        }
+      });
+      var localCounter = parseInt(localStorage.getItem(LS.BILL_COUNTER) || "0", 10);
+      if (maxRemoteNum > localCounter) {
+        localStorage.setItem(LS.BILL_COUNTER, String(maxRemoteNum));
+      }
+    } catch (e) {
+      console.warn("Could not seed bills:", e);
     }
   }
 
@@ -1388,6 +1491,7 @@
     renderBills();
     renderDashboard();
     showToast("Bill saved.", "success");
+    autoSyncBills();
   });
 
   function billToStatusClass(st) {
@@ -1973,6 +2077,100 @@
   qs("#dashSyncBtn")?.addEventListener("click", function() { syncProductsToGithub(); });
   qs("#productsSyncBtn")?.addEventListener("click", function() { syncProductsToGithub(); });
   qs("#bannerSyncBtn")?.addEventListener("click", function() { syncProductsToGithub(); });
+
+  /* ---------- Bills GitHub Sync ---------- */
+  var isBillSyncing = false;
+
+  async function syncBillsToGithub() {
+    if (isBillSyncing) return;
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) return;
+    var repo = getGithubRepo();
+    if (!repo || !repo.includes("/")) return;
+
+    isBillSyncing = true;
+
+    var bills = getBills();
+    var cleanBills = bills.map(function(b) {
+      return {
+        id: b.id,
+        billNumber: b.billNumber,
+        customerName: b.customerName,
+        phone: b.phone || "",
+        address: b.address || "",
+        lineItems: Array.isArray(b.lineItems) ? b.lineItems : [],
+        subtotal: b.subtotal || 0,
+        discountTotal: b.discountTotal || 0,
+        grandTotal: b.grandTotal || 0,
+        paymentMethod: b.paymentMethod || "Cash",
+        paymentStatus: b.paymentStatus || "Unpaid",
+        notes: b.notes || "",
+        date: b.date || Date.now()
+      };
+    });
+
+    var jsonContent = JSON.stringify(cleanBills, null, 2) + "\n";
+    var apiBase = "https://api.github.com/repos/" + repo + "/contents/data/bills.json";
+    var headers = {
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github.v3+json",
+      "Content-Type": "application/json"
+    };
+
+    var encoded = btoa(unescape(encodeURIComponent(jsonContent)));
+    var maxRetries = 3;
+
+    try {
+      for (var attempt = 0; attempt < maxRetries; attempt++) {
+        var getResp = await fetch(apiBase, { headers: headers });
+        var sha = "";
+        if (getResp.ok) {
+          var fileData = await getResp.json();
+          sha = fileData.sha || "";
+        } else if (getResp.status === 401 || getResp.status === 403) {
+          showToast("GitHub token invalid — bills not synced.", "error");
+          isBillSyncing = false;
+          return;
+        } else if (getResp.status === 404) {
+          sha = "";
+        }
+
+        var putBody = {
+          message: "Update bills from admin panel",
+          content: encoded
+        };
+        if (sha) {
+          putBody.sha = sha;
+        }
+
+        var putResp = await fetch(apiBase, {
+          method: "PUT",
+          headers: headers,
+          body: JSON.stringify(putBody)
+        });
+
+        if (putResp.ok) {
+          pushActivity("Bills synced to cloud (" + bills.length + " bills).");
+          isBillSyncing = false;
+          return;
+        } else if (putResp.status === 409 && attempt < maxRetries - 1) {
+          await new Promise(function(r) { setTimeout(r, 1000); });
+          continue;
+        } else {
+          var errData = null;
+          try { errData = await putResp.json(); } catch (e) { /* ignore */ }
+          var errMsg = (errData && errData.message) ? errData.message : "Unknown error";
+          console.warn("Bills sync failed:", errMsg);
+          isBillSyncing = false;
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("Bills sync network error:", e);
+    } finally {
+      isBillSyncing = false;
+    }
+  }
 
   qs("#clearAllDataBtn")?.addEventListener("click", async () => {
     const ok = await confirmDialog(
