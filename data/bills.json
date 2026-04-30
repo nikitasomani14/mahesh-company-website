@@ -1,1 +1,48 @@
-[]
+[
+  {
+    "id": "e26ba90b-2606-4235-9c9d-534819078074",
+    "billNumber": "MC-2026-0001",
+    "customerName": "Nikita",
+    "phone": "7828054641",
+    "address": "",
+    "lineItems": [
+      {
+        "productName": "Drip Irrigation Kit (1 Acre)",
+        "qty": 1,
+        "unitPrice": 500,
+        "discount": 80,
+        "lineTotal": 420
+      }
+    ],
+    "subtotal": 500,
+    "discountTotal": 80,
+    "grandTotal": 420,
+    "paymentMethod": "Cash",
+    "paymentStatus": "Paid",
+    "notes": "",
+    "date": 1776690922107
+  },
+  {
+    "id": "56a59a22-ae21-4321-8a55-b4f21ec8e15e",
+    "billNumber": "MC-2026-0002",
+    "customerName": "Ram",
+    "phone": "",
+    "address": "",
+    "lineItems": [
+      {
+        "productName": "Honda GX200 Engine 6.5 HP",
+        "qty": 1,
+        "unitPrice": 25000,
+        "discount": 0,
+        "lineTotal": 25000
+      }
+    ],
+    "subtotal": 25000,
+    "discountTotal": 0,
+    "grandTotal": 25000,
+    "paymentMethod": "Cash",
+    "paymentStatus": "Paid",
+    "notes": "",
+    "date": 1777555196472
+  }
+]
