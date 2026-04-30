@@ -1683,7 +1683,6 @@ body.admin-body {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
-  min-width: 700px;
 }
 
 .profit-table th,
@@ -1727,6 +1726,84 @@ body.admin-body {
   border-radius: 4px;
   color: var(--muted);
   margin-left: 6px;
+}
+
+/* ---- Mobile card layout for profit table ---- */
+@media (max-width: 768px) {
+  .profit-table {
+    min-width: 0;
+  }
+  .profit-table thead {
+    display: none;
+  }
+  .profit-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .profit-table tbody tr:hover {
+    background: rgba(26, 71, 42, 0.04);
+  }
+  .profit-table tbody td {
+    padding: 2px 0;
+    border-bottom: none;
+    text-align: left !important;
+    font-size: 0.85rem;
+  }
+  .profit-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 1px;
+  }
+  .profit-table tbody td.profit-col-name {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
+  .profit-table tbody td.profit-col-name .product-name {
+    max-width: none;
+    font-size: 0.95rem;
+  }
+  .profit-table tbody td.profit-col-action {
+    grid-column: 1 / -1;
+    text-align: center !important;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .profit-table tbody td.profit-col-action::before {
+    display: none;
+  }
+  .profit-table .action-btn {
+    width: 100%;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .profit-table .product-name {
+    max-width: none;
+  }
+  .profit-summary-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .profit-controls {
+    flex-direction: column;
+  }
+  .profit-controls .search-box {
+    min-width: 0;
+    width: 100%;
+  }
+  .profit-controls select {
+    width: 100%;
+  }
 }
 
 .profit-positive {

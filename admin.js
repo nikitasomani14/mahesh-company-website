@@ -2327,14 +2327,14 @@
       }
 
       return '<tr>' +
-        '<td><span class="product-name">' + escapeHtml(p.name || "Unnamed") + '</span><span class="category-badge">' + (p.category || "—") + '</span></td>' +
-        '<td class="text-right">' + (cost > 0 ? "₹" + cost.toLocaleString("en-IN") : '<span style="color:var(--muted)">Not set</span>') + '</td>' +
-        '<td class="text-right">₹' + sell.toLocaleString("en-IN") + '</td>' +
-        '<td class="text-right"><span class="stock-badge ' + stockClass + '">' + stockText + '</span></td>' +
-        '<td class="text-right ' + profitClass + '">' + (cost > 0 ? "₹" + profitUnit.toLocaleString("en-IN") : "—") + '</td>' +
-        '<td class="text-right ' + profitClass + '">' + (cost > 0 ? margin + "%" : "—") + '</td>' +
-        '<td class="text-right ' + profitClass + '">' + (cost > 0 ? "₹" + totalProfitProduct.toLocaleString("en-IN") : "—") + '</td>' +
-        '<td><button class="action-btn" data-id="' + p.id + '"><i class="fas fa-edit"></i> Edit</button></td>' +
+        '<td class="profit-col-name" data-label="Product"><span class="product-name">' + escapeHtml(p.name || "Unnamed") + '</span><span class="category-badge">' + (p.category || "—") + '</span></td>' +
+        '<td class="text-right" data-label="Cost Price">' + (cost > 0 ? "₹" + cost.toLocaleString("en-IN") : '<span style="color:var(--muted)">Not set</span>') + '</td>' +
+        '<td class="text-right" data-label="Selling Price">₹' + sell.toLocaleString("en-IN") + '</td>' +
+        '<td class="text-right" data-label="Stock"><span class="stock-badge ' + stockClass + '">' + stockText + '</span></td>' +
+        '<td class="text-right ' + profitClass + '" data-label="Profit/Unit">' + (cost > 0 ? "₹" + profitUnit.toLocaleString("en-IN") : "—") + '</td>' +
+        '<td class="text-right ' + profitClass + '" data-label="Margin">' + (cost > 0 ? margin + "%" : "—") + '</td>' +
+        '<td class="text-right ' + profitClass + '" data-label="Total Profit">' + (cost > 0 ? "₹" + totalProfitProduct.toLocaleString("en-IN") : "—") + '</td>' +
+        '<td class="profit-col-action"><button class="action-btn" data-id="' + p.id + '"><i class="fas fa-edit"></i> Edit</button></td>' +
         '</tr>';
     }).join("");
 
