@@ -1512,6 +1512,7 @@
     closeModal("billModal");
     renderBills();
     renderDashboard();
+    if (typeof renderSalesBillsList === "function") renderSalesBillsList();
     showToast("Bill saved.", "success");
     autoSyncBills();
   });
@@ -2868,12 +2869,46 @@
     qs("#salesBalance").textContent = fmtCurrency(balance);
   }
 
-  /* --- Customer Search & Status --- */
+  /* --- Customer Search & Status (synced across Bills + Sales tabs) --- */
   function getAllCustomerNames() {
     var names = {};
-    getSalesBills().forEach(function(b) { if (b.customerName) names[b.customerName.toUpperCase()] = b; });
-    getPayments().forEach(function(p) { if (p.customerName) names[p.customerName.toUpperCase()] = p; });
+    getSalesBills().forEach(function(b) { if (b.customerName) names[b.customerName.toUpperCase()] = true; });
+    getBills().forEach(function(b) { if (b.customerName) names[b.customerName.toUpperCase()] = true; });
+    getPayments().forEach(function(p) { if (p.customerName) names[p.customerName.toUpperCase()] = true; });
     return Object.keys(names).sort();
+  }
+
+  function getCustomerPurchaseHistory(custNameUpper) {
+    var products = {};
+    getSalesBills().filter(function(b) {
+      return (b.customerName || "").toUpperCase() === custNameUpper;
+    }).forEach(function(b) {
+      (b.lineItems || []).forEach(function(li) {
+        var key = (li.productName || "").toUpperCase();
+        if (!key) return;
+        if (!products[key]) products[key] = { name: li.productName, totalQty: 0, lastRate: 0, lastDate: 0 };
+        products[key].totalQty += (li.qty || 0);
+        if ((b.date || 0) > products[key].lastDate) {
+          products[key].lastRate = li.rate || li.unitPrice || 0;
+          products[key].lastDate = b.date || 0;
+        }
+      });
+    });
+    getBills().filter(function(b) {
+      return (b.customerName || "").toUpperCase() === custNameUpper;
+    }).forEach(function(b) {
+      (b.lineItems || []).forEach(function(li) {
+        var key = (li.productName || "").toUpperCase();
+        if (!key) return;
+        if (!products[key]) products[key] = { name: li.productName, totalQty: 0, lastRate: 0, lastDate: 0 };
+        products[key].totalQty += (li.qty || 0);
+        if ((b.date || 0) > products[key].lastDate) {
+          products[key].lastRate = li.unitPrice || 0;
+          products[key].lastDate = b.date || 0;
+        }
+      });
+    });
+    return Object.values(products).sort(function(a, b) { return b.lastDate - a.lastDate; });
   }
 
   function updateCustomerStatus(custName) {
@@ -2888,28 +2923,37 @@
       return;
     }
     var name = custName.trim().toUpperCase();
-    var bills = getSalesBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name; });
+
+    var salesBills = getSalesBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name; });
+    var oldBills = getBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name; });
     var payments = getPayments().filter(function(p) { return (p.customerName || "").toUpperCase() === name; });
 
-    bills.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
+    var allBills = [];
+    salesBills.forEach(function(b) {
+      allBills.push({ src: "sales", billNumber: b.billNumber || "", total: b.billTotal || 0, cashReceived: b.cashReceived || 0, date: b.date || 0, phone: b.phone || "" });
+    });
+    oldBills.forEach(function(b) {
+      allBills.push({ src: "bills", billNumber: b.billNumber || "", total: b.grandTotal || 0, cashReceived: b.paymentStatus === "Paid" ? (b.grandTotal || 0) : 0, date: b.date || 0, phone: b.phone || "" });
+    });
+    allBills.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
     payments.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
 
     var totalBilled = 0;
     var totalPaid = 0;
-    bills.forEach(function(b) { totalBilled += (b.billTotal || 0); totalPaid += (b.cashReceived || 0); });
+    allBills.forEach(function(b) { totalBilled += b.total; totalPaid += b.cashReceived; });
     payments.forEach(function(p) { totalPaid += (p.amount || 0); });
     var outstanding = totalBilled - totalPaid;
 
     var phone = "";
-    if (bills.length > 0) phone = bills[0].phone || "";
+    for (var i = 0; i < allBills.length; i++) { if (allBills[i].phone) { phone = allBills[i].phone; break; } }
 
-    qs("#custPanelName").textContent = custName.trim().toUpperCase();
+    qs("#custPanelName").textContent = name;
     qs("#custPanelPhone").textContent = phone ? "Phone: " + phone : "";
     qs("#custPanelOutstanding").textContent = "₹ " + fmtCurrency(outstanding);
-    qs("#custPanelBillCount").textContent = String(bills.length);
+    qs("#custPanelBillCount").textContent = String(allBills.length);
 
-    if (bills.length > 0) {
-      qs("#custPanelLastSale").textContent = "₹" + fmtCurrency(bills[0].billTotal) + " (" + fmtDateShort(bills[0].date) + ")";
+    if (allBills.length > 0) {
+      qs("#custPanelLastSale").textContent = "₹" + fmtCurrency(allBills[0].total) + " (" + fmtDateShort(allBills[0].date) + ")";
     } else {
       qs("#custPanelLastSale").textContent = "—";
     }
@@ -2921,18 +2965,19 @@
     }
 
     var txns = [];
-    bills.forEach(function(b) {
-      txns.push({ type: "BILL", ref: b.billNumber || "", amount: b.billTotal || 0, date: b.date || 0 });
+    allBills.forEach(function(b) {
+      txns.push({ type: "BILL", ref: b.billNumber, amount: b.total, date: b.date });
     });
     payments.forEach(function(p) {
       txns.push({ type: p.mode || "CASH", ref: "", amount: p.amount || 0, date: p.date || 0 });
     });
     txns.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
 
-    if (txns.length === 0) {
-      qs("#custPanelTxnList").innerHTML = '<p class="muted-text">No transactions found</p>';
-    } else {
-      qs("#custPanelTxnList").innerHTML = txns.slice(0, 20).map(function(t) {
+    var purchaseHistory = getCustomerPurchaseHistory(name);
+
+    var html = "";
+    if (txns.length > 0) {
+      html += txns.slice(0, 15).map(function(t) {
         var cls = t.type === "BILL" ? "cust-txn-type--bill" : "cust-txn-type--payment";
         return '<div class="cust-txn-item">' +
           '<span class="cust-txn-type ' + cls + '">' + t.type + '</span>' +
@@ -2941,6 +2986,22 @@
         '</div>';
       }).join("");
     }
+
+    if (purchaseHistory.length > 0) {
+      html += '<h4 class="cust-txn-title" style="margin-top:12px;">Products Purchased</h4>';
+      html += purchaseHistory.slice(0, 20).map(function(p) {
+        return '<div class="cust-txn-item">' +
+          '<span style="flex:1;font-size:0.78rem;">' + p.name + '</span>' +
+          '<span class="cust-txn-date">Qty: ' + p.totalQty + '</span>' +
+          '<span class="cust-txn-amount">₹' + fmtCurrency(p.lastRate) + '</span>' +
+        '</div>';
+      }).join("");
+    }
+
+    if (!html) {
+      html = '<p class="muted-text">No transactions found</p>';
+    }
+    qs("#custPanelTxnList").innerHTML = html;
   }
 
   /* --- Init / Reset Sales Form --- */
@@ -3094,46 +3155,78 @@
     return true;
   }
 
-  /* --- Render Sales Bills List --- */
+  /* --- Render Sales Bills List (unified: sales + old bills) --- */
   function renderSalesBillsList(filter) {
     var tbody = qs("#salesBillsList");
     if (!tbody) return;
-    var bills = getSalesBills();
-    bills.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
+
+    var unified = [];
+    getSalesBills().forEach(function(b) {
+      unified.push({
+        id: b.id, src: "sales", billNumber: b.billNumber || "", customerName: b.customerName || "",
+        date: b.date || 0, billTotal: b.billTotal || 0, type: b.type || "CREDIT",
+        balance: b.balance || 0, paymentStatus: ""
+      });
+    });
+    getBills().forEach(function(b) {
+      unified.push({
+        id: b.id, src: "bills", billNumber: b.billNumber || "", customerName: b.customerName || "",
+        date: b.date || 0, billTotal: b.grandTotal || 0, type: b.paymentMethod || "Cash",
+        balance: b.paymentStatus === "Paid" ? 0 : (b.grandTotal || 0), paymentStatus: b.paymentStatus || ""
+      });
+    });
+    unified.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
 
     var search = (filter || qs("#salesBillSearch")?.value || "").trim().toLowerCase();
     if (search) {
-      bills = bills.filter(function(b) {
+      unified = unified.filter(function(b) {
         return (b.billNumber || "").toLowerCase().indexOf(search) !== -1 ||
                (b.customerName || "").toLowerCase().indexOf(search) !== -1;
       });
     }
 
-    if (bills.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">No sales bills found</td></tr>';
+    if (unified.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">No bills found</td></tr>';
       return;
     }
 
-    tbody.innerHTML = bills.map(function(b) {
+    tbody.innerHTML = unified.map(function(b) {
       var balCls = (b.balance || 0) > 0 ? "sales-bill-balance--due" : "sales-bill-balance--paid";
-      var typeCls = b.type === "CREDIT" ? "sales-bill-badge--credit" : "sales-bill-badge--cash";
+      var typeBadge = b.type;
+      var typeCls = "sales-bill-badge--credit";
+      if (b.type === "CASH" || b.type === "Cash") typeCls = "sales-bill-badge--cash";
+      var editBtn = b.src === "sales"
+        ? '<button class="icon-btn" title="Edit" onclick="window._salesEdit(\'' + b.id + '\')"><i class="fas fa-pen-to-square"></i></button>'
+        : '<button class="icon-btn" title="Edit (Bills)" onclick="window._oldBillEdit(\'' + b.id + '\')"><i class="fas fa-pen-to-square"></i></button>';
+      var printBtn = b.src === "sales"
+        ? '<button class="icon-btn" title="Print" onclick="window._salesPrint(\'' + b.id + '\')"><i class="fas fa-print"></i></button>'
+        : '<button class="icon-btn" title="Print (Bills)" onclick="window._oldBillPrint(\'' + b.id + '\')"><i class="fas fa-print"></i></button>';
       return '<tr>' +
-        '<td><strong>' + (b.billNumber || "") + '</strong></td>' +
-        '<td>' + (b.customerName || "") + '</td>' +
+        '<td><strong>' + b.billNumber + '</strong></td>' +
+        '<td>' + b.customerName + '</td>' +
         '<td>' + fmtDateShort(b.date) + '</td>' +
         '<td class="text-right"><strong>₹' + fmtCurrency(b.billTotal) + '</strong></td>' +
-        '<td><span class="sales-bill-badge ' + typeCls + '">' + (b.type || "CREDIT") + '</span></td>' +
+        '<td><span class="sales-bill-badge ' + typeCls + '">' + typeBadge + '</span></td>' +
         '<td><span class="sales-bill-balance ' + balCls + '">₹' + fmtCurrency(b.balance || 0) + '</span></td>' +
-        '<td class="sales-bill-actions">' +
-          '<button class="icon-btn" title="Edit" onclick="window._salesEdit(\'' + b.id + '\')"><i class="fas fa-pen-to-square"></i></button>' +
-          '<button class="icon-btn" title="Print" onclick="window._salesPrint(\'' + b.id + '\')"><i class="fas fa-print"></i></button>' +
-        '</td>' +
+        '<td class="sales-bill-actions">' + editBtn + printBtn + '</td>' +
       '</tr>';
     }).join("");
   }
 
   window._salesEdit = function(id) { loadSalesBillForEdit(id); };
   window._salesPrint = function(id) { printSalesBill(id); };
+  window._oldBillEdit = function(id) {
+    if (typeof openBillModal === "function") {
+      openBillModal(id);
+      switchTab("bills");
+    }
+  };
+  window._oldBillPrint = function(id) {
+    if (typeof openBillModal === "function") {
+      openBillModal(id);
+      switchTab("bills");
+    }
+  };
 
   /* --- Print Sales Bill --- */
   function buildSalesInvoiceHtml(bill) {
@@ -3476,10 +3569,14 @@
       custInput.value = name;
       custDropdown.classList.add("hidden");
       updateCustomerStatus(name);
-      var bills = getSalesBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name.toUpperCase(); });
-      if (bills.length > 0 && bills[0].phone) {
-        qs("#salesCustomerPhone").value = bills[0].phone;
+      var phone = "";
+      var allCustBills = getSalesBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name.toUpperCase(); });
+      if (allCustBills.length > 0 && allCustBills[0].phone) phone = allCustBills[0].phone;
+      if (!phone) {
+        var oldCustBills = getBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name.toUpperCase(); });
+        if (oldCustBills.length > 0 && oldCustBills[0].phone) phone = oldCustBills[0].phone;
       }
+      if (phone) qs("#salesCustomerPhone").value = phone;
     });
   })();
 
