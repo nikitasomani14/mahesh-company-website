@@ -375,11 +375,56 @@
   });
 
   /* ---------- Main app bootstrap ---------- */
+  function migratePhoneNumbers() {
+    var changed = false;
+    var namePhoneMap = {};
+    var salesBills = getSalesBills();
+    salesBills.forEach(function(b) {
+      if (b.phone && b.customerName) namePhoneMap[b.customerName.toUpperCase()] = b.phone;
+    });
+    getBills().forEach(function(b) {
+      if (b.phone && b.customerName && !namePhoneMap[b.customerName.toUpperCase()]) {
+        namePhoneMap[b.customerName.toUpperCase()] = b.phone;
+      }
+    });
+
+    salesBills.forEach(function(b) {
+      if (!b.phone) {
+        var key = (b.customerName || "").toUpperCase();
+        if (namePhoneMap[key]) {
+          b.phone = namePhoneMap[key];
+        } else {
+          b.phone = "9" + Math.floor(100000000 + Math.random() * 900000000).toString();
+          if (key) namePhoneMap[key] = b.phone;
+        }
+        changed = true;
+      }
+    });
+    if (changed) saveSalesBills(salesBills);
+
+    var bills = getBills();
+    var billsChanged = false;
+    bills.forEach(function(b) {
+      if (!b.phone) {
+        var key = (b.customerName || "").toUpperCase();
+        if (namePhoneMap[key]) {
+          b.phone = namePhoneMap[key];
+        } else {
+          b.phone = "9" + Math.floor(100000000 + Math.random() * 900000000).toString();
+          if (key) namePhoneMap[key] = b.phone;
+        }
+        billsChanged = true;
+      }
+    });
+    if (billsChanged) saveBills(bills);
+  }
+
   async function bootMainApp() {
     await seedProductsFromJson();
     await seedBillsFromJson();
     await seedSalesBillsFromJson();
     await seedPaymentsFromJson();
+    migratePhoneNumbers();
     renderDashboard();
     fetchVisitorStats();
     fetchDetailedAnalytics();
@@ -2869,7 +2914,7 @@
     qs("#salesBalance").textContent = fmtCurrency(balance);
   }
 
-  /* --- Customer Search & Status (synced across Bills + Sales tabs) --- */
+  /* --- Customer Search & Status (synced across Bills + Sales tabs, grouped by phone) --- */
   function getAllCustomerNames() {
     var names = {};
     getSalesBills().forEach(function(b) { if (b.customerName) names[b.customerName.toUpperCase()] = true; });
@@ -2878,11 +2923,74 @@
     return Object.keys(names).sort();
   }
 
-  function getCustomerPurchaseHistory(custNameUpper) {
+  function getCustomerPhoneMap() {
+    var map = {};
+    getSalesBills().forEach(function(b) {
+      if (b.phone) {
+        if (!map[b.phone]) map[b.phone] = { phone: b.phone, name: b.customerName || "", date: b.date || 0 };
+        else if ((b.date || 0) > map[b.phone].date) { map[b.phone].name = b.customerName || ""; map[b.phone].date = b.date || 0; }
+      }
+    });
+    getBills().forEach(function(b) {
+      if (b.phone) {
+        if (!map[b.phone]) map[b.phone] = { phone: b.phone, name: b.customerName || "", date: b.date || 0 };
+        else if ((b.date || 0) > map[b.phone].date) { map[b.phone].name = b.customerName || ""; map[b.phone].date = b.date || 0; }
+      }
+    });
+    getPayments().forEach(function(p) {
+      if (p.phone) {
+        if (!map[p.phone]) map[p.phone] = { phone: p.phone, name: p.customerName || "", date: p.date || 0 };
+      }
+    });
+    return map;
+  }
+
+  function findCustomerByPhone(phone) {
+    if (!phone) return null;
+    var ph = phone.trim();
+    var result = { name: "", phone: ph, bills: [] };
+    getSalesBills().forEach(function(b) {
+      if ((b.phone || "") === ph) {
+        result.bills.push(b);
+        if (b.customerName) result.name = b.customerName;
+      }
+    });
+    getBills().forEach(function(b) {
+      if ((b.phone || "") === ph) {
+        if (b.customerName && !result.name) result.name = b.customerName;
+      }
+    });
+    return result.name ? result : null;
+  }
+
+  function findPhoneByCustomerName(name) {
+    if (!name) return "";
+    var upper = name.trim().toUpperCase();
+    var phone = "";
+    var latestDate = 0;
+    getSalesBills().forEach(function(b) {
+      if ((b.customerName || "").toUpperCase() === upper && b.phone && (b.date || 0) >= latestDate) {
+        phone = b.phone; latestDate = b.date || 0;
+      }
+    });
+    if (phone) return phone;
+    getBills().forEach(function(b) {
+      if ((b.customerName || "").toUpperCase() === upper && b.phone && (b.date || 0) >= latestDate) {
+        phone = b.phone; latestDate = b.date || 0;
+      }
+    });
+    return phone;
+  }
+
+  function matchesCustOrPhone(b, nameUpper, phone) {
+    if (phone && (b.phone || "") === phone) return true;
+    if (nameUpper && (b.customerName || "").toUpperCase() === nameUpper) return true;
+    return false;
+  }
+
+  function getCustomerPurchaseHistory(nameUpper, phone) {
     var products = {};
-    getSalesBills().filter(function(b) {
-      return (b.customerName || "").toUpperCase() === custNameUpper;
-    }).forEach(function(b) {
+    function addItems(b) {
       (b.lineItems || []).forEach(function(li) {
         var key = (li.productName || "").toUpperCase();
         if (!key) return;
@@ -2893,47 +3001,40 @@
           products[key].lastDate = b.date || 0;
         }
       });
-    });
-    getBills().filter(function(b) {
-      return (b.customerName || "").toUpperCase() === custNameUpper;
-    }).forEach(function(b) {
-      (b.lineItems || []).forEach(function(li) {
-        var key = (li.productName || "").toUpperCase();
-        if (!key) return;
-        if (!products[key]) products[key] = { name: li.productName, totalQty: 0, lastRate: 0, lastDate: 0 };
-        products[key].totalQty += (li.qty || 0);
-        if ((b.date || 0) > products[key].lastDate) {
-          products[key].lastRate = li.unitPrice || 0;
-          products[key].lastDate = b.date || 0;
-        }
-      });
-    });
+    }
+    getSalesBills().filter(function(b) { return matchesCustOrPhone(b, nameUpper, phone); }).forEach(addItems);
+    getBills().filter(function(b) { return matchesCustOrPhone(b, nameUpper, phone); }).forEach(addItems);
     return Object.values(products).sort(function(a, b) { return b.lastDate - a.lastDate; });
   }
 
-  function updateCustomerStatus(custName) {
-    if (!custName || !custName.trim()) {
+  function updateCustomerStatus(custName, custPhone) {
+    if ((!custName || !custName.trim()) && (!custPhone || !custPhone.trim())) {
       qs("#custPanelName").textContent = "CUSTOMER STATUS";
       qs("#custPanelPhone").textContent = "";
       qs("#custPanelOutstanding").textContent = "0.00";
       qs("#custPanelBillCount").textContent = "0";
       qs("#custPanelLastSale").textContent = "—";
       qs("#custPanelLastReceipt").textContent = "—";
-      qs("#custPanelTxnList").innerHTML = '<p class="muted-text">Select a customer to see history</p>';
+      qs("#custPanelTxnList").innerHTML = '<p class="muted-text">Enter mobile number to see history</p>';
       return;
     }
-    var name = custName.trim().toUpperCase();
+    var name = (custName || "").trim().toUpperCase();
+    var phone = (custPhone || "").trim();
 
-    var salesBills = getSalesBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name; });
-    var oldBills = getBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name; });
-    var payments = getPayments().filter(function(p) { return (p.customerName || "").toUpperCase() === name; });
+    var salesBills = getSalesBills().filter(function(b) { return matchesCustOrPhone(b, name, phone); });
+    var oldBills = getBills().filter(function(b) { return matchesCustOrPhone(b, name, phone); });
+    var payments = getPayments().filter(function(p) {
+      if (phone && (p.phone || "") === phone) return true;
+      if (name && (p.customerName || "").toUpperCase() === name) return true;
+      return false;
+    });
 
     var allBills = [];
     salesBills.forEach(function(b) {
-      allBills.push({ src: "sales", billNumber: b.billNumber || "", total: b.billTotal || 0, cashReceived: b.cashReceived || 0, date: b.date || 0, phone: b.phone || "" });
+      allBills.push({ src: "sales", billNumber: b.billNumber || "", total: b.billTotal || 0, cashReceived: b.cashReceived || 0, date: b.date || 0, phone: b.phone || "", name: b.customerName || "" });
     });
     oldBills.forEach(function(b) {
-      allBills.push({ src: "bills", billNumber: b.billNumber || "", total: b.grandTotal || 0, cashReceived: b.paymentStatus === "Paid" ? (b.grandTotal || 0) : 0, date: b.date || 0, phone: b.phone || "" });
+      allBills.push({ src: "bills", billNumber: b.billNumber || "", total: b.grandTotal || 0, cashReceived: b.paymentStatus === "Paid" ? (b.grandTotal || 0) : 0, date: b.date || 0, phone: b.phone || "", name: b.customerName || "" });
     });
     allBills.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
     payments.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
@@ -2944,11 +3045,16 @@
     payments.forEach(function(p) { totalPaid += (p.amount || 0); });
     var outstanding = totalBilled - totalPaid;
 
-    var phone = "";
-    for (var i = 0; i < allBills.length; i++) { if (allBills[i].phone) { phone = allBills[i].phone; break; } }
+    var displayName = name;
+    var displayPhone = phone;
+    for (var i = 0; i < allBills.length; i++) {
+      if (!displayName && allBills[i].name) displayName = allBills[i].name.toUpperCase();
+      if (!displayPhone && allBills[i].phone) displayPhone = allBills[i].phone;
+      if (displayName && displayPhone) break;
+    }
 
-    qs("#custPanelName").textContent = name;
-    qs("#custPanelPhone").textContent = phone ? "Phone: " + phone : "";
+    qs("#custPanelName").textContent = displayName || "CUSTOMER";
+    qs("#custPanelPhone").textContent = displayPhone ? "Mobile: " + displayPhone : "";
     qs("#custPanelOutstanding").textContent = "₹ " + fmtCurrency(outstanding);
     qs("#custPanelBillCount").textContent = String(allBills.length);
 
@@ -2973,7 +3079,7 @@
     });
     txns.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
 
-    var purchaseHistory = getCustomerPurchaseHistory(name);
+    var purchaseHistory = getCustomerPurchaseHistory(name, phone);
 
     var html = "";
     if (txns.length > 0) {
@@ -3069,9 +3175,19 @@
   }
 
   /* --- Save Sales Bill --- */
+  function generateRandomPhone() {
+    return "9" + Math.floor(100000000 + Math.random() * 900000000).toString();
+  }
+
   function saveSalesBill() {
     var custName = qs("#salesCustomerName").value.trim();
     if (!custName) { showToast("Customer name is required", "error"); return false; }
+    var custPhone = qs("#salesCustomerPhone").value.trim();
+    if (!custPhone) {
+      custPhone = generateRandomPhone();
+      qs("#salesCustomerPhone").value = custPhone;
+      showToast("Auto-generated mobile: " + custPhone, "info");
+    }
 
     var rows = qsa("#salesLineItems .sales-line-row");
     var lineItems = [];
@@ -3112,7 +3228,7 @@
       var idx = bills.findIndex(function(b) { return b.id === existingId; });
       if (idx !== -1) {
         bills[idx].customerName = custName;
-        bills[idx].phone = qs("#salesCustomerPhone").value.trim();
+        bills[idx].phone = custPhone;
         bills[idx].type = qs("#salesPaymentType").value;
         bills[idx].billType = qs("#salesBillType").value;
         bills[idx].lineItems = lineItems;
@@ -3130,7 +3246,7 @@
         id: crypto.randomUUID ? crypto.randomUUID() : "sb-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
         billNumber: qs("#salesBillNumber").value,
         customerName: custName,
-        phone: qs("#salesCustomerPhone").value.trim(),
+        phone: custPhone,
         type: qs("#salesPaymentType").value,
         billType: qs("#salesBillType").value,
         lineItems: lineItems,
@@ -3150,7 +3266,7 @@
     saveSalesBills(bills);
     showToast("Sales bill saved!", "success");
     renderSalesBillsList();
-    updateCustomerStatus(custName);
+    updateCustomerStatus(custName, custPhone);
     autoSyncSalesBills();
     return true;
   }
@@ -3327,10 +3443,12 @@
 
     var dateStr = qs("#paymentDate").value;
     var dateTs = dateStr ? new Date(dateStr + "T12:00:00").getTime() : Date.now();
+    var custPhone = qs("#salesCustomerPhone")?.value.trim() || findPhoneByCustomerName(custName);
 
     var payment = {
       id: crypto.randomUUID ? crypto.randomUUID() : "pay-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
       customerName: custName,
+      phone: custPhone,
       amount: amount,
       mode: qs("#paymentMode").value,
       date: dateTs,
@@ -3343,7 +3461,7 @@
 
     showToast("Payment of ₹" + fmtCurrency(amount) + " recorded!", "success");
     closePaymentModal();
-    updateCustomerStatus(custName);
+    updateCustomerStatus(custName, custPhone);
     renderSalesBillsList();
     autoSyncPayments();
   }
@@ -3537,6 +3655,72 @@
 
   qs("#salesBillSearch")?.addEventListener("input", function() { renderSalesBillsList(); });
 
+  /* Phone number search with auto-fill (primary grouping key) */
+  (function() {
+    var phoneInput = qs("#salesCustomerPhone");
+    var phoneDropdown = qs("#salesPhoneDropdown");
+    var custInput = qs("#salesCustomerName");
+    if (!phoneInput || !custInput) return;
+
+    phoneInput.addEventListener("input", function() {
+      var val = phoneInput.value.trim();
+      if (val.length < 3) {
+        if (phoneDropdown) phoneDropdown.classList.add("hidden");
+        return;
+      }
+      var phoneMap = getCustomerPhoneMap();
+      var matches = Object.values(phoneMap).filter(function(e) {
+        return e.phone.indexOf(val) !== -1;
+      }).slice(0, 8);
+
+      if (matches.length === 0 || (matches.length === 1 && matches[0].phone === val)) {
+        if (phoneDropdown) phoneDropdown.classList.add("hidden");
+        var exact = findCustomerByPhone(val);
+        if (exact) {
+          custInput.value = exact.name;
+          updateCustomerStatus(exact.name, val);
+        }
+        return;
+      }
+      if (phoneDropdown) {
+        phoneDropdown.innerHTML = matches.map(function(e) {
+          return '<div class="sales-dropdown-item" data-phone="' + e.phone + '" data-name="' + (e.name || "") + '">' +
+            '<strong>' + e.phone + '</strong> — ' + (e.name || "New") + '</div>';
+        }).join("");
+        phoneDropdown.classList.remove("hidden");
+      }
+    });
+
+    phoneInput.addEventListener("blur", function() {
+      setTimeout(function() {
+        if (phoneDropdown) phoneDropdown.classList.add("hidden");
+        var val = phoneInput.value.trim();
+        if (val.length >= 3) {
+          var cust = findCustomerByPhone(val);
+          if (cust) {
+            custInput.value = cust.name;
+            updateCustomerStatus(cust.name, val);
+          } else {
+            updateCustomerStatus(custInput.value.trim(), val);
+          }
+        }
+      }, 200);
+    });
+
+    if (phoneDropdown) {
+      phoneDropdown.addEventListener("click", function(e) {
+        var item = e.target.closest(".sales-dropdown-item");
+        if (!item) return;
+        var ph = item.getAttribute("data-phone");
+        var nm = item.getAttribute("data-name");
+        phoneInput.value = ph;
+        if (nm) custInput.value = nm;
+        phoneDropdown.classList.add("hidden");
+        updateCustomerStatus(nm, ph);
+      });
+    }
+  })();
+
   /* Customer name search with dropdown */
   (function() {
     var custInput = qs("#salesCustomerName");
@@ -3558,7 +3742,8 @@
     custInput.addEventListener("blur", function() {
       setTimeout(function() {
         custDropdown.classList.add("hidden");
-        updateCustomerStatus(custInput.value);
+        var ph = qs("#salesCustomerPhone").value.trim();
+        updateCustomerStatus(custInput.value, ph);
       }, 200);
     });
 
@@ -3568,15 +3753,9 @@
       var name = item.getAttribute("data-name");
       custInput.value = name;
       custDropdown.classList.add("hidden");
-      updateCustomerStatus(name);
-      var phone = "";
-      var allCustBills = getSalesBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name.toUpperCase(); });
-      if (allCustBills.length > 0 && allCustBills[0].phone) phone = allCustBills[0].phone;
-      if (!phone) {
-        var oldCustBills = getBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name.toUpperCase(); });
-        if (oldCustBills.length > 0 && oldCustBills[0].phone) phone = oldCustBills[0].phone;
-      }
+      var phone = findPhoneByCustomerName(name);
       if (phone) qs("#salesCustomerPhone").value = phone;
+      updateCustomerStatus(name, phone);
     });
   })();
 

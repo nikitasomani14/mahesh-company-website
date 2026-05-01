@@ -405,16 +405,19 @@
               </div>
 
               <div class="sales-form-header">
+                <div class="sales-field-group">
+                  <label class="field-label" for="salesCustomerPhone">Mobile No. <span style="color:var(--danger)">*</span></label>
+                  <div class="sales-search-wrap">
+                    <input type="tel" id="salesCustomerPhone" class="input-control" placeholder="Enter mobile number..." required />
+                    <div class="sales-dropdown hidden" id="salesPhoneDropdown"></div>
+                  </div>
+                </div>
                 <div class="sales-field-group sales-field-grow">
-                  <label class="field-label" for="salesCustomerName">Customer</label>
+                  <label class="field-label" for="salesCustomerName">Customer Name <span style="color:var(--danger)">*</span></label>
                   <div class="sales-search-wrap">
                     <input type="text" id="salesCustomerName" class="input-control" placeholder="Search customer..." required />
                     <div class="sales-dropdown hidden" id="salesCustomerDropdown"></div>
                   </div>
-                </div>
-                <div class="sales-field-group">
-                  <label class="field-label" for="salesCustomerPhone">Phone</label>
-                  <input type="tel" id="salesCustomerPhone" class="input-control" placeholder="Phone" />
                 </div>
               </div>
 
