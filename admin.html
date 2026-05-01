@@ -373,6 +373,194 @@
         <p class="muted ledger-empty-msg hidden" id="ledgerEmptyMsg">No transactions yet. Tap "Record Purchase" or "Record Sale" to get started.</p>
       </section>
 
+      <!-- Sales -->
+      <section id="salesSection" class="app-section hidden" data-section="sales" aria-labelledby="salesHeading">
+        <div class="section-head-row">
+          <h2 id="salesHeading" class="section-heading">Sales</h2>
+          <div class="sales-head-actions">
+            <button type="button" class="btn btn-primary btn-sm" id="salesNewBillBtn">
+              <i class="fas fa-plus" aria-hidden="true"></i> New Bill
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" id="salesRecordPaymentBtn">
+              <i class="fas fa-money-bill-wave" aria-hidden="true"></i> Payment
+            </button>
+          </div>
+        </div>
+
+        <div class="sales-layout">
+          <!-- Bill Form (Left) -->
+          <div class="sales-form-wrap" id="salesFormWrap">
+            <form id="salesBillForm" class="sales-bill-form" autocomplete="off">
+              <input type="hidden" id="salesBillId" value="" />
+
+              <div class="sales-form-header">
+                <div class="sales-field-group">
+                  <label class="field-label" for="salesBillNumber">Bill No.</label>
+                  <input type="text" id="salesBillNumber" class="input-control" readonly />
+                </div>
+                <div class="sales-field-group">
+                  <label class="field-label" for="salesBillDate">Date</label>
+                  <input type="date" id="salesBillDate" class="input-control" />
+                </div>
+              </div>
+
+              <div class="sales-form-header">
+                <div class="sales-field-group sales-field-grow">
+                  <label class="field-label" for="salesCustomerName">Customer</label>
+                  <div class="sales-search-wrap">
+                    <input type="text" id="salesCustomerName" class="input-control" placeholder="Search customer..." required />
+                    <div class="sales-dropdown hidden" id="salesCustomerDropdown"></div>
+                  </div>
+                </div>
+                <div class="sales-field-group">
+                  <label class="field-label" for="salesCustomerPhone">Phone</label>
+                  <input type="tel" id="salesCustomerPhone" class="input-control" placeholder="Phone" />
+                </div>
+              </div>
+
+              <div class="sales-form-header">
+                <div class="sales-field-group">
+                  <label class="field-label" for="salesPaymentType">Type</label>
+                  <select id="salesPaymentType" class="input-control">
+                    <option value="CREDIT">CREDIT</option>
+                    <option value="CASH">CASH</option>
+                  </select>
+                </div>
+                <div class="sales-field-group">
+                  <label class="field-label" for="salesBillType">Bill Type</label>
+                  <select id="salesBillType" class="input-control">
+                    <option value="LOCAL">LOCAL</option>
+                    <option value="OUTSIDE">OUTSIDE</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Product Line Items Table -->
+              <div class="sales-table-wrap">
+                <table class="sales-line-table">
+                  <thead>
+                    <tr>
+                      <th class="col-product">Product</th>
+                      <th class="col-qty">Qty</th>
+                      <th class="col-rate">Rate</th>
+                      <th class="col-dis">Dis%</th>
+                      <th class="col-amount">Amount</th>
+                      <th class="col-action"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="salesLineItems">
+                  </tbody>
+                </table>
+                <button type="button" class="btn btn-ghost btn-sm sales-add-row" id="salesAddRowBtn">
+                  <i class="fas fa-plus" aria-hidden="true"></i> Add Row
+                </button>
+              </div>
+
+              <!-- Bill Totals -->
+              <div class="sales-totals">
+                <div class="sales-total-row">
+                  <span>VALUE OF GOODS</span>
+                  <span id="salesValueOfGoods">0.00</span>
+                </div>
+                <div class="sales-total-row">
+                  <label for="salesDiscountAmt">DISCOUNT</label>
+                  <input type="number" id="salesDiscountAmt" class="input-control input-sm" value="0" min="0" step="0.01" />
+                </div>
+                <div class="sales-total-row">
+                  <label for="salesGstPct">GST %</label>
+                  <input type="number" id="salesGstPct" class="input-control input-sm" value="0" min="0" step="0.01" />
+                </div>
+                <div class="sales-total-row">
+                  <label for="salesFreight">FREIGHT</label>
+                  <input type="number" id="salesFreight" class="input-control input-sm" value="0" min="0" step="0.01" />
+                </div>
+                <div class="sales-total-row sales-total-grand">
+                  <span>BILL TOTAL</span>
+                  <span id="salesBillTotal">0.00</span>
+                </div>
+                <div class="sales-total-row">
+                  <label for="salesCashReceived">CASH RECEIVED</label>
+                  <input type="number" id="salesCashReceived" class="input-control input-sm" value="0" min="0" step="0.01" />
+                </div>
+                <div class="sales-total-row sales-total-balance">
+                  <span>BALANCE</span>
+                  <span id="salesBalance">0.00</span>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="sales-form-actions">
+                <button type="submit" class="btn btn-primary" id="salesSaveBtn">
+                  <i class="fas fa-save" aria-hidden="true"></i> Save
+                </button>
+                <button type="button" class="btn btn-secondary" id="salesPrintBtn">
+                  <i class="fas fa-print" aria-hidden="true"></i> Print
+                </button>
+                <button type="button" class="btn btn-ghost" id="salesCancelBtn">Cancel</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Customer Status (Right) -->
+          <div class="sales-customer-panel" id="salesCustomerPanel">
+            <div class="cust-panel-head">
+              <h3 class="cust-panel-title" id="custPanelName">CUSTOMER STATUS</h3>
+              <p class="cust-panel-phone" id="custPanelPhone"></p>
+            </div>
+            <div class="cust-panel-stats">
+              <div class="cust-stat-row">
+                <span>Outstanding</span>
+                <strong id="custPanelOutstanding">0.00</strong>
+              </div>
+              <div class="cust-stat-row">
+                <span>Total Bills</span>
+                <strong id="custPanelBillCount">0</strong>
+              </div>
+              <div class="cust-stat-row">
+                <span>Last Sale</span>
+                <strong id="custPanelLastSale">—</strong>
+              </div>
+              <div class="cust-stat-row">
+                <span>Last Receipt</span>
+                <strong id="custPanelLastReceipt">—</strong>
+              </div>
+            </div>
+            <div class="cust-panel-txns">
+              <h4 class="cust-txn-title">Transaction History</h4>
+              <div id="custPanelTxnList" class="cust-txn-list">
+                <p class="muted-text">Select a customer to see history</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Sales Bills List -->
+        <div class="sales-recent">
+          <div class="section-head-row">
+            <h3 class="section-heading">Recent Sales Bills</h3>
+            <div class="sales-filter-row">
+              <input type="text" id="salesBillSearch" class="input-control search-box" placeholder="Search bills..." />
+            </div>
+          </div>
+          <div class="sales-bills-table-wrap">
+            <table class="sales-bills-table">
+              <thead>
+                <tr>
+                  <th>Bill No</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                  <th class="text-right">Amount</th>
+                  <th>Type</th>
+                  <th>Balance</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="salesBillsList"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- Settings -->
       <section id="settingsSection" class="app-section hidden" data-section="settings" aria-labelledby="settingsHeading">
         <h2 id="settingsHeading" class="section-heading">Settings</h2>
@@ -567,11 +755,52 @@
         <i class="fas fa-indian-rupee-sign" aria-hidden="true"></i>
         <span>Profit</span>
       </button>
+      <button type="button" class="nav-tab" data-tab="sales">
+        <i class="fas fa-cash-register" aria-hidden="true"></i>
+        <span>Sales</span>
+      </button>
       <button type="button" class="nav-tab" data-tab="settings">
         <i class="fas fa-cog" aria-hidden="true"></i>
         <span>Settings</span>
       </button>
     </nav>
+  </div>
+
+  <!-- Record Payment Modal -->
+  <div id="paymentModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-sheet modal-sheet--sm">
+      <div class="modal-head">
+        <h2 class="modal-title">Record Payment</h2>
+        <button type="button" class="icon-btn modal-close" data-close-modal="paymentModal" aria-label="Close">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+      </div>
+      <form id="paymentForm" class="stack-form">
+        <label class="field-label" for="paymentCustomer">Customer Name</label>
+        <input type="text" id="paymentCustomer" class="input-control" required />
+        <label class="field-label" for="paymentAmount">Amount (₹)</label>
+        <input type="number" id="paymentAmount" class="input-control" min="0" step="0.01" required />
+        <label class="field-label" for="paymentMode">Mode</label>
+        <select id="paymentMode" class="input-control">
+          <option value="CASH">CASH</option>
+          <option value="BANK">BANK TRANSFER</option>
+          <option value="UPI">UPI</option>
+          <option value="CHEQUE">CHEQUE</option>
+        </select>
+        <label class="field-label" for="paymentDate">Date</label>
+        <input type="date" id="paymentDate" class="input-control" />
+        <label class="field-label" for="paymentNote">Note</label>
+        <input type="text" id="paymentNote" class="input-control" placeholder="Optional note" />
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary btn-block">Save Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sales Bill Print Area (hidden, for PDF) -->
+  <div id="salesPrintArea" class="sales-print-area" style="display:none;">
+    <div class="sales-invoice-print" id="salesInvoicePrint"></div>
   </div>
 
   <!-- Add/Edit Product Modal -->

@@ -24,6 +24,9 @@
     LOCKOUT_UNTIL: "mc_lockout_until",
     PENDING_SYNC: "mc_pending_sync",
     STOCK_TRANSACTIONS: "mc_stock_transactions",
+    SALES_BILLS: "mc_sales_bills",
+    SALES_BILL_COUNTER: "mc_sales_bill_counter",
+    PAYMENTS: "mc_payments",
   };
 
   const DEFAULT_GITHUB_REPO = "nikitasomani14/mahesh-company-website";
@@ -375,6 +378,8 @@
   async function bootMainApp() {
     await seedProductsFromJson();
     await seedBillsFromJson();
+    await seedSalesBillsFromJson();
+    await seedPaymentsFromJson();
     renderDashboard();
     fetchVisitorStats();
     fetchDetailedAnalytics();
@@ -382,6 +387,7 @@
     renderBills();
     renderProfitSection();
     renderLedger();
+    renderSalesBillsList();
     initGoatcounterSettings();
     initGithubSettings();
     updateUnsyncedBanner();
@@ -2728,6 +2734,775 @@
     ledgerDateRange = e.target.value;
     renderLedger();
   });
+
+  /* ===================== SALES MODULE ===================== */
+
+  function getSalesBills() {
+    try { return JSON.parse(localStorage.getItem(LS.SALES_BILLS) || "[]"); }
+    catch { return []; }
+  }
+  function saveSalesBills(list) { localStorage.setItem(LS.SALES_BILLS, JSON.stringify(list)); }
+
+  function getPayments() {
+    try { return JSON.parse(localStorage.getItem(LS.PAYMENTS) || "[]"); }
+    catch { return []; }
+  }
+  function savePayments(list) { localStorage.setItem(LS.PAYMENTS, JSON.stringify(list)); }
+
+  function nextSalesBillNumber() {
+    var n = parseInt(localStorage.getItem(LS.SALES_BILL_COUNTER) || "0", 10);
+    n += 1;
+    localStorage.setItem(LS.SALES_BILL_COUNTER, String(n));
+    return "A" + String(n).padStart(6, "0");
+  }
+
+  var salesSyncTimer = null;
+  var isSalesSyncing = false;
+
+  function fmtCurrency(v) {
+    return Number(v || 0).toFixed(2);
+  }
+  function fmtDateShort(ts) {
+    if (!ts) return "—";
+    var d = new Date(ts);
+    return String(d.getDate()).padStart(2, "0") + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + d.getFullYear();
+  }
+
+  /* --- Product Search Dropdown for Line Items --- */
+  function createSalesLineRow(data) {
+    var tr = document.createElement("tr");
+    tr.className = "sales-line-row";
+    var nameVal = (data && data.productName) || "";
+    var qtyVal = (data && data.qty) || "";
+    var rateVal = (data && data.rate) || "";
+    var disVal = (data && data.discount) || 0;
+    var amtVal = (data && data.amount) || 0;
+
+    tr.innerHTML =
+      '<td class="sales-product-cell">' +
+        '<input type="text" class="sl-product-input" placeholder="Search product..." value="' + nameVal.replace(/"/g, '&quot;') + '" />' +
+        '<div class="sales-product-dropdown sales-dropdown hidden"></div>' +
+      '</td>' +
+      '<td><input type="number" class="sl-qty-input" min="0" step="1" value="' + qtyVal + '" /></td>' +
+      '<td><input type="number" class="sl-rate-input" min="0" step="0.01" value="' + rateVal + '" /></td>' +
+      '<td><input type="number" class="sl-dis-input" min="0" max="100" step="0.01" value="' + disVal + '" /></td>' +
+      '<td class="col-amount">' + fmtCurrency(amtVal) + '</td>' +
+      '<td class="col-action"><button type="button" class="sales-line-remove" title="Remove"><i class="fas fa-times"></i></button></td>';
+
+    var productInput = tr.querySelector(".sl-product-input");
+    var dropdown = tr.querySelector(".sales-product-dropdown");
+
+    productInput.addEventListener("input", function() {
+      var val = productInput.value.trim().toLowerCase();
+      if (val.length < 1) { dropdown.classList.add("hidden"); return; }
+      var prods = getProducts();
+      var matches = prods.filter(function(p) {
+        return p.name.toLowerCase().indexOf(val) !== -1;
+      }).slice(0, 15);
+      if (matches.length === 0) { dropdown.classList.add("hidden"); return; }
+      dropdown.innerHTML = matches.map(function(p) {
+        return '<div class="sales-dropdown-item" data-name="' + p.name.replace(/"/g, '&quot;') + '" data-price="' + (p.price || 0) + '">' + p.name + ' <span style="color:var(--muted);font-size:0.75rem;">₹' + (p.price || 0) + '</span></div>';
+      }).join("");
+      dropdown.classList.remove("hidden");
+    });
+
+    productInput.addEventListener("focus", function() {
+      if (productInput.value.trim().length >= 1) productInput.dispatchEvent(new Event("input"));
+    });
+
+    productInput.addEventListener("blur", function() {
+      setTimeout(function() { dropdown.classList.add("hidden"); }, 200);
+    });
+
+    dropdown.addEventListener("click", function(e) {
+      var item = e.target.closest(".sales-dropdown-item");
+      if (!item) return;
+      productInput.value = item.getAttribute("data-name");
+      tr.querySelector(".sl-rate-input").value = item.getAttribute("data-price");
+      dropdown.classList.add("hidden");
+      if (!tr.querySelector(".sl-qty-input").value) tr.querySelector(".sl-qty-input").value = 1;
+      recalcSalesLine(tr);
+      recalcSalesTotals();
+    });
+
+    tr.querySelector(".sl-qty-input").addEventListener("input", function() { recalcSalesLine(tr); recalcSalesTotals(); });
+    tr.querySelector(".sl-rate-input").addEventListener("input", function() { recalcSalesLine(tr); recalcSalesTotals(); });
+    tr.querySelector(".sl-dis-input").addEventListener("input", function() { recalcSalesLine(tr); recalcSalesTotals(); });
+
+    tr.querySelector(".sales-line-remove").addEventListener("click", function() {
+      tr.remove();
+      recalcSalesTotals();
+    });
+
+    return tr;
+  }
+
+  function recalcSalesLine(tr) {
+    var qty = parseFloat(tr.querySelector(".sl-qty-input").value) || 0;
+    var rate = parseFloat(tr.querySelector(".sl-rate-input").value) || 0;
+    var dis = parseFloat(tr.querySelector(".sl-dis-input").value) || 0;
+    var amt = qty * rate * (1 - dis / 100);
+    tr.querySelector(".col-amount").textContent = fmtCurrency(amt);
+  }
+
+  function recalcSalesTotals() {
+    var rows = qsa("#salesLineItems .sales-line-row");
+    var vog = 0;
+    rows.forEach(function(tr) {
+      var qty = parseFloat(tr.querySelector(".sl-qty-input").value) || 0;
+      var rate = parseFloat(tr.querySelector(".sl-rate-input").value) || 0;
+      var dis = parseFloat(tr.querySelector(".sl-dis-input").value) || 0;
+      vog += qty * rate * (1 - dis / 100);
+    });
+    qs("#salesValueOfGoods").textContent = fmtCurrency(vog);
+
+    var discount = parseFloat(qs("#salesDiscountAmt").value) || 0;
+    var gstPct = parseFloat(qs("#salesGstPct").value) || 0;
+    var freight = parseFloat(qs("#salesFreight").value) || 0;
+    var gstAmt = vog * gstPct / 100;
+    var billTotal = vog - discount + gstAmt + freight;
+    qs("#salesBillTotal").textContent = fmtCurrency(billTotal);
+
+    var cashRcvd = parseFloat(qs("#salesCashReceived").value) || 0;
+    var balance = billTotal - cashRcvd;
+    qs("#salesBalance").textContent = fmtCurrency(balance);
+  }
+
+  /* --- Customer Search & Status --- */
+  function getAllCustomerNames() {
+    var names = {};
+    getSalesBills().forEach(function(b) { if (b.customerName) names[b.customerName.toUpperCase()] = b; });
+    getPayments().forEach(function(p) { if (p.customerName) names[p.customerName.toUpperCase()] = p; });
+    return Object.keys(names).sort();
+  }
+
+  function updateCustomerStatus(custName) {
+    if (!custName || !custName.trim()) {
+      qs("#custPanelName").textContent = "CUSTOMER STATUS";
+      qs("#custPanelPhone").textContent = "";
+      qs("#custPanelOutstanding").textContent = "0.00";
+      qs("#custPanelBillCount").textContent = "0";
+      qs("#custPanelLastSale").textContent = "—";
+      qs("#custPanelLastReceipt").textContent = "—";
+      qs("#custPanelTxnList").innerHTML = '<p class="muted-text">Select a customer to see history</p>';
+      return;
+    }
+    var name = custName.trim().toUpperCase();
+    var bills = getSalesBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name; });
+    var payments = getPayments().filter(function(p) { return (p.customerName || "").toUpperCase() === name; });
+
+    bills.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
+    payments.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
+
+    var totalBilled = 0;
+    var totalPaid = 0;
+    bills.forEach(function(b) { totalBilled += (b.billTotal || 0); totalPaid += (b.cashReceived || 0); });
+    payments.forEach(function(p) { totalPaid += (p.amount || 0); });
+    var outstanding = totalBilled - totalPaid;
+
+    var phone = "";
+    if (bills.length > 0) phone = bills[0].phone || "";
+
+    qs("#custPanelName").textContent = custName.trim().toUpperCase();
+    qs("#custPanelPhone").textContent = phone ? "Phone: " + phone : "";
+    qs("#custPanelOutstanding").textContent = "₹ " + fmtCurrency(outstanding);
+    qs("#custPanelBillCount").textContent = String(bills.length);
+
+    if (bills.length > 0) {
+      qs("#custPanelLastSale").textContent = "₹" + fmtCurrency(bills[0].billTotal) + " (" + fmtDateShort(bills[0].date) + ")";
+    } else {
+      qs("#custPanelLastSale").textContent = "—";
+    }
+
+    if (payments.length > 0) {
+      qs("#custPanelLastReceipt").textContent = "₹" + fmtCurrency(payments[0].amount) + " (" + fmtDateShort(payments[0].date) + ")";
+    } else {
+      qs("#custPanelLastReceipt").textContent = "—";
+    }
+
+    var txns = [];
+    bills.forEach(function(b) {
+      txns.push({ type: "BILL", ref: b.billNumber || "", amount: b.billTotal || 0, date: b.date || 0 });
+    });
+    payments.forEach(function(p) {
+      txns.push({ type: p.mode || "CASH", ref: "", amount: p.amount || 0, date: p.date || 0 });
+    });
+    txns.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
+
+    if (txns.length === 0) {
+      qs("#custPanelTxnList").innerHTML = '<p class="muted-text">No transactions found</p>';
+    } else {
+      qs("#custPanelTxnList").innerHTML = txns.slice(0, 20).map(function(t) {
+        var cls = t.type === "BILL" ? "cust-txn-type--bill" : "cust-txn-type--payment";
+        return '<div class="cust-txn-item">' +
+          '<span class="cust-txn-type ' + cls + '">' + t.type + '</span>' +
+          '<span class="cust-txn-date">' + (t.ref ? t.ref + " " : "") + fmtDateShort(t.date) + '</span>' +
+          '<span class="cust-txn-amount">₹' + fmtCurrency(t.amount) + '</span>' +
+        '</div>';
+      }).join("");
+    }
+  }
+
+  /* --- Init / Reset Sales Form --- */
+  function resetSalesForm() {
+    qs("#salesBillId").value = "";
+    qs("#salesBillNumber").value = "";
+    qs("#salesBillDate").value = new Date().toISOString().split("T")[0];
+    qs("#salesCustomerName").value = "";
+    qs("#salesCustomerPhone").value = "";
+    qs("#salesPaymentType").value = "CREDIT";
+    qs("#salesBillType").value = "LOCAL";
+    qs("#salesLineItems").innerHTML = "";
+    qs("#salesDiscountAmt").value = 0;
+    qs("#salesGstPct").value = 0;
+    qs("#salesFreight").value = 0;
+    qs("#salesCashReceived").value = 0;
+    qs("#salesValueOfGoods").textContent = "0.00";
+    qs("#salesBillTotal").textContent = "0.00";
+    qs("#salesBalance").textContent = "0.00";
+    for (var i = 0; i < 3; i++) {
+      qs("#salesLineItems").appendChild(createSalesLineRow());
+    }
+    updateCustomerStatus("");
+  }
+
+  function startNewSalesBill() {
+    resetSalesForm();
+    qs("#salesBillNumber").value = nextSalesBillNumber();
+    qs("#salesBillDate").value = new Date().toISOString().split("T")[0];
+    qs("#salesFormWrap").scrollIntoView({ behavior: "smooth" });
+  }
+
+  function loadSalesBillForEdit(billId) {
+    var bills = getSalesBills();
+    var bill = bills.find(function(b) { return b.id === billId; });
+    if (!bill) return;
+
+    resetSalesForm();
+    qs("#salesBillId").value = bill.id;
+    qs("#salesBillNumber").value = bill.billNumber || "";
+    if (bill.date) {
+      qs("#salesBillDate").value = new Date(bill.date).toISOString().split("T")[0];
+    }
+    qs("#salesCustomerName").value = bill.customerName || "";
+    qs("#salesCustomerPhone").value = bill.phone || "";
+    qs("#salesPaymentType").value = bill.type || "CREDIT";
+    qs("#salesBillType").value = bill.billType || "LOCAL";
+    qs("#salesDiscountAmt").value = bill.discount || 0;
+    qs("#salesGstPct").value = bill.gst || 0;
+    qs("#salesFreight").value = bill.freight || 0;
+    qs("#salesCashReceived").value = bill.cashReceived || 0;
+
+    qs("#salesLineItems").innerHTML = "";
+    if (Array.isArray(bill.lineItems)) {
+      bill.lineItems.forEach(function(li) {
+        qs("#salesLineItems").appendChild(createSalesLineRow(li));
+      });
+    }
+    if (bill.lineItems.length < 1) {
+      qs("#salesLineItems").appendChild(createSalesLineRow());
+    }
+    recalcSalesTotals();
+    updateCustomerStatus(bill.customerName);
+    qs("#salesFormWrap").scrollIntoView({ behavior: "smooth" });
+  }
+
+  /* --- Save Sales Bill --- */
+  function saveSalesBill() {
+    var custName = qs("#salesCustomerName").value.trim();
+    if (!custName) { showToast("Customer name is required", "error"); return false; }
+
+    var rows = qsa("#salesLineItems .sales-line-row");
+    var lineItems = [];
+    rows.forEach(function(tr) {
+      var pname = tr.querySelector(".sl-product-input").value.trim();
+      var qty = parseFloat(tr.querySelector(".sl-qty-input").value) || 0;
+      var rate = parseFloat(tr.querySelector(".sl-rate-input").value) || 0;
+      var dis = parseFloat(tr.querySelector(".sl-dis-input").value) || 0;
+      if (pname && qty > 0) {
+        lineItems.push({
+          productName: pname,
+          qty: qty,
+          rate: rate,
+          discount: dis,
+          amount: qty * rate * (1 - dis / 100)
+        });
+      }
+    });
+
+    if (lineItems.length === 0) { showToast("Add at least one product", "error"); return false; }
+
+    var vog = 0;
+    lineItems.forEach(function(li) { vog += li.amount; });
+    var discount = parseFloat(qs("#salesDiscountAmt").value) || 0;
+    var gstPct = parseFloat(qs("#salesGstPct").value) || 0;
+    var freight = parseFloat(qs("#salesFreight").value) || 0;
+    var gstAmt = vog * gstPct / 100;
+    var billTotal = vog - discount + gstAmt + freight;
+    var cashReceived = parseFloat(qs("#salesCashReceived").value) || 0;
+
+    var dateStr = qs("#salesBillDate").value;
+    var dateTs = dateStr ? new Date(dateStr + "T12:00:00").getTime() : Date.now();
+
+    var existingId = qs("#salesBillId").value;
+    var bills = getSalesBills();
+
+    if (existingId) {
+      var idx = bills.findIndex(function(b) { return b.id === existingId; });
+      if (idx !== -1) {
+        bills[idx].customerName = custName;
+        bills[idx].phone = qs("#salesCustomerPhone").value.trim();
+        bills[idx].type = qs("#salesPaymentType").value;
+        bills[idx].billType = qs("#salesBillType").value;
+        bills[idx].lineItems = lineItems;
+        bills[idx].valueOfGoods = vog;
+        bills[idx].discount = discount;
+        bills[idx].gst = gstPct;
+        bills[idx].freight = freight;
+        bills[idx].billTotal = billTotal;
+        bills[idx].cashReceived = cashReceived;
+        bills[idx].balance = billTotal - cashReceived;
+        bills[idx].date = dateTs;
+      }
+    } else {
+      var bill = {
+        id: crypto.randomUUID ? crypto.randomUUID() : "sb-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
+        billNumber: qs("#salesBillNumber").value,
+        customerName: custName,
+        phone: qs("#salesCustomerPhone").value.trim(),
+        type: qs("#salesPaymentType").value,
+        billType: qs("#salesBillType").value,
+        lineItems: lineItems,
+        valueOfGoods: vog,
+        discount: discount,
+        gst: gstPct,
+        freight: freight,
+        billTotal: billTotal,
+        cashReceived: cashReceived,
+        balance: billTotal - cashReceived,
+        date: dateTs,
+        status: "active"
+      };
+      bills.push(bill);
+    }
+
+    saveSalesBills(bills);
+    showToast("Sales bill saved!", "success");
+    renderSalesBillsList();
+    updateCustomerStatus(custName);
+    autoSyncSalesBills();
+    return true;
+  }
+
+  /* --- Render Sales Bills List --- */
+  function renderSalesBillsList(filter) {
+    var tbody = qs("#salesBillsList");
+    if (!tbody) return;
+    var bills = getSalesBills();
+    bills.sort(function(a, b) { return (b.date || 0) - (a.date || 0); });
+
+    var search = (filter || qs("#salesBillSearch")?.value || "").trim().toLowerCase();
+    if (search) {
+      bills = bills.filter(function(b) {
+        return (b.billNumber || "").toLowerCase().indexOf(search) !== -1 ||
+               (b.customerName || "").toLowerCase().indexOf(search) !== -1;
+      });
+    }
+
+    if (bills.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:20px;">No sales bills found</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = bills.map(function(b) {
+      var balCls = (b.balance || 0) > 0 ? "sales-bill-balance--due" : "sales-bill-balance--paid";
+      var typeCls = b.type === "CREDIT" ? "sales-bill-badge--credit" : "sales-bill-badge--cash";
+      return '<tr>' +
+        '<td><strong>' + (b.billNumber || "") + '</strong></td>' +
+        '<td>' + (b.customerName || "") + '</td>' +
+        '<td>' + fmtDateShort(b.date) + '</td>' +
+        '<td class="text-right"><strong>₹' + fmtCurrency(b.billTotal) + '</strong></td>' +
+        '<td><span class="sales-bill-badge ' + typeCls + '">' + (b.type || "CREDIT") + '</span></td>' +
+        '<td><span class="sales-bill-balance ' + balCls + '">₹' + fmtCurrency(b.balance || 0) + '</span></td>' +
+        '<td class="sales-bill-actions">' +
+          '<button class="icon-btn" title="Edit" onclick="window._salesEdit(\'' + b.id + '\')"><i class="fas fa-pen-to-square"></i></button>' +
+          '<button class="icon-btn" title="Print" onclick="window._salesPrint(\'' + b.id + '\')"><i class="fas fa-print"></i></button>' +
+        '</td>' +
+      '</tr>';
+    }).join("");
+  }
+
+  window._salesEdit = function(id) { loadSalesBillForEdit(id); };
+  window._salesPrint = function(id) { printSalesBill(id); };
+
+  /* --- Print Sales Bill --- */
+  function buildSalesInvoiceHtml(bill) {
+    var linesHtml = (bill.lineItems || []).map(function(li, i) {
+      return '<tr>' +
+        '<td>' + (i + 1) + '</td>' +
+        '<td>' + (li.productName || "") + '</td>' +
+        '<td style="text-align:right;">' + (li.qty || 0) + '</td>' +
+        '<td style="text-align:right;">' + fmtCurrency(li.rate) + '</td>' +
+        '<td style="text-align:right;">' + fmtCurrency(li.discount || 0) + '%</td>' +
+        '<td style="text-align:right;">' + fmtCurrency(li.amount) + '</td>' +
+      '</tr>';
+    }).join("");
+
+    return '<h2>SALE INVOICE</h2>' +
+      '<div class="inv-header">' +
+        '<div><strong>M/S : MAHESH N COMPANY</strong><br>Address: ASPUR<br>Phone: 7297047681</div>' +
+        '<div class="inv-meta">' +
+          '<span>INVOICE: ' + (bill.billNumber || "") + '</span>' +
+          '<span>Date: ' + fmtDateShort(bill.date) + '</span>' +
+          '<span>Type: ' + (bill.type || "CREDIT") + ' / ' + (bill.billType || "LOCAL") + '</span>' +
+        '</div>' +
+        '<div>Customer: <strong>' + (bill.customerName || "") + '</strong>' + (bill.phone ? ' | Phone: ' + bill.phone : '') + '</div>' +
+      '</div>' +
+      '<table>' +
+        '<thead><tr><th>S.No</th><th>Product</th><th>Qty</th><th>Rate</th><th>Dis%</th><th>Amount</th></tr></thead>' +
+        '<tbody>' + linesHtml + '</tbody>' +
+      '</table>' +
+      '<div class="inv-totals">' +
+        '<div>Value of Goods: ₹' + fmtCurrency(bill.valueOfGoods) + '</div>' +
+        (bill.discount ? '<div>Discount: ₹' + fmtCurrency(bill.discount) + '</div>' : '') +
+        (bill.gst ? '<div>GST: ' + bill.gst + '%</div>' : '') +
+        (bill.freight ? '<div>Freight: ₹' + fmtCurrency(bill.freight) + '</div>' : '') +
+        '<div class="grand">Bill Total: ₹' + fmtCurrency(bill.billTotal) + '</div>' +
+        '<div>Cash Received: ₹' + fmtCurrency(bill.cashReceived) + '</div>' +
+        '<div><strong>Balance: ₹' + fmtCurrency(bill.balance) + '</strong></div>' +
+      '</div>';
+  }
+
+  function printSalesBill(billId) {
+    var bill;
+    if (typeof billId === "string") {
+      bill = getSalesBills().find(function(b) { return b.id === billId; });
+    } else {
+      bill = billId;
+    }
+    if (!bill) { showToast("Bill not found", "error"); return; }
+
+    var printEl = qs("#salesInvoicePrint");
+    if (!printEl) return;
+    printEl.innerHTML = buildSalesInvoiceHtml(bill);
+    qs("#salesPrintArea").style.display = "block";
+
+    if (typeof html2pdf !== "undefined") {
+      html2pdf().set({
+        margin: 8,
+        filename: (bill.billNumber || "sale") + ".pdf",
+        image: { type: "jpeg", quality: 0.95 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+      }).from(printEl).save().then(function() {
+        qs("#salesPrintArea").style.display = "none";
+      });
+    } else {
+      var win = window.open("", "_blank");
+      if (win) {
+        win.document.write('<html><head><title>' + (bill.billNumber || "Sale") + '</title><style>body{font-family:sans-serif;padding:20px;font-size:13px;} table{width:100%;border-collapse:collapse;margin:12px 0;} th,td{border:1px solid #999;padding:6px 8px;text-align:left;} th{background:#f0f0f0;} h2{text-align:center;} .inv-header{border:1px solid #333;padding:10px 14px;margin-bottom:12px;} .inv-meta{display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px;} .inv-totals{text-align:right;margin-top:12px;} .grand{font-size:16px;font-weight:700;border-top:2px solid #333;padding-top:4px;margin-top:4px;}</style></head><body>');
+        win.document.write(buildSalesInvoiceHtml(bill));
+        win.document.write('</body></html>');
+        win.document.close();
+        win.print();
+      }
+      qs("#salesPrintArea").style.display = "none";
+    }
+  }
+
+  /* --- Record Payment Modal --- */
+  function openPaymentModal(custName) {
+    qs("#paymentCustomer").value = custName || "";
+    qs("#paymentAmount").value = "";
+    qs("#paymentMode").value = "CASH";
+    qs("#paymentDate").value = new Date().toISOString().split("T")[0];
+    qs("#paymentNote").value = "";
+    qs("#paymentModal").classList.remove("hidden");
+    qs("#paymentModal").setAttribute("aria-hidden", "false");
+  }
+
+  function closePaymentModal() {
+    qs("#paymentModal").classList.add("hidden");
+    qs("#paymentModal").setAttribute("aria-hidden", "true");
+  }
+
+  function savePayment() {
+    var custName = qs("#paymentCustomer").value.trim();
+    var amount = parseFloat(qs("#paymentAmount").value) || 0;
+    if (!custName) { showToast("Customer name required", "error"); return; }
+    if (amount <= 0) { showToast("Enter a valid amount", "error"); return; }
+
+    var dateStr = qs("#paymentDate").value;
+    var dateTs = dateStr ? new Date(dateStr + "T12:00:00").getTime() : Date.now();
+
+    var payment = {
+      id: crypto.randomUUID ? crypto.randomUUID() : "pay-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
+      customerName: custName,
+      amount: amount,
+      mode: qs("#paymentMode").value,
+      date: dateTs,
+      note: qs("#paymentNote").value.trim()
+    };
+
+    var payments = getPayments();
+    payments.push(payment);
+    savePayments(payments);
+
+    showToast("Payment of ₹" + fmtCurrency(amount) + " recorded!", "success");
+    closePaymentModal();
+    updateCustomerStatus(custName);
+    renderSalesBillsList();
+    autoSyncPayments();
+  }
+
+  /* --- Sync Sales Bills & Payments to GitHub --- */
+  function autoSyncSalesBills() {
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) return;
+    clearTimeout(salesSyncTimer);
+    salesSyncTimer = setTimeout(function() { syncSalesBillsToGithub(); }, 2000);
+  }
+
+  function autoSyncPayments() {
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) return;
+    setTimeout(function() { syncPaymentsToGithub(); }, 2500);
+  }
+
+  async function syncSalesBillsToGithub() {
+    if (isSalesSyncing) return;
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) return;
+    var repo = getGithubRepo();
+    if (!repo || !repo.includes("/")) return;
+
+    isSalesSyncing = true;
+    var bills = getSalesBills();
+    var jsonContent = JSON.stringify(bills, null, 2) + "\n";
+    var apiBase = "https://api.github.com/repos/" + repo + "/contents/data/sales-bills.json";
+    var headers = {
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github.v3+json",
+      "Content-Type": "application/json"
+    };
+    var encoded = btoa(unescape(encodeURIComponent(jsonContent)));
+
+    try {
+      var getResp = await fetch(apiBase, { headers: headers });
+      var sha = "";
+      if (getResp.ok) {
+        var fileData = await getResp.json();
+        sha = fileData.sha || "";
+      }
+      var putBody = { message: "Update sales bills from admin", content: encoded };
+      if (sha) putBody.sha = sha;
+      var putResp = await fetch(apiBase, { method: "PUT", headers: headers, body: JSON.stringify(putBody) });
+      if (putResp.ok) {
+        showToast("Sales bills synced to GitHub", "success");
+      }
+    } catch (err) {
+      console.error("Sales sync error:", err);
+    }
+    isSalesSyncing = false;
+  }
+
+  async function syncPaymentsToGithub() {
+    var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+    if (!token) return;
+    var repo = getGithubRepo();
+    if (!repo || !repo.includes("/")) return;
+
+    var payments = getPayments();
+    var jsonContent = JSON.stringify(payments, null, 2) + "\n";
+    var apiBase = "https://api.github.com/repos/" + repo + "/contents/data/payments.json";
+    var headers = {
+      "Authorization": "Bearer " + token,
+      "Accept": "application/vnd.github.v3+json",
+      "Content-Type": "application/json"
+    };
+    var encoded = btoa(unescape(encodeURIComponent(jsonContent)));
+
+    try {
+      var getResp = await fetch(apiBase, { headers: headers });
+      var sha = "";
+      if (getResp.ok) {
+        var fileData = await getResp.json();
+        sha = fileData.sha || "";
+      }
+      var putBody = { message: "Update payments from admin", content: encoded };
+      if (sha) putBody.sha = sha;
+      await fetch(apiBase, { method: "PUT", headers: headers, body: JSON.stringify(putBody) });
+    } catch (err) {
+      console.error("Payments sync error:", err);
+    }
+  }
+
+  /* --- Seed Sales Bills & Payments from GitHub on boot --- */
+  async function seedSalesBillsFromJson() {
+    try {
+      var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+      var repo = getGithubRepo();
+      var remoteBills = [];
+      if (token && repo) {
+        var apiUrl = "https://api.github.com/repos/" + repo + "/contents/data/sales-bills.json";
+        var resp = await fetch(apiUrl, { headers: { "Authorization": "Bearer " + token, "Accept": "application/vnd.github.v3+json" } });
+        if (resp.ok) {
+          var data = await resp.json();
+          if (data.content) {
+            remoteBills = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, "")))));
+          }
+        }
+      } else {
+        var localResp = await fetch("data/sales-bills.json");
+        if (localResp.ok) remoteBills = await localResp.json();
+      }
+      if (!Array.isArray(remoteBills) || remoteBills.length === 0) return;
+      var local = getSalesBills();
+      if (local.length === 0) {
+        saveSalesBills(remoteBills);
+      } else {
+        var localIds = {};
+        local.forEach(function(b) { localIds[b.id] = true; });
+        remoteBills.forEach(function(rb) {
+          if (!localIds[rb.id]) local.push(rb);
+        });
+        saveSalesBills(local);
+      }
+      var maxNum = 0;
+      getSalesBills().forEach(function(b) {
+        var m = (b.billNumber || "").match(/A0*(\d+)/);
+        if (m) { var n = parseInt(m[1], 10); if (n > maxNum) maxNum = n; }
+      });
+      var currentCounter = parseInt(localStorage.getItem(LS.SALES_BILL_COUNTER) || "0", 10);
+      if (maxNum > currentCounter) localStorage.setItem(LS.SALES_BILL_COUNTER, String(maxNum));
+    } catch (e) { console.error("seedSalesBills error:", e); }
+  }
+
+  async function seedPaymentsFromJson() {
+    try {
+      var token = localStorage.getItem(LS.GITHUB_TOKEN) || "";
+      var repo = getGithubRepo();
+      var remotePayments = [];
+      if (token && repo) {
+        var apiUrl = "https://api.github.com/repos/" + repo + "/contents/data/payments.json";
+        var resp = await fetch(apiUrl, { headers: { "Authorization": "Bearer " + token, "Accept": "application/vnd.github.v3+json" } });
+        if (resp.ok) {
+          var data = await resp.json();
+          if (data.content) {
+            remotePayments = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, "")))));
+          }
+        }
+      } else {
+        var localResp = await fetch("data/payments.json");
+        if (localResp.ok) remotePayments = await localResp.json();
+      }
+      if (!Array.isArray(remotePayments) || remotePayments.length === 0) return;
+      var local = getPayments();
+      if (local.length === 0) {
+        savePayments(remotePayments);
+      } else {
+        var localIds = {};
+        local.forEach(function(p) { localIds[p.id] = true; });
+        remotePayments.forEach(function(rp) {
+          if (!localIds[rp.id]) local.push(rp);
+        });
+        savePayments(local);
+      }
+    } catch (e) { console.error("seedPayments error:", e); }
+  }
+
+  /* --- Sales Tab Event Listeners --- */
+  qs("#salesNewBillBtn")?.addEventListener("click", startNewSalesBill);
+  qs("#salesRecordPaymentBtn")?.addEventListener("click", function() { openPaymentModal(qs("#salesCustomerName").value); });
+  qs("#salesAddRowBtn")?.addEventListener("click", function() {
+    qs("#salesLineItems").appendChild(createSalesLineRow());
+  });
+
+  qs("#salesBillForm")?.addEventListener("submit", function(e) {
+    e.preventDefault();
+    saveSalesBill();
+  });
+
+  qs("#salesCancelBtn")?.addEventListener("click", function() {
+    resetSalesForm();
+    qs("#salesBillNumber").value = "";
+  });
+
+  qs("#salesPrintBtn")?.addEventListener("click", function() {
+    var existingId = qs("#salesBillId").value;
+    if (existingId) {
+      printSalesBill(existingId);
+    } else {
+      showToast("Save the bill first before printing", "info");
+    }
+  });
+
+  qs("#salesDiscountAmt")?.addEventListener("input", recalcSalesTotals);
+  qs("#salesGstPct")?.addEventListener("input", recalcSalesTotals);
+  qs("#salesFreight")?.addEventListener("input", recalcSalesTotals);
+  qs("#salesCashReceived")?.addEventListener("input", recalcSalesTotals);
+
+  qs("#salesBillSearch")?.addEventListener("input", function() { renderSalesBillsList(); });
+
+  /* Customer name search with dropdown */
+  (function() {
+    var custInput = qs("#salesCustomerName");
+    var custDropdown = qs("#salesCustomerDropdown");
+    if (!custInput || !custDropdown) return;
+
+    custInput.addEventListener("input", function() {
+      var val = custInput.value.trim().toLowerCase();
+      if (val.length < 1) { custDropdown.classList.add("hidden"); updateCustomerStatus(""); return; }
+      var names = getAllCustomerNames();
+      var matches = names.filter(function(n) { return n.toLowerCase().indexOf(val) !== -1; }).slice(0, 10);
+      if (matches.length === 0) { custDropdown.classList.add("hidden"); updateCustomerStatus(val); return; }
+      custDropdown.innerHTML = matches.map(function(n) {
+        return '<div class="sales-dropdown-item" data-name="' + n + '">' + n + '</div>';
+      }).join("");
+      custDropdown.classList.remove("hidden");
+    });
+
+    custInput.addEventListener("blur", function() {
+      setTimeout(function() {
+        custDropdown.classList.add("hidden");
+        updateCustomerStatus(custInput.value);
+      }, 200);
+    });
+
+    custDropdown.addEventListener("click", function(e) {
+      var item = e.target.closest(".sales-dropdown-item");
+      if (!item) return;
+      var name = item.getAttribute("data-name");
+      custInput.value = name;
+      custDropdown.classList.add("hidden");
+      updateCustomerStatus(name);
+      var bills = getSalesBills().filter(function(b) { return (b.customerName || "").toUpperCase() === name.toUpperCase(); });
+      if (bills.length > 0 && bills[0].phone) {
+        qs("#salesCustomerPhone").value = bills[0].phone;
+      }
+    });
+  })();
+
+  /* Payment modal listeners */
+  qs("#paymentForm")?.addEventListener("submit", function(e) {
+    e.preventDefault();
+    savePayment();
+  });
+  qs('[data-close-modal="paymentModal"]')?.addEventListener("click", closePaymentModal);
+  qs("#paymentModal")?.addEventListener("click", function(e) {
+    if (e.target === qs("#paymentModal")) closePaymentModal();
+  });
+
+  /* --- Init Sales Tab on switchTab --- */
+  (function() {
+    var origSwitchTab = switchTab;
+    switchTab = function(tab) {
+      origSwitchTab(tab);
+      if (tab === "sales") {
+        renderSalesBillsList();
+      }
+    };
+  })();
 
   /* ---------- Init ---------- */
   initDefaultPasswordHash();
