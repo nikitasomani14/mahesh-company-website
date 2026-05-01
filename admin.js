@@ -100,6 +100,29 @@
     localStorage.setItem(LS.BILLS, JSON.stringify(list));
   }
 
+  function adjustStockForBill(lineItems, direction) {
+    var products = getProducts();
+    var changed = false;
+    (lineItems || []).forEach(function(li) {
+      var name = (li.productName || "").toUpperCase();
+      if (!name) return;
+      var idx = products.findIndex(function(p) {
+        return (p.name || "").toUpperCase() === name;
+      });
+      if (idx !== -1) {
+        var newQty = (Number(products[idx].stockQty) || 0) + (direction * (li.qty || 0));
+        products[idx].stockQty = Math.max(0, Math.round(newQty * 100) / 100);
+        products[idx].inStock = products[idx].stockQty > 0;
+        changed = true;
+      }
+    });
+    if (changed) {
+      saveProducts(products);
+      if (typeof renderProfitSection === "function") renderProfitSection();
+      if (typeof renderProducts === "function") renderProducts();
+    }
+  }
+
   function getActivity() {
     try {
       const raw = localStorage.getItem(LS.ACTIVITY);
@@ -419,12 +442,46 @@
     if (billsChanged) saveBills(bills);
   }
 
+  function migrateStockFromExistingBills() {
+    if (localStorage.getItem("mc_stock_migrated") === "1") return;
+    var products = getProducts();
+    if (products.length === 0) return;
+
+    var deductions = {};
+    getSalesBills().forEach(function(b) {
+      (b.lineItems || []).forEach(function(li) {
+        var key = (li.productName || "").toUpperCase();
+        if (key) deductions[key] = (deductions[key] || 0) + (li.qty || 0);
+      });
+    });
+    getBills().forEach(function(b) {
+      (b.lineItems || []).forEach(function(li) {
+        var key = (li.productName || "").toUpperCase();
+        if (key) deductions[key] = (deductions[key] || 0) + (li.qty || 0);
+      });
+    });
+
+    var changed = false;
+    products.forEach(function(p) {
+      var key = (p.name || "").toUpperCase();
+      if (deductions[key] && deductions[key] > 0) {
+        var current = Number(p.stockQty) || 0;
+        p.stockQty = Math.max(0, current - deductions[key]);
+        p.inStock = p.stockQty > 0;
+        changed = true;
+      }
+    });
+    if (changed) saveProducts(products);
+    localStorage.setItem("mc_stock_migrated", "1");
+  }
+
   async function bootMainApp() {
     await seedProductsFromJson();
     await seedBillsFromJson();
     await seedSalesBillsFromJson();
     await seedPaymentsFromJson();
     migratePhoneNumbers();
+    migrateStockFromExistingBills();
     renderDashboard();
     fetchVisitorStats();
     fetchDetailedAnalytics();
@@ -1527,19 +1584,26 @@
     const id = qs("#billId").value || uid();
     const existing = getBills().find((b) => b.id === id);
     const billNumber = existing ? existing.billNumber : nextBillNumber();
+    const newLineItems = lines.map(({ productName, qty, unitPrice, discount, lineTotal }) => ({
+      productName,
+      qty,
+      unitPrice,
+      discount,
+      lineTotal,
+    }));
+
+    if (existing) {
+      adjustStockForBill(existing.lineItems || [], +1);
+    }
+    adjustStockForBill(newLineItems, -1);
+
     const bill = {
       id,
       billNumber,
       customerName,
       phone: qs("#billCustomerPhone").value.trim(),
       address: qs("#billCustomerAddress").value.trim(),
-      lineItems: lines.map(({ productName, qty, unitPrice, discount, lineTotal }) => ({
-        productName,
-        qty,
-        unitPrice,
-        discount,
-        lineTotal,
-      })),
+      lineItems: newLineItems,
       subtotal,
       discountTotal: discTot,
       grandTotal,
@@ -3238,6 +3302,10 @@
     if (existingId) {
       var idx = bills.findIndex(function(b) { return b.id === existingId; });
       if (idx !== -1) {
+        var oldLineItems = bills[idx].lineItems || [];
+        adjustStockForBill(oldLineItems, +1);
+        adjustStockForBill(lineItems, -1);
+
         bills[idx].customerName = custName;
         bills[idx].phone = custPhone;
         bills[idx].type = qs("#salesPaymentType").value;
@@ -3253,6 +3321,8 @@
         bills[idx].date = dateTs;
       }
     } else {
+      adjustStockForBill(lineItems, -1);
+
       var bill = {
         id: crypto.randomUUID ? crypto.randomUUID() : "sb-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8),
         billNumber: qs("#salesBillNumber").value,
