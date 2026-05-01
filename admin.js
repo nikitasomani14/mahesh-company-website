@@ -1748,16 +1748,27 @@
   });
 
   function shareBillWhatsapp(b) {
+    var items = "";
+    (b.lineItems || []).forEach(function(li) {
+      var name = li.productName || "";
+      var qty = li.qty || 0;
+      var rate = li.unitPrice || 0;
+      var amt = li.lineTotal || (qty * rate);
+      items += "\n  " + name + " × " + qty + " = " + formatMoney(amt);
+    });
     const text =
-      "Mahesh & Company — Invoice " +
-      b.billNumber +
-      "\nCustomer: " +
-      b.customerName +
-      "\nTotal: " +
-      formatMoney(b.grandTotal) +
-      "\nStatus: " +
-      b.paymentStatus;
-    const url = "https://wa.me/?text=" + encodeURIComponent(text);
+      "*Mahesh & Company*\n" +
+      "Invoice: " + b.billNumber +
+      "\nCustomer: " + b.customerName +
+      "\n─────────────" +
+      items + "\n" +
+      "─────────────\n" +
+      "*Total: " + formatMoney(b.grandTotal) + "*" +
+      "\nStatus: " + b.paymentStatus;
+    var waPhone = (b.phone || "").replace(/[^0-9]/g, "");
+    if (waPhone.length === 10) waPhone = "91" + waPhone;
+    const url = waPhone ? "https://wa.me/" + waPhone + "?text=" + encodeURIComponent(text)
+                        : "https://wa.me/?text=" + encodeURIComponent(text);
     window.open(url, "_blank", "noopener,noreferrer");
   }
 
@@ -3317,6 +3328,7 @@
       var printBtn = b.src === "sales"
         ? '<button class="icon-btn" title="Print" onclick="window._salesPrint(\'' + b.id + '\')"><i class="fas fa-print"></i></button>'
         : '<button class="icon-btn" title="Print (Bills)" onclick="window._oldBillPrint(\'' + b.id + '\')"><i class="fas fa-print"></i></button>';
+      var shareBtn = '<button class="icon-btn" title="WhatsApp" onclick="window._salesWhatsApp(\'' + b.id + '\',\'' + b.src + '\')"><i class="fab fa-whatsapp" style="color:#25D366;"></i></button>';
       return '<tr>' +
         '<td><strong>' + b.billNumber + '</strong></td>' +
         '<td>' + b.customerName + '</td>' +
@@ -3324,7 +3336,7 @@
         '<td class="text-right"><strong>₹' + fmtCurrency(b.billTotal) + '</strong></td>' +
         '<td><span class="sales-bill-badge ' + typeCls + '">' + typeBadge + '</span></td>' +
         '<td><span class="sales-bill-balance ' + balCls + '">₹' + fmtCurrency(b.balance || 0) + '</span></td>' +
-        '<td class="sales-bill-actions">' + editBtn + printBtn + '</td>' +
+        '<td class="sales-bill-actions">' + editBtn + printBtn + shareBtn + '</td>' +
       '</tr>';
     }).join("");
   }
@@ -3342,6 +3354,61 @@
       openBillModal(id);
       switchTab("bills");
     }
+  };
+
+  window._salesWhatsApp = function(id, src) {
+    var bill = null;
+    var phone = "";
+    var custName = "";
+    var total = 0;
+    var billNum = "";
+    var balance = 0;
+
+    if (src === "sales") {
+      bill = getSalesBills().find(function(b) { return b.id === id; });
+      if (bill) {
+        phone = bill.phone || "";
+        custName = bill.customerName || "";
+        total = bill.billTotal || 0;
+        billNum = bill.billNumber || "";
+        balance = bill.balance || 0;
+      }
+    } else {
+      bill = getBills().find(function(b) { return b.id === id; });
+      if (bill) {
+        phone = bill.phone || "";
+        custName = bill.customerName || "";
+        total = bill.grandTotal || 0;
+        billNum = bill.billNumber || "";
+        balance = bill.paymentStatus === "Paid" ? 0 : total;
+      }
+    }
+
+    if (!bill) { showToast("Bill not found", "error"); return; }
+
+    var items = "";
+    (bill.lineItems || []).forEach(function(li) {
+      var name = li.productName || "";
+      var qty = li.qty || 0;
+      var rate = li.rate || li.unitPrice || 0;
+      var amt = li.amount || li.lineTotal || (qty * rate);
+      items += "\n  " + name + " × " + qty + " = ₹" + fmtCurrency(amt);
+    });
+
+    var text = "*Mahesh & Company*\n" +
+      "Invoice: " + billNum + "\n" +
+      "Customer: " + custName + "\n" +
+      "─────────────" +
+      items + "\n" +
+      "─────────────\n" +
+      "*Total: ₹" + fmtCurrency(total) + "*";
+    if (balance > 0) text += "\n*Balance Due: ₹" + fmtCurrency(balance) + "*";
+
+    var waPhone = phone.replace(/[^0-9]/g, "");
+    if (waPhone.length === 10) waPhone = "91" + waPhone;
+    var url = waPhone ? "https://wa.me/" + waPhone + "?text=" + encodeURIComponent(text)
+                      : "https://wa.me/?text=" + encodeURIComponent(text);
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   /* --- Print Sales Bill --- */

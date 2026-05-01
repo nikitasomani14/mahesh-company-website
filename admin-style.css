@@ -1672,6 +1672,15 @@ body.admin-body {
   padding-left: 36px;
 }
 
+/* Make profit section use full screen width */
+[data-section="profit"] {
+  max-width: none;
+  width: calc(100vw - 32px);
+  margin-left: calc(-50vw + 50% + 0px);
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
 .profit-table-wrap {
   overflow-x: auto;
   background: var(--card-bg);
@@ -1730,16 +1739,22 @@ body.admin-body {
 
 /* ---- Mobile compact table for profit table ---- */
 @media (max-width: 768px) {
+  [data-section="profit"] {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 0 4px;
+  }
   .profit-table {
-    min-width: 580px;
-    font-size: 0.78rem;
+    min-width: 100%;
+    font-size: 0.72rem;
   }
   .profit-table th,
   .profit-table td {
-    padding: 8px 6px;
+    padding: 6px 4px;
+    white-space: nowrap;
   }
   .profit-table .product-name {
-    max-width: 120px;
+    max-width: 100px;
   }
   .profit-summary-row {
     grid-template-columns: 1fr 1fr !important;
