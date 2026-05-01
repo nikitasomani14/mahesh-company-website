@@ -2371,11 +2371,13 @@
     qs("#quickEditStock").value = p.stockQty ?? 0;
     
     updateQuickEditPreview();
+    qs("#profitQuickEditOverlay")?.classList.remove("hidden");
     qs("#profitQuickEdit").classList.remove("hidden");
   }
 
   function closeQuickEdit() {
     qs("#profitQuickEdit").classList.add("hidden");
+    qs("#profitQuickEditOverlay")?.classList.add("hidden");
   }
 
   function updateQuickEditPreview() {
@@ -2440,6 +2442,7 @@
 
   qs("#quickEditCancel")?.addEventListener("click", closeQuickEdit);
   qs("#quickEditSave")?.addEventListener("click", saveQuickEdit);
+  qs("#profitQuickEditOverlay")?.addEventListener("click", closeQuickEdit);
 
   qs("#quickEditCostPrice")?.addEventListener("input", updateQuickEditPreview);
   qs("#quickEditSellingPrice")?.addEventListener("input", updateQuickEditPreview);
