@@ -44,5 +44,58 @@
     "paymentStatus": "Paid",
     "notes": "",
     "date": 1777555196472
+  },
+  {
+    "id": "4f3e1eca-37e4-4d03-aed4-6fec1643f962",
+    "billNumber": "MC-2026-0003",
+    "customerName": "Radhe",
+    "phone": "",
+    "address": "",
+    "lineItems": [
+      {
+        "productName": "Sonalika Multi-Crop Thresher 40HP",
+        "qty": 1,
+        "unitPrice": 195000,
+        "discount": 0,
+        "lineTotal": 195000
+      }
+    ],
+    "subtotal": 195000,
+    "discountTotal": 0,
+    "grandTotal": 195000,
+    "paymentMethod": "Cash",
+    "paymentStatus": "Paid",
+    "notes": "",
+    "date": 1777613828263
+  },
+  {
+    "id": "b0b0f156-842a-4e6a-a55d-ff65b3cdc2b4",
+    "billNumber": "MC-2026-0004",
+    "customerName": "Shyam",
+    "phone": "",
+    "address": "",
+    "lineItems": [
+      {
+        "productName": "Cultivator Blade Set (12 Pcs)",
+        "qty": 1,
+        "unitPrice": 2800,
+        "discount": 0,
+        "lineTotal": 2800
+      },
+      {
+        "productName": "Thresher V-Belt Set (Premium)",
+        "qty": 1,
+        "unitPrice": 1500,
+        "discount": 0,
+        "lineTotal": 1500
+      }
+    ],
+    "subtotal": 4300,
+    "discountTotal": 0,
+    "grandTotal": 4300,
+    "paymentMethod": "Cash",
+    "paymentStatus": "Paid",
+    "notes": "",
+    "date": 1777622714174
   }
 ]
