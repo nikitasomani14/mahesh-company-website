@@ -150,5 +150,28 @@
     "paymentStatus": "Paid",
     "notes": "",
     "date": 1777636225119
+  },
+  {
+    "id": "303198e0-4125-4cde-bab8-4b74cc66d2db",
+    "billNumber": "MC-2026-0007",
+    "customerName": "Nikita",
+    "phone": "9424812705",
+    "address": "",
+    "lineItems": [
+      {
+        "productName": "4STK Caorborater",
+        "qty": 1,
+        "unitPrice": 510,
+        "discount": 0,
+        "lineTotal": 510
+      }
+    ],
+    "subtotal": 510,
+    "discountTotal": 0,
+    "grandTotal": 510,
+    "paymentMethod": "Cash",
+    "paymentStatus": "Paid",
+    "notes": "",
+    "date": 1777641349530
   }
 ]
